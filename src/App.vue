@@ -15,3 +15,9 @@ import PDF from './components/pdf-viewer.vue';
 })
 export default class App extends Vue {}
 </script>
+
+<style scoped>
+#app {
+  height: 100%;
+}
+</style>

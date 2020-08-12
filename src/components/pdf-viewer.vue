@@ -751,7 +751,7 @@ interface ToolbarConfig {
 }
 
 const pdfFileInput = "pdfFileInput";
-const appConfig = {
+const getAppConfig = () => ({
   appContainer: document.getElementById("pdf"),
   mainContainer: document.getElementById("viewerContainer"),
   viewerContainer: document.getElementById("viewer"),
@@ -876,7 +876,7 @@ const appConfig = {
   },
   printContainer: document.getElementById("printContainer"),
   openFileInputName: pdfFileInput,
-};
+});
 const toolbarConfig: ToolbarConfig = {
   sidebar: {
     viewThumbnail: true,
@@ -950,7 +950,7 @@ export default class PdfViewer extends Vue {
 
   private mounted() {
     this.addPrintContainer();
-    const config = appConfig;
+    const config = getAppConfig();
 
     if (pdfApp.PDFViewerApplication) {
       pdfApp.PDFViewerApplication.run(config);
