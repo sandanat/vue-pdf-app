@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
     <pdf-viewer pdf="/sample.pdf"/>
   </div>
 </template>

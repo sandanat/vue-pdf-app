@@ -1,10 +1,11 @@
 <template>
   <div id="pdf">
     <div id="outerContainer">
-      <div id="sidebarContainer">
+      <div v-show="showElem('sidebar')" id="sidebarContainer">
         <div id="toolbarSidebar">
           <div class="splitToolbarButton toggled">
             <button
+              v-show="showElem('sidebar.viewThumbnail')"
               id="viewThumbnail"
               class="toolbarButton toggled"
               title="Show Thumbnails"
@@ -14,6 +15,7 @@
               <span data-l10n-id="thumbs_label">Thumbnails</span>
             </button>
             <button
+              v-show="showElem('sidebar.viewOutline')"
               id="viewOutline"
               class="toolbarButton"
               title="Show Document Outline (double-click to expand/collapse all items)"
@@ -23,6 +25,7 @@
               <span data-l10n-id="document_outline_label">Document Outline</span>
             </button>
             <button
+              v-show="showElem('sidebar.viewAttachments')"
               id="viewAttachments"
               class="toolbarButton"
               title="Show Attachments"
@@ -33,17 +36,17 @@
             </button>
           </div>
         </div>
-        <div id="sidebarContent">
-          <div id="thumbnailView"></div>
-          <div id="outlineView" class="hidden"></div>
-          <div id="attachmentsView" class="hidden"></div>
+        <div v-show="showElem('sidebar.')" id="sidebarContent">
+          <div v-show="showElem('sidebar.viewThumbnail')" id="thumbnailView"></div>
+          <div v-show="showElem('sidebar.viewOutline')" id="outlineView" class="hidden"></div>
+          <div v-show="showElem('sidebar.viewAttachments')" id="attachmentsView" class="hidden"></div>
         </div>
         <div id="sidebarResizer" class="hidden"></div>
       </div>
       <!-- sidebarContainer -->
 
       <div id="mainContainer">
-        <div class="findbar hidden doorHanger" id="findbar">
+        <div v-show="showElem('findbar')" class="findbar hidden doorHanger" id="findbar">
           <div id="findbarInputContainer">
             <input
               id="findInput"
@@ -106,9 +109,14 @@
         </div>
         <!-- findbar -->
 
-        <div id="secondaryToolbar" class="secondaryToolbar hidden doorHangerRight">
+        <div
+          v-show="showElem('secondaryToolbar')"
+          id="secondaryToolbar"
+          class="secondaryToolbar hidden doorHangerRight"
+        >
           <div id="secondaryToolbarButtonContainer">
             <button
+              v-show="showElem('secondaryToolbar.secondaryPresentationMode')"
               id="secondaryPresentationMode"
               class="secondaryToolbarButton presentationMode visibleLargeView"
               title="Switch to Presentation Mode"
@@ -119,6 +127,7 @@
             </button>
 
             <button
+              v-show="showElem('secondaryToolbar.secondaryOpenFile')"
               id="secondaryOpenFile"
               class="secondaryToolbarButton openFile visibleLargeView"
               title="Open File"
@@ -129,6 +138,7 @@
             </button>
 
             <button
+              v-show="showElem('secondaryToolbar.secondaryPrint')"
               id="secondaryPrint"
               class="secondaryToolbarButton print visibleMediumView"
               title="Print"
@@ -139,6 +149,7 @@
             </button>
 
             <button
+              v-show="showElem('secondaryToolbar.secondaryDownload')"
               id="secondaryDownload"
               class="secondaryToolbarButton download visibleMediumView"
               title="Download"
@@ -149,6 +160,7 @@
             </button>
 
             <a
+              v-show="showElem('secondaryToolbar.secondaryViewBookmark')"
               href="#"
               id="secondaryViewBookmark"
               class="secondaryToolbarButton bookmark visibleSmallView"
@@ -162,6 +174,7 @@
             <div class="horizontalToolbarSeparator visibleLargeView"></div>
 
             <button
+              v-show="showElem('secondaryToolbar.firstPage')"
               id="firstPage"
               class="secondaryToolbarButton firstPage"
               title="Go to First Page"
@@ -171,6 +184,7 @@
               <span data-l10n-id="first_page_label">Go to First Page</span>
             </button>
             <button
+              v-show="showElem('secondaryToolbar.lastPage')"
               id="lastPage"
               class="secondaryToolbarButton lastPage"
               title="Go to Last Page"
@@ -183,6 +197,7 @@
             <div class="horizontalToolbarSeparator"></div>
 
             <button
+              v-show="showElem('secondaryToolbar.pageRotateCw')"
               id="pageRotateCw"
               class="secondaryToolbarButton rotateCw"
               title="Rotate Clockwise"
@@ -192,6 +207,7 @@
               <span data-l10n-id="page_rotate_cw_label">Rotate Clockwise</span>
             </button>
             <button
+              v-show="showElem('secondaryToolbar.pageRotateCcw')"
               id="pageRotateCcw"
               class="secondaryToolbarButton rotateCcw"
               title="Rotate Counterclockwise"
@@ -204,6 +220,7 @@
             <div class="horizontalToolbarSeparator"></div>
 
             <button
+              v-show="showElem('secondaryToolbar.cursorSelectTool')"
               id="cursorSelectTool"
               class="secondaryToolbarButton selectTool toggled"
               title="Enable Text Selection Tool"
@@ -213,6 +230,7 @@
               <span data-l10n-id="cursor_text_select_tool_label">Text Selection Tool</span>
             </button>
             <button
+              v-show="showElem('secondaryToolbar.cursorHandTool')"
               id="cursorHandTool"
               class="secondaryToolbarButton handTool"
               title="Enable Hand Tool"
@@ -225,6 +243,7 @@
             <div class="horizontalToolbarSeparator"></div>
 
             <button
+              v-show="showElem('secondaryToolbar.scrollVertical')"
               id="scrollVertical"
               class="secondaryToolbarButton scrollModeButtons scrollVertical toggled"
               title="Use Vertical Scrolling"
@@ -234,6 +253,7 @@
               <span data-l10n-id="scroll_vertical_label">Vertical Scrolling</span>
             </button>
             <button
+              v-show="showElem('secondaryToolbar.scrollHorizontal')"
               id="scrollHorizontal"
               class="secondaryToolbarButton scrollModeButtons scrollHorizontal"
               title="Use Horizontal Scrolling"
@@ -243,6 +263,7 @@
               <span data-l10n-id="scroll_horizontal_label">Horizontal Scrolling</span>
             </button>
             <button
+              v-show="showElem('secondaryToolbar.scrollWrapped')"
               id="scrollWrapped"
               class="secondaryToolbarButton scrollModeButtons scrollWrapped"
               title="Use Wrapped Scrolling"
@@ -255,6 +276,7 @@
             <div class="horizontalToolbarSeparator scrollModeButtons"></div>
 
             <button
+              v-show="showElem('secondaryToolbar.spreadNone')"
               id="spreadNone"
               class="secondaryToolbarButton spreadModeButtons spreadNone toggled"
               title="Do not join page spreads"
@@ -264,6 +286,7 @@
               <span data-l10n-id="spread_none_label">No Spreads</span>
             </button>
             <button
+              v-show="showElem('secondaryToolbar.spreadOdd')"
               id="spreadOdd"
               class="secondaryToolbarButton spreadModeButtons spreadOdd"
               title="Join page spreads starting with odd-numbered pages"
@@ -273,6 +296,7 @@
               <span data-l10n-id="spread_odd_label">Odd Spreads</span>
             </button>
             <button
+              v-show="showElem('secondaryToolbar.spreadEven')"
               id="spreadEven"
               class="secondaryToolbarButton spreadModeButtons spreadEven"
               title="Join page spreads starting with even-numbered pages"
@@ -285,6 +309,7 @@
             <div class="horizontalToolbarSeparator spreadModeButtons"></div>
 
             <button
+              v-show="showElem('secondaryToolbar.documentProperties')"
               id="documentProperties"
               class="secondaryToolbarButton documentProperties"
               title="Document Properties…"
@@ -297,11 +322,12 @@
         </div>
         <!-- secondaryToolbar -->
 
-        <div class="toolbar">
+        <div v-show="showElem('toolbar')" class="toolbar">
           <div id="toolbarContainer">
             <div id="toolbarViewer">
-              <div id="toolbarViewerLeft">
+              <div v-show="showElem('toolbar.toolbarViewerLeft')" id="toolbarViewerLeft">
                 <button
+                  v-show="showElem('sidebar')"
                   id="sidebarToggle"
                   class="toolbarButton"
                   title="Toggle Sidebar"
@@ -312,6 +338,7 @@
                 </button>
                 <div class="toolbarButtonSpacer"></div>
                 <button
+                  v-show="showElem('findbar')"
                   id="viewFind"
                   class="toolbarButton"
                   title="Find in Document"
@@ -322,6 +349,7 @@
                 </button>
                 <div class="splitToolbarButton hiddenSmallView">
                   <button
+                    v-show="showElem('toolbar.toolbarViewerLeft.previous')"
                     class="toolbarButton pageUp"
                     title="Previous Page"
                     id="previous"
@@ -332,6 +360,7 @@
                   </button>
                   <div class="splitToolbarButtonSeparator"></div>
                   <button
+                    v-show="showElem('toolbar.toolbarViewerLeft.next')"
                     class="toolbarButton pageDown"
                     title="Next Page"
                     id="next"
@@ -342,6 +371,7 @@
                   </button>
                 </div>
                 <input
+                  v-show="showElem('toolbar.toolbarViewerLeft.pageNumber')"
                   type="number"
                   id="pageNumber"
                   class="toolbarField pageNumber"
@@ -355,8 +385,9 @@
                 />
                 <span id="numPages" class="toolbarLabel"></span>
               </div>
-              <div id="toolbarViewerRight">
+              <div v-show="showElem('toolbar.toolbarViewerRight')" id="toolbarViewerRight">
                 <button
+                  v-show="showElem('toolbar.toolbarViewerRight.presentationMode')"
                   id="presentationMode"
                   class="toolbarButton presentationMode hiddenLargeView"
                   title="Switch to Presentation Mode"
@@ -367,6 +398,7 @@
                 </button>
 
                 <button
+                  v-show="showElem('toolbar.toolbarViewerRight.openFile')"
                   id="openFile"
                   class="toolbarButton openFile hiddenLargeView"
                   title="Open File"
@@ -377,6 +409,7 @@
                 </button>
 
                 <button
+                  v-show="showElem('toolbar.toolbarViewerRight.print')"
                   id="print"
                   class="toolbarButton print hiddenMediumView"
                   title="Print"
@@ -387,6 +420,7 @@
                 </button>
 
                 <button
+                  v-show="showElem('toolbar.toolbarViewerRight.download')"
                   id="download"
                   class="toolbarButton download hiddenMediumView"
                   title="Download"
@@ -396,6 +430,7 @@
                   <span data-l10n-id="download_label">Download</span>
                 </button>
                 <a
+                  v-show="showElem('toolbar.toolbarViewerRight.viewBookmark')"
                   href="#"
                   id="viewBookmark"
                   class="toolbarButton bookmark hiddenSmallView"
@@ -409,6 +444,7 @@
                 <div class="verticalToolbarSeparator hiddenSmallView"></div>
 
                 <button
+                  v-show="showElem('toolbar.toolbarViewerRight.secondaryToolbarToggle')"
                   id="secondaryToolbarToggle"
                   class="toolbarButton"
                   title="Tools"
@@ -418,9 +454,10 @@
                   <span data-l10n-id="tools_label">Tools</span>
                 </button>
               </div>
-              <div id="toolbarViewerMiddle">
+              <div v-show="showElem('toolbar.toolbarViewerMiddle')" id="toolbarViewerMiddle">
                 <div class="splitToolbarButton">
                   <button
+                    v-show="showElem('toolbar.toolbarViewerMiddle.zoomOut')"
                     id="zoomOut"
                     class="toolbarButton zoomOut"
                     title="Zoom Out"
@@ -431,6 +468,7 @@
                   </button>
                   <div class="splitToolbarButtonSeparator"></div>
                   <button
+                    v-show="showElem('toolbar.toolbarViewerMiddle.zoomIn')"
                     id="zoomIn"
                     class="toolbarButton zoomIn"
                     title="Zoom In"
@@ -440,7 +478,11 @@
                     <span data-l10n-id="zoom_in_label">Zoom In</span>
                   </button>
                 </div>
-                <span id="scaleSelectContainer" class="dropdownToolbarButton">
+                <span
+                  v-show="showElem('toolbar.toolbarViewerMiddle.scaleSelectContatiner')"
+                  id="scaleSelectContainer"
+                  class="dropdownToolbarButton"
+                >
                   <select id="scaleSelect" title="Zoom" tabindex="23" data-l10n-id="zoom">
                     <option
                       id="pageAutoOption"
@@ -687,6 +729,7 @@
 </template>
 
 <script lang="ts">
+import { get } from "lodash";
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import "@/pdfjs-dist/es5/build/pdf";
 import * as pdfApp from "@/pdfjs-dist/lib/web/app";
@@ -884,36 +927,20 @@ const toolbarConfig: ToolbarConfig = {
   errorWrapper: true,
 };
 
-// FIX this
 const getToolbarConfigValue = (
   config: ToolbarConfig,
   path: string
 ): ToolbarConfValue => {
-  const props = path.split(".");
-  if (props.length === 1) return config[props[0]];
-  const result = props.reduce(
-    (pv: string | ToolbarConfValue, cv: string, ci: number) => {
-      if (ci === 1) {
-        return (
-          (typeof pv === "string" &&
-            typeof config[pv] === "object" &&
-            config[pv][cv]) ||
-          undefined
-        );
-      } else {
-        return (typeof pv === "object" && pv[cv]) || undefined;
-      }
-    }
-  );
-  return result;
+  return get(config, path);
 };
 const errorHandler = console.error.bind(console);
 
 @Component
 export default class PdfViewer extends Vue {
+  // can accept string URL
   @Prop({ required: false }) private pdf!: string | ArrayBuffer;
   @Prop({ required: false, default: () => toolbarConfig })
-  private config!: typeof toolbarConfig;
+  private config!: ToolbarConfig;
 
   private beforeDestroy() {
     const el = document.getElementById(pdfFileInput);
