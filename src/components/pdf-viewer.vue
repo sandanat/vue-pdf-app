@@ -741,6 +741,7 @@ import "../css/index.css";
 
 if (AppOptions) {
   AppOptions.set("defaultUrl", null);
+  AppOptions.set("locale", "en");
 }
 
 type ToolbarConfValue = boolean | ToolbarConfig | undefined;
@@ -997,7 +998,7 @@ export default class PdfViewer extends Vue {
 #pdf {
   height: 100%;
   background-color: rgba(64, 64, 64, 1);
-  background-image: url(/images/texture.png);
+  background-image: url(../assets/images/texture.png);
   /* font size is needed to make the activity bar the correct size */
   font-size: 10px;
 }
