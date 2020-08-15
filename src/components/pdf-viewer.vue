@@ -383,7 +383,11 @@
                   data-l10n-id="page"
                   autocomplete="off"
                 />
-                <span id="numPages" class="toolbarLabel"></span>
+                <span
+                  v-show="showElem('toolbar.toolbarViewerLeft.pageNumber')"
+                  id="numPages"
+                  class="toolbarLabel">
+                </span>
               </div>
               <div v-show="showElem('toolbar.toolbarViewerRight')" id="toolbarViewerRight">
                 <button
@@ -729,7 +733,6 @@
 </template>
 
 <script lang="ts">
-import { get } from "lodash";
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import "@/pdfjs-dist/es5/build/pdf";
 import * as pdfApp from "@/pdfjs-dist/lib/web/app";
@@ -928,12 +931,19 @@ const toolbarConfig: ToolbarConfig = {
   errorWrapper: true,
 };
 
-const getToolbarConfigValue = (
-  config: ToolbarConfig,
-  path: string
-): ToolbarConfValue => {
-  return get(config, path);
-};
+const getToolbarConfigValue = (config: ToolbarConfig,
+  path: string): ToolbarConfValue => {
+  const props = path.split(".");
+  let currValue = config[props[0]];
+
+  for (let i = 1; i < props.length; i++) {
+    if (typeof currValue === "object") {
+      currValue = currValue[props[i]];
+    } else break;
+  }
+  return currValue;
+}
+
 const errorHandler = console.error.bind(console);
 
 @Component
