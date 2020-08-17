@@ -1,5 +1,8 @@
 <template>
   <div id="pdf">
+    <script type="application/l10n">
+      {{ defaultLocale }}
+    </script>
     <div id="outerContainer">
       <div v-show="showElem('sidebar')" id="sidebarContainer">
         <div id="toolbarSidebar">
@@ -386,8 +389,8 @@
                 <span
                   v-show="showElem('toolbar.toolbarViewerLeft.pageNumber')"
                   id="numPages"
-                  class="toolbarLabel">
-                </span>
+                  class="toolbarLabel"
+                ></span>
               </div>
               <div v-show="showElem('toolbar.toolbarViewerRight')" id="toolbarViewerRight">
                 <button
@@ -735,213 +738,23 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import "@/pdfjs-dist/es5/build/pdf";
+// @ts-ignore
 import * as pdfApp from "@/pdfjs-dist/lib/web/app";
+// @ts-ignore
 import { AppOptions } from "@/pdfjs-dist/lib/web/app_options";
 import "@/pdfjs-dist/lib/web/genericcom";
 import "@/pdfjs-dist/lib/web/pdf_print_service";
 import "@/pdfjs-dist/build/pdf.worker.entry";
 import "../css/index.css";
+import { ToolbarConfig } from "@/types";
+import getAppConfig from "@/utils/get-pdf-config";
+import toolbarConfig from "@/utils/toolbar-config";
+import { PDF_FILE_INPUT_ID } from "@/utils/constants";
+import locale from "@/utils/locale";
+import getToolbarConfigValue from "@/utils/get-toolbar-config-value";
 
 if (AppOptions) {
   AppOptions.set("defaultUrl", null);
-  AppOptions.set("locale", "en");
-}
-
-type ToolbarConfValue = boolean | ToolbarConfig | undefined;
-
-interface ToolbarConfig {
-  [key: string]: ToolbarConfValue;
-}
-
-const pdfFileInput = "pdfFileInput";
-const getAppConfig = () => ({
-  appContainer: document.getElementById("pdf"),
-  mainContainer: document.getElementById("viewerContainer"),
-  viewerContainer: document.getElementById("viewer"),
-  eventBus: null,
-  toolbar: {
-    container: document.getElementById("toolbarViewer"),
-    numPages: document.getElementById("numPages"),
-    pageNumber: document.getElementById("pageNumber"),
-    scaleSelectContainer: document.getElementById("scaleSelectContainer"),
-    scaleSelect: document.getElementById("scaleSelect"),
-    customScaleOption: document.getElementById("customScaleOption"),
-    previous: document.getElementById("previous"),
-    next: document.getElementById("next"),
-    zoomIn: document.getElementById("zoomIn"),
-    zoomOut: document.getElementById("zoomOut"),
-    viewFind: document.getElementById("viewFind"),
-    openFile: document.getElementById("openFile"),
-    print: document.getElementById("print"),
-    presentationModeButton: document.getElementById("presentationMode"),
-    download: document.getElementById("download"),
-    viewBookmark: document.getElementById("viewBookmark"),
-  },
-  secondaryToolbar: {
-    toolbar: document.getElementById("secondaryToolbar"),
-    toggleButton: document.getElementById("secondaryToolbarToggle"),
-    toolbarButtonContainer: document.getElementById(
-      "secondaryToolbarButtonContainer"
-    ),
-    presentationModeButton: document.getElementById(
-      "secondaryPresentationMode"
-    ),
-    openFileButton: document.getElementById("secondaryOpenFile"),
-    printButton: document.getElementById("secondaryPrint"),
-    downloadButton: document.getElementById("secondaryDownload"),
-    viewBookmarkButton: document.getElementById("secondaryViewBookmark"),
-    firstPageButton: document.getElementById("firstPage"),
-    lastPageButton: document.getElementById("lastPage"),
-    pageRotateCwButton: document.getElementById("pageRotateCw"),
-    pageRotateCcwButton: document.getElementById("pageRotateCcw"),
-    cursorSelectToolButton: document.getElementById("cursorSelectTool"),
-    cursorHandToolButton: document.getElementById("cursorHandTool"),
-    scrollVerticalButton: document.getElementById("scrollVertical"),
-    scrollHorizontalButton: document.getElementById("scrollHorizontal"),
-    scrollWrappedButton: document.getElementById("scrollWrapped"),
-    spreadNoneButton: document.getElementById("spreadNone"),
-    spreadOddButton: document.getElementById("spreadOdd"),
-    spreadEvenButton: document.getElementById("spreadEven"),
-    documentPropertiesButton: document.getElementById("documentProperties"),
-  },
-  fullscreen: {
-    contextFirstPage: document.getElementById("contextFirstPage"),
-    contextLastPage: document.getElementById("contextLastPage"),
-    contextPageRotateCw: document.getElementById("contextPageRotateCw"),
-    contextPageRotateCcw: document.getElementById("contextPageRotateCcw"),
-  },
-  sidebar: {
-    // Divs (and sidebar button)
-    outerContainer: document.getElementById("outerContainer"),
-    viewerContainer: document.getElementById("viewerContainer"),
-    toggleButton: document.getElementById("sidebarToggle"),
-    // Buttons
-    thumbnailButton: document.getElementById("viewThumbnail"),
-    outlineButton: document.getElementById("viewOutline"),
-    attachmentsButton: document.getElementById("viewAttachments"),
-    // Views
-    thumbnailView: document.getElementById("thumbnailView"),
-    outlineView: document.getElementById("outlineView"),
-    attachmentsView: document.getElementById("attachmentsView"),
-  },
-  sidebarResizer: {
-    outerContainer: document.getElementById("outerContainer"),
-    resizer: document.getElementById("sidebarResizer"),
-  },
-  findBar: {
-    bar: document.getElementById("findbar"),
-    toggleButton: document.getElementById("viewFind"),
-    findField: document.getElementById("findInput"),
-    highlightAllCheckbox: document.getElementById("findHighlightAll"),
-    caseSensitiveCheckbox: document.getElementById("findMatchCase"),
-    entireWordCheckbox: document.getElementById("findEntireWord"),
-    findMsg: document.getElementById("findMsg"),
-    findResultsCount: document.getElementById("findResultsCount"),
-    findPreviousButton: document.getElementById("findPrevious"),
-    findNextButton: document.getElementById("findNext"),
-  },
-  passwordOverlay: {
-    overlayName: "passwordOverlay",
-    container: document.getElementById("passwordOverlay"),
-    label: document.getElementById("passwordText"),
-    input: document.getElementById("password"),
-    submitButton: document.getElementById("passwordSubmit"),
-    cancelButton: document.getElementById("passwordCancel"),
-  },
-  documentProperties: {
-    overlayName: "documentPropertiesOverlay",
-    container: document.getElementById("documentPropertiesOverlay"),
-    closeButton: document.getElementById("documentPropertiesClose"),
-    fields: {
-      fileName: document.getElementById("fileNameField"),
-      fileSize: document.getElementById("fileSizeField"),
-      title: document.getElementById("titleField"),
-      author: document.getElementById("authorField"),
-      subject: document.getElementById("subjectField"),
-      keywords: document.getElementById("keywordsField"),
-      creationDate: document.getElementById("creationDateField"),
-      modificationDate: document.getElementById("modificationDateField"),
-      creator: document.getElementById("creatorField"),
-      producer: document.getElementById("producerField"),
-      version: document.getElementById("versionField"),
-      pageCount: document.getElementById("pageCountField"),
-      pageSize: document.getElementById("pageSizeField"),
-      linearized: document.getElementById("linearizedField"),
-    },
-  },
-  errorWrapper: {
-    container: document.getElementById("errorWrapper"),
-    errorMessage: document.getElementById("errorMessage"),
-    closeButton: document.getElementById("errorClose"),
-    errorMoreInfo: document.getElementById("errorMoreInfo"),
-    moreInfoButton: document.getElementById("errorShowMore"),
-    lessInfoButton: document.getElementById("errorShowLess"),
-  },
-  printContainer: document.getElementById("printContainer"),
-  openFileInputName: pdfFileInput,
-});
-const toolbarConfig: ToolbarConfig = {
-  sidebar: {
-    viewThumbnail: true,
-    viewOutline: true,
-    viewAttachments: true,
-  },
-  findbar: true,
-  secondaryToolbar: {
-    secondaryPresentationMode: true,
-    secondaryOpenFile: true,
-    secondaryPrint: true,
-    secondaryDownload: true,
-    secondaryViewBookmark: true,
-    firstPage: true,
-    lastPage: true,
-    pageRotateCw: true,
-    pageRotateCcw: true,
-    cursorSelectTool: true,
-    cursorHandTool: true,
-    scrollVertical: true,
-    scrollHorizontal: true,
-    scrollWrapped: true,
-    spreadNone: true,
-    spreadOdd: true,
-    spreadEven: true,
-    documentProperties: true,
-  },
-  toolbar: {
-    toolbarViewerLeft: {
-      previous: true,
-      next: true,
-      pageNumber: true,
-    },
-    toolbarViewerRight: {
-      presentationMode: true,
-      openFile: true,
-      print: true,
-      download: true,
-      viewBookmark: true,
-      secondaryToolbarToggle: true,
-    },
-    toolbarViewerMiddle: {
-      zoomOut: true,
-      zoomIn: true,
-      scaleSelectContatiner: true,
-    },
-  },
-  viewerContextMenu: true,
-  errorWrapper: true,
-};
-
-const getToolbarConfigValue = (config: ToolbarConfig,
-  path: string): ToolbarConfValue => {
-  const props = path.split(".");
-  let currValue = config[props[0]];
-
-  for (let i = 1; i < props.length; i++) {
-    if (typeof currValue === "object") {
-      currValue = currValue[props[i]];
-    } else break;
-  }
-  return currValue;
 }
 
 const errorHandler = console.error.bind(console);
@@ -953,8 +766,10 @@ export default class PdfViewer extends Vue {
   @Prop({ required: false, default: () => toolbarConfig })
   private config!: ToolbarConfig;
 
+  private defaultLocale = locale;
+
   private beforeDestroy() {
-    const el = document.getElementById(pdfFileInput);
+    const el = document.getElementById(PDF_FILE_INPUT_ID);
     el && el.remove();
   }
 
