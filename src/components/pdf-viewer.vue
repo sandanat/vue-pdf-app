@@ -745,7 +745,7 @@ import { AppOptions } from "@/pdfjs-dist/lib/web/app_options";
 import "@/pdfjs-dist/lib/web/genericcom";
 import "@/pdfjs-dist/lib/web/pdf_print_service";
 import "@/pdfjs-dist/build/pdf.worker.entry";
-import "../css/index.css";
+import "@/css/index.css";
 import { ToolbarConfig } from "@/types";
 import getAppConfig from "@/utils/get-pdf-config";
 import toolbarConfig from "@/utils/toolbar-config";

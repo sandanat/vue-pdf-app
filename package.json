@@ -1,10 +1,29 @@
 {
-  "name": "pdf-viewer",
+  "name": "vue-pdf-viewer",
   "version": "0.1.0",
+  "description": "vue pdf viewer",
+  "main": "dist/js/main.js",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sandanat/vue-pdf-viewer"
+  },
+  "keywords": [
+    "vue",
+    "vuejs",
+    "pdfjs",
+    "pdf",
+    "viewer"
+  ],
+  "author": "sandanat",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sandanat/vue-pdf-viewer/issues"
+  },
+  "homepage": "https://github.com/sandanat/vue-pdf-viewer#readme",
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "webpack --mode production src/wrapper.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -26,6 +45,7 @@
     "eslint-plugin-vue": "^6.2.2",
     "typescript": "~3.9.3",
     "vue-template-compiler": "^2.6.11",
-    "webpack-bundle-analyzer": "^3.8.0"
+    "webpack-bundle-analyzer": "^3.8.0",
+    "webpack-cli": "^3.3.12"
   }
 }
