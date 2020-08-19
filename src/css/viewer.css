@@ -34,6 +34,9 @@ html {
 body {
   height: 100%;
   width: 100%;
+}
+
+#pdf {
   background-color: rgba(64, 64, 64, 1);
   background-image: url(../assets/images/texture.png);
 }
