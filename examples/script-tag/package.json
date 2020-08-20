@@ -1,0 +1,15 @@
+{
+  "name": "script-tag",
+  "version": "1.0.0",
+  "description": "",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "live-server": "^1.2.1"
+  },
+  "scripts": {
+    "start": "live-server"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <title>pdf-viewer demo</title>
+  <script src="https://unpkg.com/vue"></script>
+  <script src="https://unpkg.com/vue-pdf-app"></script>
+</head>
+
+<body>
+  <div id="app" style="height: 100%;">
+    <pdf-app pdf="/sample.pdf"></pdf-app>
+  </div>
+  <script>
+    new Vue({
+      components: {
+        PdfApp: window["pdf-viewer"]
+      }
+    }).$mount('#app')
+  </script>
+</body>
+
+</html>
