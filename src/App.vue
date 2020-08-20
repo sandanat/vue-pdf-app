@@ -1,5 +1,5 @@
 <template>
-  <pdf-viewer :pdf="pdf" :config="config"></pdf-viewer>
+  <pdf-viewer :pdf="pdf" :config="config" @open="open"></pdf-viewer>
 </template>
 
 <script lang="ts">
@@ -14,6 +14,10 @@ export default Vue.extend({
     return {
       pdf: null,
       config: { toolbar: { toolbarViewerLeft: false } }
+    }
+  },
+  methods: {
+    open() {
     }
   }
 });

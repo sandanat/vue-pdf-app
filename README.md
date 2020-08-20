@@ -15,17 +15,28 @@ Easily localized configurable panel
 
 Cross-browser support
 
-Typescript support
+# Example
+```
+<template>
+  <pdf-viewer pdf="http://example.com/sample.pdf"></pdf-viewer>
+</template>
 
+<script>
+import PdfViewer from "vue-pdf-viewer";
 
-# 100% PDFJS functionality
-
+export default {
+  components: {
+    PdfViewer
+  }
+}
+</script>
+```
 ![pdf sample](./readme/sample.png "Pdf expample")
 
 
 # Configurable panel
-
-Toolbar is available by default. Specify `false` for buttons or whole group of buttons to disable them.
+Toolbar is available by default and is customized via `config` prop.
+Specify `false` for buttons or whole group of buttons to disable them.
 
 ```
 // disable "Previous page" button
@@ -41,6 +52,11 @@ Toolbar is available by default. Specify `false` for buttons or whole group of b
 {
   toolbar: {
     toolbarViewerLeft: false
+}
+
+// disable whole panel
+{
+  toolbar: false
 }
 ```
 
@@ -102,14 +118,14 @@ Toolbar is available by default. Specify `false` for buttons or whole group of b
 </code>
 </details>
 
-# Localize panel
+# Localized panel
 English is the default language for panel.
 Use `<link rel="resource" type="application/l10n" href="path-to-localization-file">` in your html for localization.
 See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l10n "file examples").
 
 # API
 ### :pdf
-- Type: `string | null | ArrayBuffer`. 
+- Type: `string | null | ArrayBuffer | TypedArray`. 
 - Required: `false`
 - Usage:
 ```
@@ -121,6 +137,13 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
 - Required: `false`
 - Usage:
 ```
-<vue-pdf-viewer :config="{  }" />
+<vue-pdf-viewer :config="{ toolbar: false }" />
 ```
 ### @open(PDFViewerApplication)
+- Description: emitted when pdf is opened
+- Arguments:
+  - PDFViewerApplication - pdf application
+- Usage:
+```
+<vue-pdf-viewer @open="openHandler" />
+```
