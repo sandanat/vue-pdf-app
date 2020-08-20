@@ -1,5 +1,5 @@
 {
-  "name": "vue-pdf-viewer",
+  "name": "vue-pdf-app",
   "version": "0.1.0",
   "description": "vue pdf viewer",
   "main": "dist/pdf-viewer.umd.js",
@@ -8,7 +8,7 @@
   "types": "src/types/pdf-viewer.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sandanat/vue-pdf-viewer"
+    "url": "git+https://github.com/sandanat/vue-pdf-app"
   },
   "files": ["dist", "src/types/pdf-viewer.d.ts"],
   "keywords": [
@@ -21,9 +21,9 @@
   "author": "sandanat",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sandanat/vue-pdf-viewer/issues"
+    "url": "https://github.com/sandanat/vue-pdf-app/issues"
   },
-  "homepage": "https://github.com/sandanat/vue-pdf-viewer#readme",
+  "homepage": "https://github.com/sandanat/vue-pdf-app#readme",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
