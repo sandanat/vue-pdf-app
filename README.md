@@ -1,4 +1,4 @@
-VUEjs PDF viewer base on Mozilla's PDFJS.
+VUEjs PDF viewer based on Mozilla's PDFJS.
 
 100% PDFJS functionality:
 
@@ -15,6 +15,16 @@ Easily localized configurable panel
 
 Cross-browser support
 
+Built-in typescript support
+
+UMD/Unpkg support:
+File | Size | Gzipped
+ - | - | -
+pdf-viewer.umd.min.js | 1764.98 KiB | 505.85 KiB
+pdf-viewer.umd.js     | 3132.88 KiB | 703.12 KiB
+pdf-viewer.common.js  | 3132.41 KiB | 702.95 KiB
+
+
 # Example
 ```
 <template>
@@ -22,7 +32,7 @@ Cross-browser support
 </template>
 
 <script>
-import PdfViewer from "vue-pdf-viewer";
+import PdfViewer from "vue-pdf-app";
 
 export default {
   components: {
@@ -33,6 +43,7 @@ export default {
 ```
 ![pdf sample](./readme/sample.png "Pdf expample")
 
+[See examples](https://github.com/sandanat/vue-pdf-app/tree/master/examples "Examples source code")
 
 # Configurable panel
 Toolbar is available by default and is customized via `config` prop.
@@ -146,4 +157,137 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
 - Usage:
 ```
 <vue-pdf-viewer @open="openHandler" />
+```
+
+# Examples
+[See examples](https://github.com/sandanat/vue-pdf-app/tree/master/examples "Examples source code") source code.
+
+## script tag (unpkg)
+```
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <title>pdf-viewer demo</title>
+  <script src="https://unpkg.com/vue"></script>
+  <script src="https://unpkg.com/vue-pdf-app"></script>
+</head>
+
+<body>
+  <div id="app" style="height: 100%;">
+    <pdf-app pdf="/sample.pdf"></pdf-app>
+  </div>
+  <script>
+    new Vue({
+      components: {
+        PdfApp: window["pdf-viewer"]
+      }
+    }).$mount('#app')
+  </script>
+</body>
+
+</html>
+```
+## typescript
+```
+<template>
+  <div id="app">
+    <pdf-app pdf="/sample.pdf"></pdf-app>
+  </div>
+</template>
+
+<script lang="ts">
+import PdfApp from "vue-pdf-app";
+import { Component, Vue } from 'vue-property-decorator';
+
+@Component({
+  components: {
+    PdfApp
+  },
+})
+export default class App extends Vue {}
+</script>
+```
+## Lazy loading
+PDFJS is a huge package (see the library size table above).
+So use lazy loading to split your bundle into small pieces.
+```
+<template>
+  <div id="app">
+    <pdf-viewer></pdf-viewer>
+  </div>
+</template>
+
+<script>
+import Loader from "./components/Loader.vue";
+
+export default {
+  name: "App",
+  components: {
+    "pdf-viewer": () => ({
+      component: new Promise((res) => {
+        return setTimeout(
+          () => res(import(/* webpackChunkName: "pdf-viewer" */ "vue-pdf-app")),
+          4000
+        );
+      }),
+      loading: Loader,
+    }),
+  },
+};
+</script>
+```
+## PDFJS interaction
+You can interact with pdfjs library when pdf is opened via `open` event.
+```
+<template>
+  <div id="app">
+    <div id="pdf-wrapper">
+      <pdf-app pdf="/sample.pdf" @open="openHandler"></pdf-app>
+    </div>
+    <div id="info">
+      <h1>PDF info:</h1>
+      <div v-for="item in info" :key="item.name">
+        <span>{{ item.name }}: {{ item.value }}</span>
+        <br />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import PdfApp from "vue-pdf-app";
+
+export default {
+  name: "App",
+  components: {
+    PdfApp,
+  },
+  data() {
+    return {
+      info: [],
+    };
+  },
+  methods: {
+    async openHandler(PDFViewerApplication) {
+      this.info = [];
+      const info = await PDFViewerApplication.pdfDocument
+        .getMetadata()
+        .catch(console.error.bind(console));
+
+      if (!info) return;
+      const props = Object.keys(info.info);
+      props.forEach((prop) => {
+        const obj = {
+          name: prop,
+          value: info.info[prop],
+        };
+        this.info.push(obj);
+      });
+    },
+  },
+};
+</script>
 ```
