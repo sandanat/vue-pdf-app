@@ -12,7 +12,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      pdf: null,
+      pdf: "/sample.pdf",
       config: { toolbar: { toolbarViewerLeft: false } }
     }
   },

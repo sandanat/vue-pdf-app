@@ -766,7 +766,7 @@ export default class PdfViewer extends Vue {
   @Prop({ required: false, default: () => toolbarConfig })
   private config!: ToolbarConfig;
 
-  private defaultLocale = locale;
+  private defaultLocale = JSON.stringify(locale);
 
   private beforeDestroy() {
     const el = document.getElementById(PDF_FILE_INPUT_ID);
