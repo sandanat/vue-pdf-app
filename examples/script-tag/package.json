@@ -2,8 +2,7 @@
   "name": "script-tag",
   "version": "1.0.0",
   "description": "",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "live-server": "^1.2.1"
   },
