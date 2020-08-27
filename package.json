@@ -1,6 +1,6 @@
 {
   "name": "vue-pdf-app",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "vue pdf viewer",
   "main": "dist/pdf-viewer.umd.js",
   "unpkg": "dist/pdf-viewer.umd.min.js",
@@ -10,7 +10,10 @@
     "type": "git",
     "url": "git+https://github.com/sandanat/vue-pdf-app"
   },
-  "files": ["dist", "src/types/pdf-viewer.d.ts"],
+  "files": [
+    "dist",
+    "src/types/pdf-viewer.d.ts"
+  ],
   "keywords": [
     "vue",
     "vuejs",
