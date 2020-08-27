@@ -45,6 +45,8 @@ export default {
 
 [See examples](https://github.com/sandanat/vue-pdf-app/tree/master/examples "Examples source code")
 
+[Live demo](https://codepen.io/sandanat/pen/xxVdgYM)
+
 # Configurable panel
 Toolbar is available by default and is customized via `config` prop.
 Specify `false` for buttons or whole group of buttons to disable them.
@@ -161,6 +163,9 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
 
 # Examples
 [See examples](https://github.com/sandanat/vue-pdf-app/tree/master/examples "Examples source code") source code.
+
+[Live demo](https://codepen.io/sandanat/pen/xxVdgYM)
+
 
 ## script tag (unpkg)
 ```
