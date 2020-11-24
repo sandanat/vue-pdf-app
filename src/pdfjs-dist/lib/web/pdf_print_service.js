@@ -21,6 +21,8 @@
  */
 "use strict";
 
+window.__nativePrint__ = window.print.bind(window);
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
