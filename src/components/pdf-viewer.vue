@@ -25,7 +25,9 @@
               tabindex="3"
               data-l10n-id="document_outline"
             >
-              <span data-l10n-id="document_outline_label">Document Outline</span>
+              <span data-l10n-id="document_outline_label"
+                >Document Outline</span
+              >
             </button>
             <button
               v-show="showElem('sidebar.viewAttachments')"
@@ -39,17 +41,32 @@
             </button>
           </div>
         </div>
-        <div v-show="showElem('sidebar.')" id="sidebarContent">
-          <div v-show="showElem('sidebar.viewThumbnail')" id="thumbnailView"></div>
-          <div v-show="showElem('sidebar.viewOutline')" id="outlineView" class="hidden"></div>
-          <div v-show="showElem('sidebar.viewAttachments')" id="attachmentsView" class="hidden"></div>
+        <div v-show="showElem('sidebar')" id="sidebarContent">
+          <div
+            v-show="showElem('sidebar.viewThumbnail')"
+            id="thumbnailView"
+          ></div>
+          <div
+            v-show="showElem('sidebar.viewOutline')"
+            id="outlineView"
+            class="hidden"
+          ></div>
+          <div
+            v-show="showElem('sidebar.viewAttachments')"
+            id="attachmentsView"
+            class="hidden"
+          ></div>
         </div>
         <div id="sidebarResizer" class="hidden"></div>
       </div>
       <!-- sidebarContainer -->
 
       <div id="mainContainer">
-        <div v-show="showElem('findbar')" class="findbar hidden doorHanger" id="findbar">
+        <div
+          v-show="showElem('findbar')"
+          class="findbar hidden doorHanger"
+          id="findbar"
+        >
           <div id="findbarInputContainer">
             <input
               id="findInput"
@@ -83,26 +100,44 @@
           </div>
 
           <div id="findbarOptionsOneContainer">
-            <input type="checkbox" id="findHighlightAll" class="toolbarField" tabindex="94" />
+            <input
+              type="checkbox"
+              id="findHighlightAll"
+              class="toolbarField"
+              tabindex="94"
+            />
             <label
               for="findHighlightAll"
               class="toolbarLabel"
               data-l10n-id="find_highlight"
-            >Highlight all</label>
-            <input type="checkbox" id="findMatchCase" class="toolbarField" tabindex="95" />
+              >Highlight all</label
+            >
+            <input
+              type="checkbox"
+              id="findMatchCase"
+              class="toolbarField"
+              tabindex="95"
+            />
             <label
               for="findMatchCase"
               class="toolbarLabel"
               data-l10n-id="find_match_case_label"
-            >Match case</label>
+              >Match case</label
+            >
           </div>
           <div id="findbarOptionsTwoContainer">
-            <input type="checkbox" id="findEntireWord" class="toolbarField" tabindex="96" />
+            <input
+              type="checkbox"
+              id="findEntireWord"
+              class="toolbarField"
+              tabindex="96"
+            />
             <label
               for="findEntireWord"
               class="toolbarLabel"
               data-l10n-id="find_entire_word_label"
-            >Whole words</label>
+              >Whole words</label
+            >
             <span id="findResultsCount" class="toolbarLabel hidden"></span>
           </div>
 
@@ -126,7 +161,9 @@
               tabindex="51"
               data-l10n-id="presentation_mode"
             >
-              <span data-l10n-id="presentation_mode_label">Presentation Mode</span>
+              <span data-l10n-id="presentation_mode_label"
+                >Presentation Mode</span
+              >
             </button>
 
             <button
@@ -217,7 +254,9 @@
               tabindex="59"
               data-l10n-id="page_rotate_ccw"
             >
-              <span data-l10n-id="page_rotate_ccw_label">Rotate Counterclockwise</span>
+              <span data-l10n-id="page_rotate_ccw_label"
+                >Rotate Counterclockwise</span
+              >
             </button>
 
             <div class="horizontalToolbarSeparator"></div>
@@ -230,7 +269,9 @@
               tabindex="60"
               data-l10n-id="cursor_text_select_tool"
             >
-              <span data-l10n-id="cursor_text_select_tool_label">Text Selection Tool</span>
+              <span data-l10n-id="cursor_text_select_tool_label"
+                >Text Selection Tool</span
+              >
             </button>
             <button
               v-show="showElem('secondaryToolbar.cursorHandTool')"
@@ -253,7 +294,9 @@
               tabindex="62"
               data-l10n-id="scroll_vertical"
             >
-              <span data-l10n-id="scroll_vertical_label">Vertical Scrolling</span>
+              <span data-l10n-id="scroll_vertical_label"
+                >Vertical Scrolling</span
+              >
             </button>
             <button
               v-show="showElem('secondaryToolbar.scrollHorizontal')"
@@ -263,7 +306,9 @@
               tabindex="63"
               data-l10n-id="scroll_horizontal"
             >
-              <span data-l10n-id="scroll_horizontal_label">Horizontal Scrolling</span>
+              <span data-l10n-id="scroll_horizontal_label"
+                >Horizontal Scrolling</span
+              >
             </button>
             <button
               v-show="showElem('secondaryToolbar.scrollWrapped')"
@@ -319,7 +364,9 @@
               tabindex="68"
               data-l10n-id="document_properties"
             >
-              <span data-l10n-id="document_properties_label">Document Properties…</span>
+              <span data-l10n-id="document_properties_label"
+                >Document Properties…</span
+              >
             </button>
           </div>
         </div>
@@ -328,7 +375,10 @@
         <div v-show="showElem('toolbar')" class="toolbar">
           <div id="toolbarContainer">
             <div id="toolbarViewer">
-              <div v-show="showElem('toolbar.toolbarViewerLeft')" id="toolbarViewerLeft">
+              <div
+                v-show="showElem('toolbar.toolbarViewerLeft')"
+                id="toolbarViewerLeft"
+              >
                 <button
                   v-show="showElem('sidebar')"
                   id="sidebarToggle"
@@ -337,7 +387,9 @@
                   tabindex="11"
                   data-l10n-id="toggle_sidebar"
                 >
-                  <span data-l10n-id="toggle_sidebar_label">Toggle Sidebar</span>
+                  <span data-l10n-id="toggle_sidebar_label"
+                    >Toggle Sidebar</span
+                  >
                 </button>
                 <div class="toolbarButtonSpacer"></div>
                 <button
@@ -392,16 +444,23 @@
                   class="toolbarLabel"
                 ></span>
               </div>
-              <div v-show="showElem('toolbar.toolbarViewerRight')" id="toolbarViewerRight">
+              <div
+                v-show="showElem('toolbar.toolbarViewerRight')"
+                id="toolbarViewerRight"
+              >
                 <button
-                  v-show="showElem('toolbar.toolbarViewerRight.presentationMode')"
+                  v-show="
+                    showElem('toolbar.toolbarViewerRight.presentationMode')
+                  "
                   id="presentationMode"
                   class="toolbarButton presentationMode hiddenLargeView"
                   title="Switch to Presentation Mode"
                   tabindex="31"
                   data-l10n-id="presentation_mode"
                 >
-                  <span data-l10n-id="presentation_mode_label">Presentation Mode</span>
+                  <span data-l10n-id="presentation_mode_label"
+                    >Presentation Mode</span
+                  >
                 </button>
 
                 <button
@@ -451,7 +510,11 @@
                 <div class="verticalToolbarSeparator hiddenSmallView"></div>
 
                 <button
-                  v-show="showElem('toolbar.toolbarViewerRight.secondaryToolbarToggle')"
+                  v-show="
+                    showElem(
+                      'toolbar.toolbarViewerRight.secondaryToolbarToggle'
+                    )
+                  "
                   id="secondaryToolbarToggle"
                   class="toolbarButton"
                   title="Tools"
@@ -461,7 +524,10 @@
                   <span data-l10n-id="tools_label">Tools</span>
                 </button>
               </div>
-              <div v-show="showElem('toolbar.toolbarViewerMiddle')" id="toolbarViewerMiddle">
+              <div
+                v-show="showElem('toolbar.toolbarViewerMiddle')"
+                id="toolbarViewerMiddle"
+              >
                 <div class="splitToolbarButton">
                   <button
                     v-show="showElem('toolbar.toolbarViewerMiddle.zoomOut')"
@@ -486,36 +552,53 @@
                   </button>
                 </div>
                 <span
-                  v-show="showElem('toolbar.toolbarViewerMiddle.scaleSelectContatiner')"
+                  v-show="
+                    showElem(
+                      'toolbar.toolbarViewerMiddle.scaleSelectContatiner'
+                    )
+                  "
                   id="scaleSelectContainer"
                   class="dropdownToolbarButton"
                 >
-                  <select id="scaleSelect" title="Zoom" tabindex="23" data-l10n-id="zoom">
+                  <select
+                    id="scaleSelect"
+                    title="Zoom"
+                    tabindex="23"
+                    data-l10n-id="zoom"
+                  >
                     <option
                       id="pageAutoOption"
                       title
                       value="auto"
                       selected="selected"
                       data-l10n-id="page_scale_auto"
-                    >Automatic Zoom</option>
+                    >
+                      Automatic Zoom
+                    </option>
                     <option
                       id="pageActualOption"
                       title
                       value="page-actual"
                       data-l10n-id="page_scale_actual"
-                    >Actual Size</option>
+                    >
+                      Actual Size
+                    </option>
                     <option
                       id="pageFitOption"
                       title
                       value="page-fit"
                       data-l10n-id="page_scale_fit"
-                    >Page Fit</option>
+                    >
+                      Page Fit
+                    </option>
                     <option
                       id="pageWidthOption"
                       title
                       value="page-width"
                       data-l10n-id="page_scale_width"
-                    >Page Width</option>
+                    >
+                      Page Width
+                    </option>
                     <option
                       id="customScaleOption"
                       title
@@ -524,53 +607,69 @@
                       hidden="true"
                     ></option>
                     <option
-                      title
+                      :data-l10n-args="getScale(50)"
                       value="0.5"
                       data-l10n-id="page_scale_percent"
-                      data-l10n-args='{ "scale": 50 }'
-                    >50%</option>
-                    <option
                       title
+                    >
+                      50%
+                    </option>
+                    <option
+                      :data-l10n-args="getScale(75)"
                       value="0.75"
                       data-l10n-id="page_scale_percent"
-                      data-l10n-args='{ "scale": 75 }'
-                    >75%</option>
-                    <option
                       title
+                    >
+                      75%
+                    </option>
+                    <option
+                      :data-l10n-args="getScale(100)"
                       value="1"
                       data-l10n-id="page_scale_percent"
-                      data-l10n-args='{ "scale": 100 }'
-                    >100%</option>
-                    <option
                       title
+                    >
+                      100%
+                    </option>
+                    <option
+                      :data-l10n-args="getScale(125)"
                       value="1.25"
                       data-l10n-id="page_scale_percent"
-                      data-l10n-args='{ "scale": 125 }'
-                    >125%</option>
-                    <option
                       title
+                    >
+                      125%
+                    </option>
+                    <option
+                      :data-l10n-args="getScale(150)"
                       value="1.5"
                       data-l10n-id="page_scale_percent"
-                      data-l10n-args='{ "scale": 150 }'
-                    >150%</option>
-                    <option
                       title
+                    >
+                      150%
+                    </option>
+                    <option
+                      :data-l10n-args="getScale(200)"
                       value="2"
                       data-l10n-id="page_scale_percent"
-                      data-l10n-args='{ "scale": 200 }'
-                    >200%</option>
-                    <option
                       title
+                    >
+                      200%
+                    </option>
+                    <option
+                      :data-l10n-args="getScale(300)"
                       value="3"
                       data-l10n-id="page_scale_percent"
-                      data-l10n-args='{ "scale": 300 }'
-                    >300%</option>
-                    <option
                       title
+                    >
+                      300%
+                    </option>
+                    <option
+                      :data-l10n-args="getScale(400)"
                       value="4"
                       data-l10n-id="page_scale_percent"
-                      data-l10n-args='{ "scale": 400 }'
-                    >400%</option>
+                      title
+                    >
+                      400%
+                    </option>
                   </select>
                 </span>
               </div>
@@ -584,9 +683,21 @@
         </div>
 
         <menu type="context" id="viewerContextMenu">
-          <menuitem id="contextFirstPage" label="First Page" data-l10n-id="first_page" />
-          <menuitem id="contextLastPage" label="Last Page" data-l10n-id="last_page" />
-          <menuitem id="contextPageRotateCw" label="Rotate Clockwise" data-l10n-id="page_rotate_cw" />
+          <menuitem
+            id="contextFirstPage"
+            label="First Page"
+            data-l10n-id="first_page"
+          />
+          <menuitem
+            id="contextLastPage"
+            label="Last Page"
+            data-l10n-id="last_page"
+          />
+          <menuitem
+            id="contextPageRotateCw"
+            label="Rotate Clockwise"
+            data-l10n-id="page_rotate_cw"
+          />
           <menuitem
             id="contextPageRotateCcw"
             label="Rotate Counter-Clockwise"
@@ -601,14 +712,26 @@
         <div id="errorWrapper" hidden="true">
           <div id="errorMessageLeft">
             <span id="errorMessage"></span>
-            <button id="errorShowMore" data-l10n-id="error_more_info">More Information</button>
-            <button id="errorShowLess" data-l10n-id="error_less_info" hidden="true">Less Information</button>
+            <button id="errorShowMore" data-l10n-id="error_more_info">
+              More Information
+            </button>
+            <button
+              id="errorShowLess"
+              data-l10n-id="error_less_info"
+              hidden="true"
+            >
+              Less Information
+            </button>
           </div>
           <div id="errorMessageRight">
             <button id="errorClose" data-l10n-id="error_close">Close</button>
           </div>
           <div class="clearBoth"></div>
-          <textarea id="errorMoreInfo" hidden="true" readonly="readonly"></textarea>
+          <textarea
+            id="errorMoreInfo"
+            hidden="true"
+            readonly="readonly"
+          ></textarea>
         </div>
       </div>
       <!-- mainContainer -->
@@ -617,10 +740,9 @@
         <div id="passwordOverlay" class="container hidden">
           <div class="dialog">
             <div class="row">
-              <p
-                id="passwordText"
-                data-l10n-id="password_label"
-              >Enter the password to open this PDF file:</p>
+              <p id="passwordText" data-l10n-id="password_label">
+                Enter the password to open this PDF file:
+              </p>
             </div>
             <div class="row">
               <input type="password" id="password" class="toolbarField" />
@@ -638,11 +760,15 @@
         <div id="documentPropertiesOverlay" class="container hidden">
           <div class="dialog">
             <div class="row">
-              <span data-l10n-id="document_properties_file_name">File name:</span>
+              <span data-l10n-id="document_properties_file_name"
+                >File name:</span
+              >
               <p id="fileNameField">-</p>
             </div>
             <div class="row">
-              <span data-l10n-id="document_properties_file_size">File size:</span>
+              <span data-l10n-id="document_properties_file_size"
+                >File size:</span
+              >
               <p id="fileSizeField">-</p>
             </div>
             <div class="separator"></div>
@@ -663,11 +789,15 @@
               <p id="keywordsField">-</p>
             </div>
             <div class="row">
-              <span data-l10n-id="document_properties_creation_date">Creation Date:</span>
+              <span data-l10n-id="document_properties_creation_date"
+                >Creation Date:</span
+              >
               <p id="creationDateField">-</p>
             </div>
             <div class="row">
-              <span data-l10n-id="document_properties_modification_date">Modification Date:</span>
+              <span data-l10n-id="document_properties_modification_date"
+                >Modification Date:</span
+              >
               <p id="modificationDateField">-</p>
             </div>
             <div class="row">
@@ -676,24 +806,34 @@
             </div>
             <div class="separator"></div>
             <div class="row">
-              <span data-l10n-id="document_properties_producer">PDF Producer:</span>
+              <span data-l10n-id="document_properties_producer"
+                >PDF Producer:</span
+              >
               <p id="producerField">-</p>
             </div>
             <div class="row">
-              <span data-l10n-id="document_properties_version">PDF Version:</span>
+              <span data-l10n-id="document_properties_version"
+                >PDF Version:</span
+              >
               <p id="versionField">-</p>
             </div>
             <div class="row">
-              <span data-l10n-id="document_properties_page_count">Page Count:</span>
+              <span data-l10n-id="document_properties_page_count"
+                >Page Count:</span
+              >
               <p id="pageCountField">-</p>
             </div>
             <div class="row">
-              <span data-l10n-id="document_properties_page_size">Page Size:</span>
+              <span data-l10n-id="document_properties_page_size"
+                >Page Size:</span
+              >
               <p id="pageSizeField">-</p>
             </div>
             <div class="separator"></div>
             <div class="row">
-              <span data-l10n-id="document_properties_linearized">Fast Web View:</span>
+              <span data-l10n-id="document_properties_linearized"
+                >Fast Web View:</span
+              >
               <p id="linearizedField">-</p>
             </div>
             <div class="buttonRow">
@@ -707,7 +847,9 @@
         <div id="printServiceOverlay" class="container hidden">
           <div class="dialog">
             <div class="row">
-              <span data-l10n-id="print_progress_message">Preparing document for printing…</span>
+              <span data-l10n-id="print_progress_message"
+                >Preparing document for printing…</span
+              >
             </div>
             <div class="row">
               <progress value="0" max="100"></progress>
@@ -715,7 +857,8 @@
                 data-l10n-id="print_progress_percent"
                 data-l10n-args='{ "progress": 0 }'
                 class="relative-progress"
-              >0%</span>
+                >0%</span
+              >
             </div>
             <div class="buttonRow">
               <button id="printCancel" class="overlayButton">
@@ -759,18 +902,28 @@ if (AppOptions) {
 
 const errorHandler = console.error.bind(console);
 
+// pdf_print_service reassigns window.print.
+// Assign original window.print on component destroy.
+// Once pdf is opened again assign window.print = pdfjs.print
+const pdfPrint = window.print.bind(window);
+window.print = (window as any).__nativePrint__ || pdfPrint;
+
 @Component
 export default class PdfViewer extends Vue {
   // can accept string URL
   @Prop({ required: false }) private pdf!: string | ArrayBuffer;
+
   @Prop({ required: false, default: () => toolbarConfig })
   private config!: ToolbarConfig;
 
   private defaultLocale = JSON.stringify(locale);
 
   private beforeDestroy() {
-    const el = document.getElementById(PDF_FILE_INPUT_ID);
-    el && el.remove();
+    this.destroyPdf();
+  }
+
+  private created() {
+    window.print = pdfPrint;
   }
 
   private mounted() {
@@ -783,6 +936,10 @@ export default class PdfViewer extends Vue {
         .then(this.open.bind(this))
         .catch(errorHandler);
     }
+  }
+
+  private getScale(value: number): string {
+    return `{ "scale": ${value} }`;
   }
 
   private showElem(path: string): boolean {
@@ -807,9 +964,34 @@ export default class PdfViewer extends Vue {
     el.id = printElId;
     document.body.appendChild(el);
 
+    const styleEl = document.createElement("style");
+    styleEl.type = "text/css";
+    styleEl.innerHTML = `
+        @media print {
+          body > *:not(#printContainer) {
+            display: none !important; 
+        }
+      }`;
+    document.head.appendChild(styleEl);
+
     this.$once("hook:beforeDestroy", () => {
       document.body.removeChild(el);
+      document.head.removeChild(styleEl);
     });
+  }
+
+  private destroyPdf(): void {
+    pdfApp.PDFViewerApplication.unbindEvents();
+    pdfApp.PDFViewerApplication.unbindWindowEvents();
+
+    // @ts-ignore
+    pdfApp.PDFViewerApplication?.pdfDocument?.destroy();
+
+    const el = document.getElementById(PDF_FILE_INPUT_ID);
+    el && el.remove();
+
+    // __nativePrint__ is assigned in pdf_print_service.js
+    window.print = (window as any).__nativePrint__ || window.print;
   }
 
   @Watch("pdf")

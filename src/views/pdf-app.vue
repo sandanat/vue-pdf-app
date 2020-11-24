@@ -11,7 +11,9 @@ export default {
   },
   data() {
     return {
-      config: { toolbar: { toolbarViewerLeft: false } },
+      config: {
+        toolbar: { toolbarViewerLeft: false },
+      },
       pdf: "/sample.pdf",
     };
   },
