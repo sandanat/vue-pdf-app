@@ -938,6 +938,13 @@ export default class PdfViewer extends Vue {
     }
   }
 
+  private clearCacheTimeout() {
+    const cacheTimeoutId =
+    // @ts-ignore
+      pdfApp.PDFViewerApplication.pdfRenderingQueue?.idleTimeout;
+    clearTimeout(cacheTimeoutId);
+  }
+
   private getScale(value: number): string {
     return `{ "scale": ${value} }`;
   }
@@ -947,6 +954,7 @@ export default class PdfViewer extends Vue {
   }
 
   private open() {
+    this.clearCacheTimeout();
     if (!pdfApp.PDFViewerApplication) return;
 
     if (!this.pdf) {
@@ -981,11 +989,12 @@ export default class PdfViewer extends Vue {
   }
 
   private destroyPdf(): void {
+    this.clearCacheTimeout();
     pdfApp.PDFViewerApplication.unbindEvents();
     pdfApp.PDFViewerApplication.unbindWindowEvents();
 
     // @ts-ignore
-    pdfApp.PDFViewerApplication?.pdfDocument?.destroy();
+    pdfApp.PDFViewerApplication.pdfDocument?.destroy();
 
     const el = document.getElementById(PDF_FILE_INPUT_ID);
     el && el.remove();
