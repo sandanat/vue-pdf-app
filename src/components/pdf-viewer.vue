@@ -1,5 +1,5 @@
 <template>
-  <div id="pdf">
+  <div id="pdf" style="overflow: hidden">
     <script type="application/l10n">
       {{ defaultLocale }}
     </script>
