@@ -1771,9 +1771,9 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
     background: rgba(0, 0, 0, 0) none;
   }
 
-  body > *:not(#printContainer) {
+  /* body > *:not(#printContainer) {
     display: none !important;
-  }
+  } */
 
   /* Rules for browsers that don't support mozPrintCallback. */
   #sidebarContainer, #secondaryToolbar, .toolbar, #loadingBox, #errorWrapper, .textLayer {
