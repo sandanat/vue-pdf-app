@@ -26,8 +26,14 @@ export default {
       info: [],
     };
   },
+  created() {
+    // not reactive
+    this.pageTitle = document.title;
+  },
   methods: {
     async openHandler(PDFViewerApplication) {
+      PDFViewerApplication.setTitle(this.pageTitle);
+
       this.info = [];
       const info = await PDFViewerApplication.pdfDocument
         .getMetadata()
