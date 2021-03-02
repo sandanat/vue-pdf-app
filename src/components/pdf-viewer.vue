@@ -1,5 +1,5 @@
 <template>
-  <div id="pdf" style="overflow: hidden">
+  <div id="pdf" class="pdf-app" style="overflow: hidden">
     <script type="application/l10n">
       {{ defaultLocale }}
     </script>
@@ -682,7 +682,11 @@
           </div>
         </div>
 
-        <menu type="context" id="viewerContextMenu">
+        <menu
+          v-show="showElem('viewerContextMenu')"
+          type="context"
+          id="viewerContextMenu"
+        >
           <menuitem
             id="contextFirstPage"
             label="First Page"
@@ -709,7 +713,7 @@
           <div id="viewer" class="pdfViewer"></div>
         </div>
 
-        <div id="errorWrapper" hidden="true">
+        <div v-show="showElem('errorWrapper')" id="errorWrapper" hidden="true">
           <div id="errorMessageLeft">
             <span id="errorMessage"></span>
             <button id="errorShowMore" data-l10n-id="error_more_info">
@@ -940,7 +944,7 @@ export default class PdfViewer extends Vue {
 
   private clearCacheTimeout() {
     const cacheTimeoutId =
-    // @ts-ignore
+      // @ts-ignore
       pdfApp.PDFViewerApplication.pdfRenderingQueue?.idleTimeout;
     clearTimeout(cacheTimeoutId);
   }
@@ -1011,11 +1015,7 @@ export default class PdfViewer extends Vue {
 </script>
 
 <style>
-#pdf {
+.pdf-app {
   height: 100%;
-  background-color: rgba(64, 64, 64, 1);
-  background-image: url(../assets/images/texture.png);
-  /* font size is needed to make the activity bar the correct size */
-  font-size: 10px;
 }
 </style>

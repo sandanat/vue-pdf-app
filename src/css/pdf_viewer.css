@@ -12,11 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-.pdfViewer .canvasWrapper {
+.pdf-app .pdfViewer .canvasWrapper {
   overflow: hidden;
 }
 
-.pdfViewer .page {
+.pdf-app .pdfViewer .page {
   direction: ltr;
   width: 816px;
   height: 1056px;
@@ -29,70 +29,73 @@
   background-color: rgba(255, 255, 255, 1);
 }
 
-.pdfViewer.removePageBorders .page {
+.pdf-app .pdfViewer.removePageBorders .page {
   margin: 0px auto 10px auto;
   border: none;
 }
 
-.pdfViewer.singlePageView {
+.pdf-app .pdfViewer.singlePageView {
   display: inline-block;
 }
 
-.pdfViewer.singlePageView .page {
+.pdf-app .pdfViewer.singlePageView .page {
   margin: 0;
   border: none;
 }
 
-.pdfViewer.scrollHorizontal, .pdfViewer.scrollWrapped, .spread {
+.pdf-app .pdfViewer.scrollHorizontal,
+.pdf-app .pdfViewer.scrollWrapped,
+.pdf-app .spread {
   margin-left: 3.5px;
   margin-right: 3.5px;
   text-align: center;
 }
 
-.pdfViewer.scrollHorizontal, .spread {
+.pdf-app .pdfViewer.scrollHorizontal,
+.pdf-app .spread {
   white-space: nowrap;
 }
 
-.pdfViewer.removePageBorders,
-.pdfViewer.scrollHorizontal .spread,
-.pdfViewer.scrollWrapped .spread {
+.pdf-app .pdfViewer.removePageBorders,
+.pdf-app .pdfViewer.scrollHorizontal .spread,
+.pdf-app .pdfViewer.scrollWrapped .spread {
   margin-left: 0;
   margin-right: 0;
 }
 
-.spread .page,
-.pdfViewer.scrollHorizontal .page,
-.pdfViewer.scrollWrapped .page,
-.pdfViewer.scrollHorizontal .spread,
-.pdfViewer.scrollWrapped .spread {
+.pdf-app .spread .page,
+.pdf-app .pdfViewer.scrollHorizontal .page,
+.pdf-app .pdfViewer.scrollWrapped .page,
+.pdf-app .pdfViewer.scrollHorizontal .spread,
+.pdf-app .pdfViewer.scrollWrapped .spread {
   display: inline-block;
   vertical-align: middle;
 }
 
-.spread .page,
-.pdfViewer.scrollHorizontal .page,
-.pdfViewer.scrollWrapped .page {
+.pdf-app .spread .page,
+.pdf-app .pdfViewer.scrollHorizontal .page,
+.pdf-app .pdfViewer.scrollWrapped .page {
   margin-left: -3.5px;
   margin-right: -3.5px;
 }
 
-.pdfViewer.removePageBorders .spread .page,
-.pdfViewer.removePageBorders.scrollHorizontal .page,
-.pdfViewer.removePageBorders.scrollWrapped .page {
+.pdf-app .pdfViewer.removePageBorders .spread .page,
+.pdf-app .pdfViewer.removePageBorders.scrollHorizontal .page,
+.pdf-app .pdfViewer.removePageBorders.scrollWrapped .page {
   margin-left: 5px;
   margin-right: 5px;
 }
 
-.pdfViewer .page canvas {
+.pdf-app .pdfViewer .page canvas {
   margin: 0;
   display: block;
 }
 
-.pdfViewer .page canvas[hidden] {
+.pdf-app .pdfViewer .page canvas[hidden] {
   display: none;
 }
 
-.pdfViewer .page .loadingIcon {
+.pdf-app .pdfViewer .page .loadingIcon {
   position: absolute;
   display: block;
   left: 0;
@@ -102,27 +105,27 @@
   background: url(../assets/images/loading-icon.gif) center no-repeat;
 }
 
-.pdfPresentationMode .pdfViewer {
+.pdf-app .pdfPresentationMode .pdfViewer {
   margin-left: 0;
   margin-right: 0;
 }
 
-.pdfPresentationMode .pdfViewer .page,
-.pdfPresentationMode .pdfViewer .spread {
+.pdf-app .pdfPresentationMode .pdfViewer .page,
+.pdf-app .pdfPresentationMode .pdfViewer .spread {
   display: block;
 }
 
-.pdfPresentationMode .pdfViewer .page,
-.pdfPresentationMode .pdfViewer.removePageBorders .page {
+.pdf-app .pdfPresentationMode .pdfViewer .page,
+.pdf-app .pdfPresentationMode .pdfViewer.removePageBorders .page {
   margin-left: auto;
   margin-right: auto;
 }
 
-.pdfPresentationMode:-ms-fullscreen .pdfViewer .page {
+.pdf-app .pdfPresentationMode:-ms-fullscreen .pdfViewer .page {
   margin-bottom: 100% !important;
 }
 
-.pdfPresentationMode:fullscreen .pdfViewer .page {
+.pdf-app .pdfPresentationMode:fullscreen .pdfViewer .page {
   margin-bottom: 100%;
   border: 0;
 }

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-.textLayer {
+.pdf-app .textLayer {
   position: absolute;
   left: 0;
   top: 0;
@@ -21,10 +21,10 @@
   bottom: 0;
   overflow: hidden;
   opacity: 0.2;
-  line-height: 1.0;
+  line-height: 1;
 }
 
-.textLayer > span {
+.pdf-app .textLayer > span {
   color: transparent;
   position: absolute;
   white-space: pre;
@@ -32,34 +32,34 @@
   transform-origin: 0% 0%;
 }
 
-.textLayer .highlight {
+.pdf-app .textLayer .highlight {
   margin: -1px;
   padding: 1px;
   background-color: rgba(180, 0, 170, 1);
   border-radius: 4px;
 }
 
-.textLayer .highlight.begin {
+.pdf-app .textLayer .highlight.begin {
   border-radius: 4px 0px 0px 4px;
 }
 
-.textLayer .highlight.end {
+.pdf-app .textLayer .highlight.end {
   border-radius: 0px 4px 4px 0px;
 }
 
-.textLayer .highlight.middle {
+.pdf-app .textLayer .highlight.middle {
   border-radius: 0px;
 }
 
-.textLayer .highlight.selected {
+.pdf-app .textLayer .highlight.selected {
   background-color: rgba(0, 100, 0, 1);
 }
 
-.textLayer ::selection {
+.pdf-app .textLayer ::selection {
   background: rgba(0, 0, 255, 1);
 }
 
-.textLayer .endOfContent {
+.pdf-app .textLayer .endOfContent {
   display: block;
   position: absolute;
   left: 0px;
@@ -71,6 +71,6 @@
   user-select: none;
 }
 
-.textLayer .endOfContent.active {
+.pdf-app .textLayer .endOfContent.active {
   top: 0px;
 }
