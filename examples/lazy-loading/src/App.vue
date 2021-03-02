@@ -32,4 +32,9 @@ export default {
 #app h3 {
   margin-top: 30px;
 }
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
 </style>

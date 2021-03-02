@@ -18,11 +18,12 @@ Cross-browser support
 Built-in typescript support
 
 UMD/Unpkg support:
-File | Size | Gzipped
- - | - | -
-pdf-viewer.umd.min.js | 1777.56 KiB | 508.94 KiB
-pdf-viewer.umd.js     | 3160.04 KiB | 709.14 KiB
-pdf-viewer.common.js  | 3159.57 KiB | 708.95 KiB
+
+| File                  | Size        | Gzipped    |
+| -                     | -           | -          |
+| pdf-viewer.umd.min.js | 1777.56 KiB | 508.94 KiB |
+| pdf-viewer.umd.js     | 3160.04 KiB | 709.14 KiB |
+| pdf-viewer.common.js  | 3159.57 KiB | 708.95 KiB |
 
 
 # Example

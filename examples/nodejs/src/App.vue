@@ -47,4 +47,9 @@ export default {
   flex: 2 0 auto;
   align-self: center;
 }
+
+html, body {
+  margin: 0;
+  height: 100%;
+}
 </style>

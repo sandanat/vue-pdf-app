@@ -68,4 +68,9 @@ export default {
   flex: 4 0 10px;
   align-self: center;
 }
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
 </style>
