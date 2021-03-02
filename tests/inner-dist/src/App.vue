@@ -30,7 +30,7 @@
   color: #42b983;
 }
 
-#app {
-  height: 100%;
+#app, html, body {
+  height: 95%;
 }
 </style>
