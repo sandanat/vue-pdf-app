@@ -1,7 +1,7 @@
 {
   "name": "vue-pdf-app",
   "version": "1.0.0",
-  "description": "vue pdf viewer",
+  "description": "Vue 2 pdf viewer",
   "main": "dist/pdf-viewer.umd.js",
   "unpkg": "dist/pdf-viewer.umd.min.js",
   "private": false,

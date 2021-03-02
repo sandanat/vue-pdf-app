@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 
-.annotationLayer section {
+.pdf-app .annotationLayer section {
   position: absolute;
 }
 
-.annotationLayer .linkAnnotation > a,
-.annotationLayer .buttonWidgetAnnotation.pushButton > a {
+.pdf-app .annotationLayer .linkAnnotation > a,
+.pdf-app .annotationLayer .buttonWidgetAnnotation.pushButton > a {
   position: absolute;
   font-size: 1em;
   top: 0;
@@ -27,23 +27,23 @@
   height: 100%;
 }
 
-.annotationLayer .linkAnnotation > a:hover,
-.annotationLayer .buttonWidgetAnnotation.pushButton > a:hover {
+.pdf-app .annotationLayer .linkAnnotation > a:hover,
+.pdf-app .annotationLayer .buttonWidgetAnnotation.pushButton > a:hover {
   opacity: 0.2;
   background: rgba(255, 255, 0, 1);
   box-shadow: 0px 2px 10px rgba(255, 255, 0, 1);
 }
 
-.annotationLayer .textAnnotation img {
+.pdf-app .annotationLayer .textAnnotation img {
   position: absolute;
   cursor: pointer;
 }
 
-.annotationLayer .textWidgetAnnotation input,
-.annotationLayer .textWidgetAnnotation textarea,
-.annotationLayer .choiceWidgetAnnotation select,
-.annotationLayer .buttonWidgetAnnotation.checkBox input,
-.annotationLayer .buttonWidgetAnnotation.radioButton input {
+.pdf-app .annotationLayer .textWidgetAnnotation input,
+.pdf-app .annotationLayer .textWidgetAnnotation textarea,
+.pdf-app .annotationLayer .choiceWidgetAnnotation select,
+.pdf-app .annotationLayer .buttonWidgetAnnotation.checkBox input,
+.pdf-app .annotationLayer .buttonWidgetAnnotation.radioButton input {
   background-color: rgba(0, 54, 255, 0.13);
   border: 1px solid transparent;
   box-sizing: border-box;
@@ -55,70 +55,70 @@
   width: 100%;
 }
 
-.annotationLayer .choiceWidgetAnnotation select option {
+.pdf-app .annotationLayer .choiceWidgetAnnotation select option {
   padding: 0;
 }
 
-.annotationLayer .buttonWidgetAnnotation.radioButton input {
+.pdf-app .annotationLayer .buttonWidgetAnnotation.radioButton input {
   border-radius: 50%;
 }
 
-.annotationLayer .textWidgetAnnotation textarea {
+.pdf-app .annotationLayer .textWidgetAnnotation textarea {
   font: message-box;
   font-size: 9px;
   resize: none;
 }
 
-.annotationLayer .textWidgetAnnotation input[disabled],
-.annotationLayer .textWidgetAnnotation textarea[disabled],
-.annotationLayer .choiceWidgetAnnotation select[disabled],
-.annotationLayer .buttonWidgetAnnotation.checkBox input[disabled],
-.annotationLayer .buttonWidgetAnnotation.radioButton input[disabled] {
+.pdf-app .annotationLayer .textWidgetAnnotation input[disabled],
+.pdf-app .annotationLayer .textWidgetAnnotation textarea[disabled],
+.pdf-app .annotationLayer .choiceWidgetAnnotation select[disabled],
+.pdf-app .annotationLayer .buttonWidgetAnnotation.checkBox input[disabled],
+.pdf-app .annotationLayer .buttonWidgetAnnotation.radioButton input[disabled] {
   background: none;
   border: 1px solid transparent;
   cursor: not-allowed;
 }
 
-.annotationLayer .textWidgetAnnotation input:hover,
-.annotationLayer .textWidgetAnnotation textarea:hover,
-.annotationLayer .choiceWidgetAnnotation select:hover,
-.annotationLayer .buttonWidgetAnnotation.checkBox input:hover,
-.annotationLayer .buttonWidgetAnnotation.radioButton input:hover {
+.pdf-app .annotationLayer .textWidgetAnnotation input:hover,
+.pdf-app .annotationLayer .textWidgetAnnotation textarea:hover,
+.pdf-app .annotationLayer .choiceWidgetAnnotation select:hover,
+.pdf-app .annotationLayer .buttonWidgetAnnotation.checkBox input:hover,
+.pdf-app .annotationLayer .buttonWidgetAnnotation.radioButton input:hover {
   border: 1px solid rgba(0, 0, 0, 1);
 }
 
-.annotationLayer .textWidgetAnnotation input:focus,
-.annotationLayer .textWidgetAnnotation textarea:focus,
-.annotationLayer .choiceWidgetAnnotation select:focus {
+.pdf-app .annotationLayer .textWidgetAnnotation input:focus,
+.pdf-app .annotationLayer .textWidgetAnnotation textarea:focus,
+.pdf-app .annotationLayer .choiceWidgetAnnotation select:focus {
   background: none;
   border: 1px solid transparent;
 }
 
-.annotationLayer .buttonWidgetAnnotation.checkBox input:checked:before,
-.annotationLayer .buttonWidgetAnnotation.checkBox input:checked:after,
-.annotationLayer .buttonWidgetAnnotation.radioButton input:checked:before {
+.pdf-app .annotationLayer .buttonWidgetAnnotation.checkBox input:checked:before,
+.pdf-app .annotationLayer .buttonWidgetAnnotation.checkBox input:checked:after,
+.pdf-app .annotationLayer .buttonWidgetAnnotation.radioButton input:checked:before {
   background-color: rgba(0, 0, 0, 1);
-  content: '';
+  content: "";
   display: block;
   position: absolute;
 }
 
-.annotationLayer .buttonWidgetAnnotation.checkBox input:checked:before,
-.annotationLayer .buttonWidgetAnnotation.checkBox input:checked:after {
+.pdf-app .annotationLayer .buttonWidgetAnnotation.checkBox input:checked:before,
+.pdf-app .annotationLayer .buttonWidgetAnnotation.checkBox input:checked:after {
   height: 80%;
   left: 45%;
   width: 1px;
 }
 
-.annotationLayer .buttonWidgetAnnotation.checkBox input:checked:before {
+.pdf-app .annotationLayer .buttonWidgetAnnotation.checkBox input:checked:before {
   transform: rotate(45deg);
 }
 
-.annotationLayer .buttonWidgetAnnotation.checkBox input:checked:after {
+.pdf-app .annotationLayer .buttonWidgetAnnotation.checkBox input:checked:after {
   transform: rotate(-45deg);
 }
 
-.annotationLayer .buttonWidgetAnnotation.radioButton input:checked:before {
+.pdf-app .annotationLayer .buttonWidgetAnnotation.radioButton input:checked:before {
   border-radius: 50%;
   height: 50%;
   left: 30%;
@@ -126,13 +126,13 @@
   width: 50%;
 }
 
-.annotationLayer .textWidgetAnnotation input.comb {
+.pdf-app .annotationLayer .textWidgetAnnotation input.comb {
   font-family: monospace;
   padding-left: 2px;
   padding-right: 0;
 }
 
-.annotationLayer .textWidgetAnnotation input.comb:focus {
+.pdf-app .annotationLayer .textWidgetAnnotation input.comb:focus {
   /*
    * Letter spacing is placed on the right side of each character. Hence, the
    * letter spacing of the last character may be placed outside the visible
@@ -142,18 +142,18 @@
   width: 115%;
 }
 
-.annotationLayer .buttonWidgetAnnotation.checkBox input,
-.annotationLayer .buttonWidgetAnnotation.radioButton input {
+.pdf-app .annotationLayer .buttonWidgetAnnotation.checkBox input,
+.pdf-app .annotationLayer .buttonWidgetAnnotation.radioButton input {
   appearance: none;
   padding: 0;
 }
 
-.annotationLayer .popupWrapper {
+.pdf-app .annotationLayer .popupWrapper {
   position: absolute;
   width: 20em;
 }
 
-.annotationLayer .popup {
+.pdf-app .annotationLayer .popup {
   position: absolute;
   z-index: 200;
   max-width: 20em;
@@ -168,38 +168,38 @@
   word-wrap: break-word;
 }
 
-.annotationLayer .popup > * {
+.pdf-app .annotationLayer .popup > * {
   font-size: 9px;
 }
 
-.annotationLayer .popup h1 {
+.pdf-app .annotationLayer .popup h1 {
   display: inline-block;
 }
 
-.annotationLayer .popup span {
+.pdf-app .annotationLayer .popup span {
   display: inline-block;
   margin-left: 5px;
 }
 
-.annotationLayer .popup p {
+.pdf-app .annotationLayer .popup p {
   border-top: 1px solid rgba(51, 51, 51, 1);
   margin-top: 2px;
   padding-top: 2px;
 }
 
-.annotationLayer .highlightAnnotation,
-.annotationLayer .underlineAnnotation,
-.annotationLayer .squigglyAnnotation,
-.annotationLayer .strikeoutAnnotation,
-.annotationLayer .freeTextAnnotation,
-.annotationLayer .lineAnnotation svg line,
-.annotationLayer .squareAnnotation svg rect,
-.annotationLayer .circleAnnotation svg ellipse,
-.annotationLayer .polylineAnnotation svg polyline,
-.annotationLayer .polygonAnnotation svg polygon,
-.annotationLayer .caretAnnotation,
-.annotationLayer .inkAnnotation svg polyline,
-.annotationLayer .stampAnnotation,
-.annotationLayer .fileAttachmentAnnotation {
+.pdf-app .annotationLayer .highlightAnnotation,
+.pdf-app .annotationLayer .underlineAnnotation,
+.pdf-app .annotationLayer .squigglyAnnotation,
+.pdf-app .annotationLayer .strikeoutAnnotation,
+.pdf-app .annotationLayer .freeTextAnnotation,
+.pdf-app .annotationLayer .lineAnnotation svg line,
+.pdf-app .annotationLayer .squareAnnotation svg rect,
+.pdf-app .annotationLayer .circleAnnotation svg ellipse,
+.pdf-app .annotationLayer .polylineAnnotation svg polyline,
+.pdf-app .annotationLayer .polygonAnnotation svg polygon,
+.pdf-app .annotationLayer .caretAnnotation,
+.pdf-app .annotationLayer .inkAnnotation svg polyline,
+.pdf-app .annotationLayer .stampAnnotation,
+.pdf-app .annotationLayer .fileAttachmentAnnotation {
   cursor: pointer;
 }

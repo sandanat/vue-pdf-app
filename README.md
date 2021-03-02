@@ -1,4 +1,4 @@
-VUEjs PDF viewer based on Mozilla's PDFJS.
+VUEjs v2 PDF viewer based on Mozilla's PDFJS.
 
 100% PDFJS functionality:
 
@@ -9,7 +9,7 @@ VUEjs PDF viewer based on Mozilla's PDFJS.
 - rotate
 - text selection
 - search panel
-- thumbnail, outline, attachments layers
+- thumbnail, outline, attachments, annotation layers
 
 Easily localized configurable panel
 
@@ -20,9 +20,9 @@ Built-in typescript support
 UMD/Unpkg support:
 File | Size | Gzipped
  - | - | -
-pdf-viewer.umd.min.js | 1764.98 KiB | 505.85 KiB
-pdf-viewer.umd.js     | 3132.88 KiB | 703.12 KiB
-pdf-viewer.common.js  | 3132.41 KiB | 702.95 KiB
+pdf-viewer.umd.min.js | 1777.56 KiB | 508.94 KiB
+pdf-viewer.umd.js     | 3160.04 KiB | 709.14 KiB
+pdf-viewer.common.js  | 3159.57 KiB | 708.95 KiB
 
 
 # Example
@@ -45,7 +45,9 @@ export default {
 
 [See examples](https://github.com/sandanat/vue-pdf-app/tree/master/examples "Examples source code")
 
-[Live demo](https://codepen.io/sandanat/pen/xxVdgYM)
+[Live demo](https://codesandbox.io/s/vue-2-vue-pdf-app-wz5kv)
+
+[Live demo 2](https://codepen.io/sandanat/pen/xxVdgYM)
 
 # Configurable panel
 Toolbar is available by default and is customized via `config` prop.
@@ -75,6 +77,9 @@ Specify `false` for buttons or whole group of buttons to disable them.
 
 <details>
 <summary>Available config:</summary>
+
+![Config legend](./readme/config-legend.jpg "Config legend")
+
 <code>
 <pre>
 {
@@ -164,7 +169,9 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
 # Examples
 [See examples](https://github.com/sandanat/vue-pdf-app/tree/master/examples "Examples source code") source code.
 
-[Live demo](https://codepen.io/sandanat/pen/xxVdgYM)
+[Live demo](https://codesandbox.io/s/vue-2-vue-pdf-app-wz5kv)
+
+[Live demo 2](https://codepen.io/sandanat/pen/xxVdgYM)
 
 
 ## script tag (unpkg)
