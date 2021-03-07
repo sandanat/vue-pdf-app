@@ -27,7 +27,7 @@ UMD/Unpkg support:
 
 
 # Example
-```
+```html
 <template>
   <pdf-viewer pdf="http://example.com/sample.pdf"></pdf-viewer>
 </template>
@@ -54,7 +54,7 @@ export default {
 Toolbar is available by default and is customized via `config` prop.
 Specify `false` for buttons or whole group of buttons to disable them.
 
-```
+```json
 // disable "Previous page" button
 {
   toolbar: {
@@ -147,7 +147,7 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
 - Type: `string | null | ArrayBuffer | TypedArray`. 
 - Required: `false`
 - Usage:
-```
+```html
 <vue-pdf-viewer pdf="https://example.com/sample.pdf" />
 <vue-pdf-viewer :pdf="ArrayBuffer" />
 ```
@@ -155,7 +155,7 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
 - Type: toolbar config (see above)
 - Required: `false`
 - Usage:
-```
+```html
 <vue-pdf-viewer :config="{ toolbar: false }" />
 ```
 ### @open(PDFViewerApplication)
@@ -163,7 +163,7 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
 - Arguments:
   - PDFViewerApplication - pdf application
 - Usage:
-```
+```html
 <vue-pdf-viewer @open="openHandler" />
 ```
 
@@ -176,7 +176,7 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
 
 
 ## script tag (unpkg)
-```
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -204,7 +204,7 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
 </html>
 ```
 ## typescript
-```
+```html
 <template>
   <div id="app">
     <pdf-app pdf="/sample.pdf"></pdf-app>
@@ -226,7 +226,7 @@ export default class App extends Vue {}
 ## Lazy loading
 PDFJS is a huge package (see the library size table above).
 So use lazy loading to split your bundle into small pieces.
-```
+```html
 <template>
   <div id="app">
     <pdf-viewer></pdf-viewer>
@@ -254,7 +254,7 @@ export default {
 ```
 ## PDFJS interaction
 You can interact with pdfjs library when pdf is opened via `open` event.
-```
+```html
 <template>
   <div id="app">
     <div id="pdf-wrapper">
