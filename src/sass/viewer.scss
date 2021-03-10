@@ -13,10 +13,19 @@
  * limitations under the License.
  */
 
+@import "@/sass/variables.scss";
+
 :root {
-  --sidebar-width: 200px;
-  --sidebar-transition-duration: 200ms;
-  --sidebar-transition-timing-function: ease;
+  --pdf-sidebar-width: #{$sidebar-width};
+  --pdf-sidebar-transition-duration: #{$sidebar-transition-duration};
+  --pdf-sidebar-transition-timing-function: #{$sidebar-transition-timing-function};
+  --pdf-app-background-color: #{$pdf-app-background-color};
+  --pdf-sidebar-content-color: #{$pdf-sidebar-content-color};
+  --pdf-toolbar-sidebar-color: #{$pdf-toolbar-sidebar-color};
+  --pdf-toolbar-color: #{$pdf-toolbar-color};
+  --pdf-loading-bar-color: #{$pdf-loading-bar-color};
+  --pdf-find-results-count-color: #{$pdf-find-results-count-color};
+  --pdf-find-results-count-font-color: #{$pdf-find-results-count-font-color};
 }
 
 .pdf-app * {
@@ -25,8 +34,28 @@
 }
 
 .pdf-app {
-  background-color: rgba(64, 64, 64, 1);
-  background-image: url(../assets/images/texture.png);
+  #toolbarContainer,
+  #secondaryToolbar,
+  #sidebarContainer {
+    button {
+      cursor: pointer;
+    }
+  }
+
+  #sidebarContainer {
+    button[disabled] {
+      cursor: no-drop;
+    }
+  }
+
+  #viewBookmark {
+    cursor: pointer;
+  }
+}
+
+.pdf-app {
+  background-color: $pdf-app-background-color; /* fallback for IE11 */
+  background-color: var(--pdf-app-background-color);
 }
 
 .pdf-app input,
@@ -89,20 +118,25 @@
   position: absolute;
   top: 32px;
   bottom: 0;
-  width: var(--sidebar-width);
+  width: $sidebar-width;
+  width: var(--pdf-sidebar-width);
   visibility: hidden;
   z-index: 100;
   border-top: 1px solid rgba(51, 51, 51, 1);
-  transition-duration: var(--sidebar-transition-duration);
-  transition-timing-function: var(--sidebar-transition-timing-function);
+  transition-duration: $sidebar-transition-duration;
+  transition-duration: var(--pdf-sidebar-transition-duration);
+  transition-timing-function: $sidebar-transition-timing-function;
+  transition-timing-function: var(--pdf-sidebar-transition-timing-function);
 }
 html[dir="ltr"] .pdf-app #sidebarContainer {
   transition-property: left;
-  left: calc(0px - var(--sidebar-width));
+  left: calc(0px - $sidebar-width);
+  left: calc(0px - var(--pdf-sidebar-width));
 }
 html[dir="rtl"] .pdf-app #sidebarContainer {
   transition-property: right;
-  right: calc(0px - var(--sidebar-width));
+  right: calc(0px - $sidebar-width);
+  right: calc(0px - var(--pdf-sidebar-width));
 }
 
 .pdf-app .loadingInProgress #sidebarContainer {
@@ -143,7 +177,8 @@ html[dir="rtl"] .pdf-app #outerContainer.sidebarOpen #sidebarContainer {
   -webkit-overflow-scrolling: touch;
   position: absolute;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: $pdf-sidebar-content-color;
+  background-color: var(--pdf-sidebar-content-color);
 }
 html[dir="ltr"] .pdf-app #sidebarContent {
   left: 0;
@@ -165,8 +200,10 @@ html[dir="rtl"] .pdf-app #sidebarContent {
   outline: none;
 }
 .pdf-app #viewerContainer:not(.pdfPresentationMode) {
-  transition-duration: var(--sidebar-transition-duration);
-  transition-timing-function: var(--sidebar-transition-timing-function);
+  transition-duration: $sidebar-transition-duration;
+  transition-duration: var(--pdf-sidebar-transition-duration);
+  transition-timing-function: $sidebar-transition-timing-function;
+  transition-timing-function: var(--pdf-sidebar-transition-timing-function);
 }
 html[dir="ltr"] .pdf-app #viewerContainer {
   box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.05);
@@ -185,14 +222,16 @@ html[dir="ltr"]
   #outerContainer.sidebarOpen
   #viewerContainer:not(.pdfPresentationMode) {
   transition-property: left;
-  left: var(--sidebar-width);
+  left: $sidebar-width;
+  left: var(--pdf-sidebar-width);
 }
 html[dir="rtl"]
   .pdf-app
   #outerContainer.sidebarOpen
   #viewerContainer:not(.pdfPresentationMode) {
   transition-property: right;
-  right: var(--sidebar-width);
+  right: $sidebar-width;
+  right: var(--pdf-sidebar-width);
 }
 
 .pdf-app .toolbar {
@@ -210,9 +249,8 @@ html[dir="rtl"]
 .pdf-app #toolbarSidebar {
   width: 100%;
   height: 32px;
-  background-color: rgba(66, 66, 66, 1); /* fallback */
-  background-image: url(../assets/images/texture.png),
-    linear-gradient(rgba(77, 77, 77, 0.99), rgba(64, 64, 64, 0.95));
+  background-color: $pdf-toolbar-sidebar-color;
+  background-color: var(--pdf-toolbar-sidebar-color);
 }
 html[dir="ltr"] .pdf-app #toolbarSidebar {
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.25),
@@ -245,9 +283,8 @@ html[dir="rtl"] .pdf-app #sidebarResizer {
 .pdf-app .secondaryToolbar {
   position: relative;
   height: 32px;
-  background-color: rgba(71, 71, 71, 1); /* fallback */
-  background-image: url(../assets/images/texture.png),
-    linear-gradient(rgba(82, 82, 82, 0.99), rgba(69, 69, 69, 0.95));
+  background-color: $pdf-toolbar-color;
+  background-color: var(--pdf-toolbar-color);
 }
 html[dir="ltr"] .pdf-app #toolbarContainer,
 .pdf-app .findbar,
@@ -272,7 +309,8 @@ html[dir="rtl"] .pdf-app #toolbarContainer,
   position: relative;
   width: 100%;
   height: 4px;
-  background-color: rgba(51, 51, 51, 1);
+  background-color: $pdf-loading-bar-color;
+  background-color: var(--pdf-loading-bar-color);
   border-bottom: 1px solid rgba(51, 51, 51, 1);
 }
 
@@ -328,7 +366,6 @@ html[dir="rtl"] .pdf-app #toolbarContainer,
   min-width: 16px;
   padding: 0px 6px 0px 6px;
   margin: 4px 2px 4px 2px;
-  color: rgba(217, 217, 217, 1);
   font-size: 12px;
   line-height: 14px;
   text-align: left;
@@ -361,14 +398,12 @@ html[dir="rtl"] .pdf-app .findbar {
 .pdf-app #findInput {
   width: 200px;
 }
-.pdf-app #findInput::-webkit-input-placeholder {
-  color: rgba(191, 191, 191, 1);
-}
+
 .pdf-app #findInput::placeholder {
   font-style: italic;
 }
 .pdf-app #findInput[data-status="pending"] {
-  background-image: url(../assets/images/loading-small.png);
+  background-image: url(../assets/images/loading-icon-small.svg);
   background-repeat: no-repeat;
   background-position: right;
 }
@@ -459,8 +494,10 @@ html[dir="ltr"] .pdf-app .doorHangerRight:before {
 }
 
 .pdf-app #findResultsCount {
-  background-color: rgba(217, 217, 217, 1);
-  color: rgba(82, 82, 82, 1);
+  background-color: $pdf-find-results-count-color;
+  background-color: var(--pdf-find-results-count-color);
+  color: $pdf-find-results-count-font-color;
+  color: var(--pdf-find-results-count-font-color);
   text-align: center;
   padding: 3px 4px;
 }
@@ -799,10 +836,7 @@ html[dir="rtl"] .pdf-app .secondaryToolbarButton::before {
   right: 4px;
 }
 
-.pdf-app .toolbarButton#sidebarToggle::before {
-  content: url(../assets/images/toolbarButton-sidebarToggle.png);
-}
-html[dir="rtl"] .pdf-app .toolbarButton#sidebarToggle::before {
+html .pdf-app .toolbarButton#sidebarToggle::before {
   transform: scaleX(-1);
 }
 
@@ -1566,7 +1600,8 @@ html[dir="rtl"] .pdf-app #documentPropertiesOverlay .row > * {
   cursor: url(../assets/images/grab.cur), move !important;
   cursor: grab !important;
 }
-.pdf-app .grab-to-pan-grab
+.pdf-app
+  .grab-to-pan-grab
   *:not(input):not(textarea):not(button):not(select):not(:link) {
   cursor: inherit !important;
 }
@@ -1635,12 +1670,12 @@ html[dir="rtl"] .pdf-app #documentPropertiesOverlay .row > * {
     left: 4px;
   }
 
-  .pdf-app .toolbarButton#sidebarToggle::before {
-    content: url(../assets/images/toolbarButton-sidebarToggle@2x.png);
-  }
-  html[dir="rtl"] .pdf-app .toolbarButton#sidebarToggle::before {
-    transform: scale(-0.5, 0.5);
-  }
+  // .pdf-app .toolbarButton#sidebarToggle::before {
+  //   content: url(../assets/images/toolbarButton-sidebarToggle@2x.png);
+  // }
+  // html[dir="rtl"] .pdf-app .toolbarButton#sidebarToggle::before {
+  //   transform: scale(-0.5, 0.5);
+  // }
 
   .pdf-app .toolbarButton#secondaryToolbarToggle::before {
     content: url(../assets/images/toolbarButton-secondaryToolbarToggle@2x.png);
