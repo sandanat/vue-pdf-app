@@ -382,7 +382,7 @@
                 <button
                   v-show="showElem('sidebar')"
                   id="sidebarToggle"
-                  class="toolbarButton"
+                  class="toolbarButton pdf-icon-button"
                   title="Toggle Sidebar"
                   tabindex="11"
                   data-l10n-id="toggle_sidebar"
@@ -892,7 +892,7 @@ import { AppOptions } from "@/pdfjs-dist/lib/web/app_options";
 import "@/pdfjs-dist/lib/web/genericcom";
 import "@/pdfjs-dist/lib/web/pdf_print_service";
 import "@/pdfjs-dist/build/pdf.worker.entry";
-import "@/css/index.css";
+import "@/sass/index.scss";
 import { ToolbarConfig } from "@/types";
 import getAppConfig from "@/utils/get-pdf-config";
 import toolbarConfig from "@/utils/toolbar-config";

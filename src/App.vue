@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import "@/sass/icons.scss"
+
 export default {};
 </script>
 
