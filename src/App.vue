@@ -1,5 +1,8 @@
 <template>
   <div id="app">
+    <button @click="toggleDirection" type="button">
+      Toggle web-page direction
+    </button>
     <div id="nav">
       <router-link to="/">Home</router-link>|
       <router-link to="/about">About</router-link>
@@ -9,9 +12,17 @@
 </template>
 
 <script>
-import "@/sass/icons.scss"
+import "@/sass/icons.scss";
 
-export default {};
+export default {
+  methods: {
+    toggleDirection() {
+      const dir = document.documentElement.getAttribute("dir");
+      const newDir = dir === "rtl" ? "ltr" : "rtl";
+      document.documentElement.setAttribute("dir", newDir);
+    },
+  },
+};
 </script>
 
 <style>

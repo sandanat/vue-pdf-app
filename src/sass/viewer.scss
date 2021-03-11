@@ -696,152 +696,38 @@ html[dir="rtl"] .pdf-app .dropdownToolbarButton {
   top: 6px;
 }
 html[dir="ltr"] .pdf-app .dropdownToolbarButton::after {
-  right: 8px;
+  right: 0px;
 }
 html[dir="rtl"] .pdf-app .dropdownToolbarButton::after {
-  left: 8px;
+  left: 0px;
 }
 
 .pdf-app .dropdownToolbarButton > select {
   width: 162px;
   height: 23px;
   font-size: 12px;
-  color: rgba(242, 242, 242, 1);
+  color: $pdf-toolbar-font-color;
+  color: var(--pdf-toolbar-font-color);
   margin: 0;
   padding: 3px 2px 2px;
   border: none;
-  background: rgba(
-    0,
-    0,
-    0,
-    0
-  ); /* Opera does not support 'transparent' <select> background */
+  background: $pdf-toolbar-color;
+  background: var(--pdf-toolbar-color);
 }
 
 .pdf-app .dropdownToolbarButton > select > option {
-  background: rgba(61, 61, 61, 1);
+  background: $pdf-toolbar-color;
+  background: var(--pdf-toolbar-color);
 }
 
 .pdf-app #customScaleOption {
   display: none;
 }
 
-.pdf-app #pageWidthOption {
-  border-bottom: 1px rgba(255, 255, 255, 0.5) solid;
-}
-
-html[dir="ltr"] .pdf-app .splitToolbarButton:first-child,
-html[dir="ltr"] .pdf-app .toolbarButton:first-child,
-html[dir="rtl"] .pdf-app .splitToolbarButton:last-child,
-html[dir="rtl"] .pdf-app .toolbarButton:last-child {
-  margin-left: 4px;
-}
-html[dir="ltr"] .pdf-app .splitToolbarButton:last-child,
-html[dir="ltr"] .pdf-app .toolbarButton:last-child,
-html[dir="rtl"] .pdf-app .splitToolbarButton:first-child,
-html[dir="rtl"] .pdf-app .toolbarButton:first-child {
-  margin-right: 4px;
-}
-
 .pdf-app .toolbarButtonSpacer {
   width: 30px;
   display: inline-block;
   height: 1px;
-}
-
-html[dir="ltr"] .pdf-app #findPrevious {
-  margin-left: 3px;
-}
-html[dir="ltr"] .pdf-app #findNext {
-  margin-right: 3px;
-}
-
-html[dir="rtl"] .pdf-app #findPrevious {
-  margin-right: 3px;
-}
-html[dir="rtl"] .pdf-app #findNext {
-  margin-left: 3px;
-}
-
-.pdf-app .toolbarButton::before,
-.pdf-app .secondaryToolbarButton::before {
-  /* All matching images have a size of 16x16
-   * All relevant containers have a size of 32x25 */
-  position: absolute;
-  display: inline-block;
-  top: 4px;
-  left: 7px;
-}
-
-html[dir="ltr"] .pdf-app .secondaryToolbarButton::before {
-  left: 4px;
-}
-html[dir="rtl"] .pdf-app .secondaryToolbarButton::before {
-  right: 4px;
-}
-
-.pdf-app .toolbarButton#secondaryToolbarToggle::before {
-  content: url(../assets/images/toolbarButton-secondaryToolbarToggle.png);
-}
-
-html[dir="rtl"] .pdf-app .toolbarButton#secondaryToolbarToggle::before {
-  transform: scaleX(-1);
-}
-
-.pdf-app .toolbarButton.findPrevious::before {
-  content: url(../assets/images/findbarButton-previous.png);
-}
-html[dir="rtl"] .pdf-app .toolbarButton.findPrevious::before {
-  transform: scaleX(-1);
-}
-
-.pdf-app .toolbarButton.findNext::before {
-  content: url(../assets/images/findbarButton-next.png);
-}
-html[dir="rtl"] .pdf-app .toolbarButton.findNext::before {
-  transform: scaleX(-1);
-}
-
-.pdf-app .toolbarButton.pageUp::before {
-  content: url(../assets/images/toolbarButton-pageUp.png);
-}
-html[dir="rtl"] .pdf-app .toolbarButton.pageUp::before {
-  transform: scaleX(-1);
-}
-
-.pdf-app .toolbarButton.pageDown::before {
-  content: url(../assets/images/toolbarButton-pageDown.png);
-}
-html[dir="rtl"] .pdf-app .toolbarButton.pageDown::before {
-  transform: scaleX(-1);
-}
-
-.pdf-app .toolbarButton.zoomOut::before {
-  content: url(../assets/images/toolbarButton-zoomOut.png);
-}
-
-.pdf-app .toolbarButton.zoomIn::before {
-  content: url(../assets/images/toolbarButton-zoomIn.png);
-}
-
-.pdf-app .toolbarButton.presentationMode::before,
-.pdf-app .secondaryToolbarButton.presentationMode::before {
-  content: url(../assets/images/toolbarButton-presentationMode.png);
-}
-
-.pdf-app .toolbarButton.print::before,
-.pdf-app .secondaryToolbarButton.print::before {
-  content: url(../assets/images/toolbarButton-print.png);
-}
-
-.pdf-app .toolbarButton.openFile::before,
-.pdf-app .secondaryToolbarButton.openFile::before {
-  content: url(../assets/images/toolbarButton-openFile.png);
-}
-
-.pdf-app .toolbarButton.download::before,
-.pdf-app .secondaryToolbarButton.download::before {
-  content: url(../assets/images/toolbarButton-download.png);
 }
 
 .pdf-app .toolbarButton.bookmark,
@@ -860,20 +746,12 @@ html[dir="rtl"] .pdf-app .toolbarButton.pageDown::before {
   pointer-events: none;
 }
 
-.pdf-app .toolbarButton.bookmark::before,
-.pdf-app .secondaryToolbarButton.bookmark::before {
-  content: url(../assets/images/toolbarButton-bookmark.png);
-}
-
 .pdf-app #viewThumbnail.toolbarButton::before {
   content: url(../assets/images/toolbarButton-viewThumbnail.png);
 }
 
 .pdf-app #viewOutline.toolbarButton::before {
   content: url(../assets/images/toolbarButton-viewOutline.png);
-}
-html[dir="rtl"] .pdf-app #viewOutline.toolbarButton::before {
-  transform: scaleX(-1);
 }
 
 .pdf-app #viewAttachments.toolbarButton::before {

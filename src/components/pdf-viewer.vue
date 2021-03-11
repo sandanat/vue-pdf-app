@@ -79,7 +79,7 @@
             <div class="splitToolbarButton">
               <button
                 id="findPrevious"
-                class="toolbarButton findPrevious"
+                class="toolbarButton findPrevious pdf-icon-button find-previous"
                 title="Find the previous occurrence of the phrase"
                 tabindex="92"
                 data-l10n-id="find_previous"
@@ -89,7 +89,7 @@
               <div class="splitToolbarButtonSeparator"></div>
               <button
                 id="findNext"
-                class="toolbarButton findNext"
+                class="toolbarButton findNext pdf-icon-button find-next"
                 title="Find the next occurrence of the phrase"
                 tabindex="93"
                 data-l10n-id="find_next"
@@ -156,7 +156,7 @@
             <button
               v-show="showElem('secondaryToolbar.secondaryPresentationMode')"
               id="secondaryPresentationMode"
-              class="secondaryToolbarButton presentationMode visibleLargeView"
+              class="secondaryToolbarButton presentationMode visibleLargeView pdf-icon-button presentation-mode"
               title="Switch to Presentation Mode"
               tabindex="51"
               data-l10n-id="presentation_mode"
@@ -169,7 +169,7 @@
             <button
               v-show="showElem('secondaryToolbar.secondaryOpenFile')"
               id="secondaryOpenFile"
-              class="secondaryToolbarButton openFile visibleLargeView"
+              class="secondaryToolbarButton openFile visibleLargeView pdf-icon-button open-file"
               title="Open File"
               tabindex="52"
               data-l10n-id="open_file"
@@ -180,7 +180,7 @@
             <button
               v-show="showElem('secondaryToolbar.secondaryPrint')"
               id="secondaryPrint"
-              class="secondaryToolbarButton print visibleMediumView"
+              class="secondaryToolbarButton print visibleMediumView pdf-icon-button print-button"
               title="Print"
               tabindex="53"
               data-l10n-id="print"
@@ -191,7 +191,7 @@
             <button
               v-show="showElem('secondaryToolbar.secondaryDownload')"
               id="secondaryDownload"
-              class="secondaryToolbarButton download visibleMediumView"
+              class="secondaryToolbarButton download visibleMediumView pdf-icon-button download-button"
               title="Download"
               tabindex="54"
               data-l10n-id="download"
@@ -203,7 +203,7 @@
               v-show="showElem('secondaryToolbar.secondaryViewBookmark')"
               href="#"
               id="secondaryViewBookmark"
-              class="secondaryToolbarButton bookmark visibleSmallView"
+              class="secondaryToolbarButton bookmark visibleSmallView pdf-icon-button bookmark-button"
               title="Current view (copy or open in new window)"
               tabindex="55"
               data-l10n-id="bookmark"
@@ -405,7 +405,7 @@
                 <div class="splitToolbarButton hiddenSmallView">
                   <button
                     v-show="showElem('toolbar.toolbarViewerLeft.previous')"
-                    class="toolbarButton pageUp"
+                    class="toolbarButton pageUp pdf-icon-button page-up"
                     title="Previous Page"
                     id="previous"
                     tabindex="13"
@@ -416,7 +416,7 @@
                   <div class="splitToolbarButtonSeparator"></div>
                   <button
                     v-show="showElem('toolbar.toolbarViewerLeft.next')"
-                    class="toolbarButton pageDown"
+                    class="toolbarButton pageDown pdf-icon-button page-down"
                     title="Next Page"
                     id="next"
                     tabindex="14"
@@ -453,7 +453,7 @@
                     showElem('toolbar.toolbarViewerRight.presentationMode')
                   "
                   id="presentationMode"
-                  class="toolbarButton presentationMode hiddenLargeView"
+                  class="toolbarButton presentationMode hiddenLargeView pdf-icon-button presentation-mode"
                   title="Switch to Presentation Mode"
                   tabindex="31"
                   data-l10n-id="presentation_mode"
@@ -466,7 +466,7 @@
                 <button
                   v-show="showElem('toolbar.toolbarViewerRight.openFile')"
                   id="openFile"
-                  class="toolbarButton openFile hiddenLargeView"
+                  class="toolbarButton openFile hiddenLargeView pdf-icon-button open-file"
                   title="Open File"
                   tabindex="32"
                   data-l10n-id="open_file"
@@ -477,7 +477,7 @@
                 <button
                   v-show="showElem('toolbar.toolbarViewerRight.print')"
                   id="print"
-                  class="toolbarButton print hiddenMediumView"
+                  class="toolbarButton print hiddenMediumView pdf-icon-button print-button"
                   title="Print"
                   tabindex="33"
                   data-l10n-id="print"
@@ -488,7 +488,7 @@
                 <button
                   v-show="showElem('toolbar.toolbarViewerRight.download')"
                   id="download"
-                  class="toolbarButton download hiddenMediumView"
+                  class="toolbarButton download hiddenMediumView pdf-icon-button download-button"
                   title="Download"
                   tabindex="34"
                   data-l10n-id="download"
@@ -499,7 +499,7 @@
                   v-show="showElem('toolbar.toolbarViewerRight.viewBookmark')"
                   href="#"
                   id="viewBookmark"
-                  class="toolbarButton bookmark hiddenSmallView"
+                  class="toolbarButton bookmark hiddenSmallView pdf-icon-button bookmark-button"
                   title="Current view (copy or open in new window)"
                   tabindex="35"
                   data-l10n-id="bookmark"
@@ -516,7 +516,7 @@
                     )
                   "
                   id="secondaryToolbarToggle"
-                  class="toolbarButton"
+                  class="toolbarButton pdf-icon-button secondary-toolbar-toggle"
                   title="Tools"
                   tabindex="36"
                   data-l10n-id="tools"
@@ -532,7 +532,7 @@
                   <button
                     v-show="showElem('toolbar.toolbarViewerMiddle.zoomOut')"
                     id="zoomOut"
-                    class="toolbarButton zoomOut"
+                    class="toolbarButton zoomOut pdf-icon-button zoom-out"
                     title="Zoom Out"
                     tabindex="21"
                     data-l10n-id="zoom_out"
@@ -543,7 +543,7 @@
                   <button
                     v-show="showElem('toolbar.toolbarViewerMiddle.zoomIn')"
                     id="zoomIn"
-                    class="toolbarButton zoomIn"
+                    class="toolbarButton zoomIn pdf-icon-button zoom-in"
                     title="Zoom In"
                     tabindex="22"
                     data-l10n-id="zoom_in"

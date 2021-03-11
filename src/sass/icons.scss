@@ -33,4 +33,62 @@
   .dropdown-toolbar-button::after {
     content: "\e810";
   }
+
+  .secondary-toolbar-toggle::before {
+    content: "\f142";
+  }
+
+  .find-previous::before {
+    content: "\e813";
+  }
+
+  .find-next::before {
+    content: "\e812";
+  }
+
+  .page-up::before {
+    content: "\e801";
+  }
+
+  .page-down::before {
+    content: "\e802";
+  }
+
+  .zoom-out::before {
+    content: "\e820";
+  }
+
+  .zoom-in::before {
+    content: "\e821";
+  }
+
+  .presentation-mode::before {
+    content: "\f0b2";
+  }
+
+  .print-button::before {
+    content: "\e81f";
+  }
+
+  .open-file::before {
+    content: "\f115";
+  }
+
+  .download-button::before {
+    content: "\e81c";
+  }
+
+  .bookmark-button::before {
+  content: "\f097";
+}
+}
+
+html[dir="rtl"] .pdf-app {
+  .find-previous::before {
+    content: "\e812";
+  }
+
+  .find-next::before {
+    content: "\e813";
+  }
 }
