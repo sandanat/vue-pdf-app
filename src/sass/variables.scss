@@ -1,11 +1,17 @@
-$sidebar-width: 200px;
-$sidebar-transition-duration: 200ms;
-$sidebar-transition-timing-function: ease;
+$pdf-sidebar-width: 200px;
+$pdf-sidebar-transition-duration: 200ms;
+$pdf-sidebar-transition-timing-function: ease;
 
-$pdf-app-background-color: #1d2636;
-$pdf-sidebar-content-color: rgba(0, 0, 0, 0.1);
-$pdf-toolbar-sidebar-color: #24364e;
-$pdf-toolbar-color: #24364e;
+$pdf-app-background-color: rgb(29, 38, 54);
+$pdf-sidebar-content-color: rgba(36, 54, 78, 0.5);
+$pdf-toolbar-sidebar-color: rgb(36, 54, 78);
+$pdf-toolbar-color: rgb(36, 54, 78);
 $pdf-loading-bar-color: rgba(51, 51, 51, 1);
 $pdf-find-results-count-color: rgba(217, 217, 217, 1);
 $pdf-find-results-count-font-color: rgba(82, 82, 82, 1);
+$pdf-find-message-font-color: rgba(166, 183, 208, 1);
+$pdf-not-found-color: rgba(255, 102, 102, 1);
+$pdf-split-toolbar-button-separator-color: rgb(255, 255, 255);
+$pdf-toolbar-font-color: rgba(217, 217, 217, 1);
+$pdf-button-hover-font-color: rgb(17, 236, 229);
+$pdf-button-toggled-color: rgb(96, 108, 136);

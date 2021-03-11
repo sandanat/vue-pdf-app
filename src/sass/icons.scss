@@ -10,18 +10,27 @@
   font-style: normal;
 }
 
-.pdf-app .pdf-icon-button::before {
-  font-family: "pdf";
-  font-size: 1.1rem;
-  display: inline;
-  text-decoration: inherit;
-  text-align: center;
-  font-variant: normal;
-  text-transform: none;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.pdf-app .pdf-icon-button {
+  &::before,
+  &::after {
+    font-family: "pdf";
+    font-size: 1.1rem;
+    display: inline;
+    text-decoration: inherit;
+    text-align: center;
+    font-variant: normal;
+    text-transform: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
-#sidebarToggle::before {
-  content: "\f0c9";
+.pdf-app {
+  .sidebar-toggle::before {
+    content: "\f0c9";
+  }
+
+  .dropdown-toolbar-button::after {
+    content: "\e810";
+  }
 }

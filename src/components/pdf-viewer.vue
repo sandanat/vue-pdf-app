@@ -382,7 +382,7 @@
                 <button
                   v-show="showElem('sidebar')"
                   id="sidebarToggle"
-                  class="toolbarButton pdf-icon-button"
+                  class="toolbarButton pdf-icon-button sidebar-toggle"
                   title="Toggle Sidebar"
                   tabindex="11"
                   data-l10n-id="toggle_sidebar"
@@ -558,7 +558,7 @@
                     )
                   "
                   id="scaleSelectContainer"
-                  class="dropdownToolbarButton"
+                  class="dropdownToolbarButton pdf-icon-button dropdown-toolbar-button"
                 >
                   <select
                     id="scaleSelect"

@@ -16,9 +16,9 @@
 @import "@/sass/variables.scss";
 
 :root {
-  --pdf-sidebar-width: #{$sidebar-width};
-  --pdf-sidebar-transition-duration: #{$sidebar-transition-duration};
-  --pdf-sidebar-transition-timing-function: #{$sidebar-transition-timing-function};
+  --sidebar-width: #{$pdf-sidebar-width};
+  --sidebar-transition-duration: #{$pdf-sidebar-transition-duration};
+  --sidebar-transition-timing-function: #{$pdf-sidebar-transition-timing-function};
   --pdf-app-background-color: #{$pdf-app-background-color};
   --pdf-sidebar-content-color: #{$pdf-sidebar-content-color};
   --pdf-toolbar-sidebar-color: #{$pdf-toolbar-sidebar-color};
@@ -26,6 +26,12 @@
   --pdf-loading-bar-color: #{$pdf-loading-bar-color};
   --pdf-find-results-count-color: #{$pdf-find-results-count-color};
   --pdf-find-results-count-font-color: #{$pdf-find-results-count-font-color};
+  --pdf-find-message-font-color: #{$pdf-find-message-font-color};
+  --pdf-not-found-color: #{$pdf-not-found-color};
+  --pdf-split-toolbar-button-separator-color: #{$pdf-split-toolbar-button-separator-color};
+  --pdf-toolbar-font-color: #{$pdf-toolbar-font-color};
+  --pdf-button-hover-font-color: #{$pdf-button-hover-font-color};
+  --pdf-button-toggled-color: #{$pdf-button-toggled-color};
 }
 
 .pdf-app * {
@@ -118,25 +124,25 @@
   position: absolute;
   top: 32px;
   bottom: 0;
-  width: $sidebar-width;
-  width: var(--pdf-sidebar-width);
+  width: $pdf-sidebar-width;
+  width: var(--sidebar-width);
   visibility: hidden;
   z-index: 100;
   border-top: 1px solid rgba(51, 51, 51, 1);
-  transition-duration: $sidebar-transition-duration;
-  transition-duration: var(--pdf-sidebar-transition-duration);
-  transition-timing-function: $sidebar-transition-timing-function;
-  transition-timing-function: var(--pdf-sidebar-transition-timing-function);
+  transition-duration: $pdf-sidebar-transition-duration;
+  transition-duration: var(--sidebar-transition-duration);
+  transition-timing-function: $pdf-sidebar-transition-timing-function;
+  transition-timing-function: var(--sidebar-transition-timing-function);
 }
 html[dir="ltr"] .pdf-app #sidebarContainer {
   transition-property: left;
-  left: calc(0px - $sidebar-width);
-  left: calc(0px - var(--pdf-sidebar-width));
+  left: calc(0px - $pdf-sidebar-width);
+  left: calc(0px - var(--sidebar-width));
 }
 html[dir="rtl"] .pdf-app #sidebarContainer {
   transition-property: right;
-  right: calc(0px - $sidebar-width);
-  right: calc(0px - var(--pdf-sidebar-width));
+  right: calc(0px - $pdf-sidebar-width);
+  right: calc(0px - var(--sidebar-width));
 }
 
 .pdf-app .loadingInProgress #sidebarContainer {
@@ -200,10 +206,10 @@ html[dir="rtl"] .pdf-app #sidebarContent {
   outline: none;
 }
 .pdf-app #viewerContainer:not(.pdfPresentationMode) {
-  transition-duration: $sidebar-transition-duration;
-  transition-duration: var(--pdf-sidebar-transition-duration);
-  transition-timing-function: $sidebar-transition-timing-function;
-  transition-timing-function: var(--pdf-sidebar-transition-timing-function);
+  transition-duration: $pdf-sidebar-transition-duration;
+  transition-duration: var(--sidebar-transition-duration);
+  transition-timing-function: $pdf-sidebar-transition-timing-function;
+  transition-timing-function: var(--sidebar-transition-timing-function);
 }
 html[dir="ltr"] .pdf-app #viewerContainer {
   box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.05);
@@ -222,16 +228,16 @@ html[dir="ltr"]
   #outerContainer.sidebarOpen
   #viewerContainer:not(.pdfPresentationMode) {
   transition-property: left;
-  left: $sidebar-width;
-  left: var(--pdf-sidebar-width);
+  left: $pdf-sidebar-width;
+  left: var(--sidebar-width);
 }
 html[dir="rtl"]
   .pdf-app
   #outerContainer.sidebarOpen
   #viewerContainer:not(.pdfPresentationMode) {
   transition-property: right;
-  right: $sidebar-width;
-  right: var(--pdf-sidebar-width);
+  right: $pdf-sidebar-width;
+  right: var(--sidebar-width);
 }
 
 .pdf-app .toolbar {
@@ -403,7 +409,8 @@ html[dir="rtl"] .pdf-app .findbar {
   font-style: italic;
 }
 .pdf-app #findInput[data-status="pending"] {
-  background-image: url(../assets/images/loading-icon-small.svg);
+  background-size: 16px;
+  background-image: url(../assets/images/loading-icon.svg);
   background-repeat: no-repeat;
   background-position: right;
 }
@@ -504,14 +511,16 @@ html[dir="ltr"] .pdf-app .doorHangerRight:before {
 
 .pdf-app #findMsg {
   font-style: italic;
-  color: rgba(166, 183, 208, 1);
+  color: $pdf-find-message-font-color;
+  color: var(--pdf-find-message-font-color);
 }
 .pdf-app #findMsg:empty {
   display: none;
 }
 
 .pdf-app #findInput.notFound {
-  background-color: rgba(255, 102, 102, 1);
+  background-color: $pdf-not-found-color;
+  background-color: var(--pdf-not-found-color);
 }
 
 .pdf-app #toolbarViewerMiddle {
@@ -586,36 +595,6 @@ html[dir="rtl"] .pdf-app .splitToolbarButton > .toolbarButton {
   margin: 0;
 }
 
-.pdf-app .splitToolbarButton:hover > .toolbarButton,
-.pdf-app .splitToolbarButton:focus > .toolbarButton,
-.pdf-app .splitToolbarButton.toggled > .toolbarButton,
-.pdf-app .toolbarButton.textButton {
-  background-color: rgba(0, 0, 0, 0.12);
-  background-image: linear-gradient(
-    rgba(255, 255, 255, 0.05),
-    rgba(255, 255, 255, 0)
-  );
-  background-clip: padding-box;
-  border: 1px solid rgba(0, 0, 0, 0.35);
-  border-color: rgba(0, 0, 0, 0.32) rgba(0, 0, 0, 0.38) rgba(0, 0, 0, 0.42);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset,
-    0 0 1px rgba(255, 255, 255, 0.15) inset, 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-.pdf-app .splitToolbarButton > .toolbarButton:hover,
-.pdf-app .splitToolbarButton > .toolbarButton:focus,
-.pdf-app .dropdownToolbarButton:hover,
-.pdf-app .overlayButton:hover,
-.pdf-app .overlayButton:focus,
-.pdf-app .toolbarButton.textButton:hover,
-.pdf-app .toolbarButton.textButton:focus {
-  background-color: rgba(0, 0, 0, 0.2);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset,
-    0 0 1px rgba(255, 255, 255, 0.15) inset, 0 0 1px rgba(0, 0, 0, 0.05);
-  z-index: 199;
-}
-.pdf-app .dropdownToolbarButton:hover {
-  background-color: rgba(0, 0, 0, 0.26);
-}
 .pdf-app .splitToolbarButton > .toolbarButton {
   position: relative;
 }
@@ -640,9 +619,9 @@ html[dir="rtl"] .pdf-app .splitToolbarButton > .toolbarButton:first-child {
 .pdf-app .splitToolbarButtonSeparator {
   padding: 8px 0;
   width: 1px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: $pdf-split-toolbar-button-separator-color;
+  background-color: var(--pdf-split-toolbar-button-separator-color);
   z-index: 99;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
   display: inline-block;
   margin: 5px 0;
 }
@@ -656,7 +635,6 @@ html[dir="rtl"] .pdf-app .splitToolbarButtonSeparator {
 .pdf-app .splitToolbarButton.toggled > .splitToolbarButtonSeparator {
   padding: 12px 0;
   margin: 1px 0;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
 .pdf-app .toolbarButton,
@@ -665,9 +643,8 @@ html[dir="rtl"] .pdf-app .splitToolbarButtonSeparator {
 .pdf-app .overlayButton {
   min-width: 16px;
   padding: 2px 6px 0;
-  border: 1px solid rgba(0, 0, 0, 0);
-  border-radius: 2px;
-  color: rgba(255, 255, 255, 0.8);
+  color: $pdf-toolbar-font-color;
+  color: var(--pdf-toolbar-font-color);
   font-size: 12px;
   line-height: 14px;
   user-select: none;
@@ -686,58 +663,26 @@ html[dir="rtl"] .pdf-app .dropdownToolbarButton {
   margin: 3px 0 4px 2px;
 }
 
+.pdf-app .dropdownToolbarButton select:hover {
+  cursor: pointer;
+}
+
 .pdf-app .toolbarButton:hover,
 .pdf-app .toolbarButton:focus,
-.pdf-app .dropdownToolbarButton,
+.pdf-app .dropdownToolbarButton:hover,
 .pdf-app .overlayButton,
 .pdf-app .secondaryToolbarButton:hover,
 .pdf-app .secondaryToolbarButton:focus {
-  background-color: rgba(0, 0, 0, 0.12);
-  background-image: linear-gradient(
-    rgba(255, 255, 255, 0.05),
-    rgba(255, 255, 255, 0)
-  );
-  background-clip: padding-box;
-  border: 1px solid rgba(0, 0, 0, 0.35);
-  border-color: rgba(0, 0, 0, 0.32) rgba(0, 0, 0, 0.38) rgba(0, 0, 0, 0.42);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset,
-    0 0 1px rgba(255, 255, 255, 0.15) inset, 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-
-.pdf-app .toolbarButton:hover:active,
-.pdf-app .overlayButton:hover:active,
-.pdf-app .dropdownToolbarButton:hover:active,
-.pdf-app .secondaryToolbarButton:hover:active {
-  background-color: rgba(0, 0, 0, 0.2);
-  background-image: linear-gradient(
-    rgba(255, 255, 255, 0.05),
-    rgba(255, 255, 255, 0)
-  );
-  border-color: rgba(0, 0, 0, 0.35) rgba(0, 0, 0, 0.4) rgba(0, 0, 0, 0.45);
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) inset,
-    0 0 1px rgba(0, 0, 0, 0.2) inset, 0 1px 0 rgba(255, 255, 255, 0.05);
+  color: $pdf-button-hover-font-color;
+  color: var(--pdf-button-hover-font-color);
 }
 
 .pdf-app .toolbarButton.toggled,
 .pdf-app .splitToolbarButton.toggled > .toolbarButton.toggled,
 .pdf-app .secondaryToolbarButton.toggled {
-  background-color: rgba(0, 0, 0, 0.3);
-  background-image: linear-gradient(
-    rgba(255, 255, 255, 0.05),
-    rgba(255, 255, 255, 0)
-  );
-  border-color: rgba(0, 0, 0, 0.4) rgba(0, 0, 0, 0.45) rgba(0, 0, 0, 0.5);
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) inset,
-    0 0 1px rgba(0, 0, 0, 0.2) inset, 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-
-.pdf-app .toolbarButton.toggled:hover:active,
-.pdf-app .splitToolbarButton.toggled > .toolbarButton.toggled:hover:active,
-.pdf-app .secondaryToolbarButton.toggled:hover:active {
-  background-color: rgba(0, 0, 0, 0.4);
-  border-color: rgba(0, 0, 0, 0.4) rgba(0, 0, 0, 0.5) rgba(0, 0, 0, 0.55);
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2) inset,
-    0 0 1px rgba(0, 0, 0, 0.3) inset, 0 1px 0 rgba(255, 255, 255, 0.05);
+  background-color: $pdf-button-toggled-color;
+  background-color: var(--pdf-button-toggled-color);
+  border-radius: 3px;
 }
 
 .pdf-app .dropdownToolbarButton {
@@ -748,8 +693,7 @@ html[dir="rtl"] .pdf-app .dropdownToolbarButton {
 .pdf-app .dropdownToolbarButton::after {
   position: absolute;
   display: inline-block;
-  top: 4px;
-  content: url(../assets/images/toolbarButton-menuArrows.png);
+  top: 6px;
 }
 html[dir="ltr"] .pdf-app .dropdownToolbarButton::after {
   right: 8px;
@@ -836,13 +780,10 @@ html[dir="rtl"] .pdf-app .secondaryToolbarButton::before {
   right: 4px;
 }
 
-html .pdf-app .toolbarButton#sidebarToggle::before {
-  transform: scaleX(-1);
-}
-
 .pdf-app .toolbarButton#secondaryToolbarToggle::before {
   content: url(../assets/images/toolbarButton-secondaryToolbarToggle.png);
 }
+
 html[dir="rtl"] .pdf-app .toolbarButton#secondaryToolbarToggle::before {
   transform: scaleX(-1);
 }
@@ -1103,9 +1044,10 @@ html[dir="rtl"] .pdf-app .verticalToolbarSeparator {
 }
 
 .pdf-app .toolbarField.pageNumber.visiblePageIsLoading {
-  background-image: url(../assets/images/loading-small.png);
+  background-image: url(../assets/images/loading-icon.svg);
   background-repeat: no-repeat;
   background-position: 1px;
+  background-size: 16px;
 }
 
 .pdf-app .toolbarField.pageNumber::-webkit-inner-spin-button,
@@ -1629,87 +1571,34 @@ html[dir="rtl"] .pdf-app #documentPropertiesOverlay .row > * {
 }
 
 @media screen and (min-resolution: 1.1dppx) {
-  /* Rules for Retina screens */
-  .pdf-app .toolbarButton::before {
-    transform: scale(0.5);
-    top: -5px;
-  }
-
-  .pdf-app .secondaryToolbarButton::before {
-    transform: scale(0.5);
-    top: -4px;
-  }
-
-  html[dir="ltr"] .pdf-app .toolbarButton::before,
-  html[dir="rtl"] .pdf-app .toolbarButton::before {
-    left: -1px;
-  }
-
-  html[dir="ltr"] .pdf-app .secondaryToolbarButton::before {
-    left: -2px;
-  }
-  html[dir="rtl"] .pdf-app .secondaryToolbarButton::before {
-    left: 186px;
-  }
-
   .pdf-app .toolbarField.pageNumber.visiblePageIsLoading,
   .pdf-app #findInput[data-status="pending"] {
-    background-image: url(../assets/images/loading-small@2x.png);
-    background-size: 16px 17px;
+    background-image: url(../assets/images/loading-icon.svg);
+    background-size: 16px;
   }
 
   .pdf-app .dropdownToolbarButton::after {
-    transform: scale(0.5);
-    top: -5px;
     content: url(../assets/images/toolbarButton-menuArrows@2x.png);
   }
-  html[dir="ltr"] .pdf-app .dropdownToolbarButton::after {
-    right: 4px;
-  }
-  html[dir="rtl"] .pdf-app .dropdownToolbarButton::after {
-    left: 4px;
-  }
-
-  // .pdf-app .toolbarButton#sidebarToggle::before {
-  //   content: url(../assets/images/toolbarButton-sidebarToggle@2x.png);
-  // }
-  // html[dir="rtl"] .pdf-app .toolbarButton#sidebarToggle::before {
-  //   transform: scale(-0.5, 0.5);
-  // }
 
   .pdf-app .toolbarButton#secondaryToolbarToggle::before {
     content: url(../assets/images/toolbarButton-secondaryToolbarToggle@2x.png);
-  }
-  html[dir="rtl"] .pdf-app .toolbarButton#secondaryToolbarToggle::before {
-    transform: scale(-0.5, 0.5);
   }
 
   .pdf-app .toolbarButton.findPrevious::before {
     content: url(../assets/images/findbarButton-previous@2x.png);
   }
-  html[dir="rtl"] .pdf-app .toolbarButton.findPrevious::before {
-    transform: scale(-0.5, 0.5);
-  }
 
   .pdf-app .toolbarButton.findNext::before {
     content: url(../assets/images/findbarButton-next@2x.png);
-  }
-  html[dir="rtl"] .pdf-app .toolbarButton.findNext::before {
-    transform: scale(-0.5, 0.5);
   }
 
   .pdf-app .toolbarButton.pageUp::before {
     content: url(../assets/images/toolbarButton-pageUp@2x.png);
   }
-  html[dir="rtl"] .pdf-app .toolbarButton.pageUp::before {
-    transform: scale(-0.5, 0.5);
-  }
 
   .pdf-app .toolbarButton.pageDown::before {
     content: url(../assets/images/toolbarButton-pageDown@2x.png);
-  }
-  html[dir="rtl"] .pdf-app .toolbarButton.pageDown::before {
-    transform: scale(-0.5, 0.5);
   }
 
   .pdf-app .toolbarButton.zoomIn::before {
@@ -1751,9 +1640,6 @@ html[dir="rtl"] .pdf-app #documentPropertiesOverlay .row > * {
 
   .pdf-app #viewOutline.toolbarButton::before {
     content: url(../assets/images/toolbarButton-viewOutline@2x.png);
-  }
-  html[dir="rtl"] .pdf-app #viewOutline.toolbarButton::before {
-    transform: scale(-0.5, 0.5);
   }
 
   .pdf-app #viewAttachments.toolbarButton::before {
@@ -1823,15 +1709,6 @@ html[dir="rtl"] .pdf-app #documentPropertiesOverlay .row > * {
   }
   .pdf-app .outlineItemToggler.outlineItemsHidden::before {
     content: url(../assets/images/treeitem-collapsed@2x.png);
-  }
-  html[dir="rtl"] .pdf-app .outlineItemToggler.outlineItemsHidden::before {
-    transform: scale(-0.5, 0.5);
-  }
-  html[dir="ltr"] .pdf-app .outlineItemToggler::before {
-    right: 0;
-  }
-  html[dir="rtl"] .pdf-app .outlineItemToggler::before {
-    left: 0;
   }
 }
 
@@ -1924,10 +1801,6 @@ html[dir="rtl"] .pdf-app #documentPropertiesOverlay .row > * {
 }
 
 @media all and (max-width: 840px) {
-  .pdf-app #sidebarContent {
-    background-color: rgba(0, 0, 0, 0.7);
-  }
-
   html[dir="ltr"] .pdf-app #outerContainer.sidebarOpen #viewerContainer {
     left: 0px !important;
   }
