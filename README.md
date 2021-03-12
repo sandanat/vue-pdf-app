@@ -54,7 +54,7 @@ export default {
 Toolbar is available by default and is customized via `config` prop.
 Specify `false` for buttons or whole group of buttons to disable them.
 
-```json
+```javascript
 // disable "Previous page" button
 {
   toolbar: {

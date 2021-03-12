@@ -79,8 +79,76 @@
   }
 
   .bookmark-button::before {
-  content: "\f097";
-}
+    content: "\f097";
+  }
+
+  .view-thumbnail::before {
+    content: "\e815";
+  }
+
+  .view-outline::before {
+    content: "\e814";
+  }
+
+  .view-attachments::before {
+    content: "\e807";
+  }
+
+  .view-find::before {
+    content: "\e817";
+  }
+
+  .first-page::before {
+    content: "\e830";
+  }
+  
+  .last-page::before {
+    content: "\e82f";
+  }
+  
+  .rotate-clockwise::before {
+    content: "\e829";
+  }
+  
+  .rotate-counter-clockwise::before {
+    content: "\e82a";
+  }
+  
+  .select-tool::before {
+    content: "\f246";
+  }
+  
+  .hand-tool::before {
+    content: "\f256";
+  }
+  
+  .scroll-vertical::before {
+    content: "\e836";
+  }
+  
+  .scroll-horizontal::before {
+    content: "\e835";
+  }
+  
+  .scroll-wrapped::before {
+    content: "\e816";
+  }
+  
+  .spread-none::before {
+    content: "\e831";
+  }
+  
+  .spread-odd::before {
+    content: "\e83d";
+  }
+  
+  .spread-even::before {
+    content: "\e83c";
+  }
+  
+  .document-properties::before {
+    content: "\f129";
+  }
 }
 
 html[dir="rtl"] .pdf-app {

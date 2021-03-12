@@ -10,7 +10,7 @@
             <button
               v-show="showElem('sidebar.viewThumbnail')"
               id="viewThumbnail"
-              class="toolbarButton toggled"
+              class="toolbarButton toggled pdf-icon-button view-thumbnail"
               title="Show Thumbnails"
               tabindex="2"
               data-l10n-id="thumbs"
@@ -20,7 +20,7 @@
             <button
               v-show="showElem('sidebar.viewOutline')"
               id="viewOutline"
-              class="toolbarButton"
+              class="toolbarButton pdf-icon-button view-outline"
               title="Show Document Outline (double-click to expand/collapse all items)"
               tabindex="3"
               data-l10n-id="document_outline"
@@ -32,7 +32,7 @@
             <button
               v-show="showElem('sidebar.viewAttachments')"
               id="viewAttachments"
-              class="toolbarButton"
+              class="toolbarButton pdf-icon-button view-attachments"
               title="Show Attachments"
               tabindex="4"
               data-l10n-id="attachments"
@@ -216,7 +216,7 @@
             <button
               v-show="showElem('secondaryToolbar.firstPage')"
               id="firstPage"
-              class="secondaryToolbarButton firstPage"
+              class="secondaryToolbarButton firstPage pdf-icon-button first-page"
               title="Go to First Page"
               tabindex="56"
               data-l10n-id="first_page"
@@ -226,7 +226,7 @@
             <button
               v-show="showElem('secondaryToolbar.lastPage')"
               id="lastPage"
-              class="secondaryToolbarButton lastPage"
+              class="secondaryToolbarButton lastPage pdf-icon-button last-page"
               title="Go to Last Page"
               tabindex="57"
               data-l10n-id="last_page"
@@ -239,7 +239,7 @@
             <button
               v-show="showElem('secondaryToolbar.pageRotateCw')"
               id="pageRotateCw"
-              class="secondaryToolbarButton rotateCw"
+              class="secondaryToolbarButton rotateCw pdf-icon-button rotate-clockwise"
               title="Rotate Clockwise"
               tabindex="58"
               data-l10n-id="page_rotate_cw"
@@ -249,7 +249,7 @@
             <button
               v-show="showElem('secondaryToolbar.pageRotateCcw')"
               id="pageRotateCcw"
-              class="secondaryToolbarButton rotateCcw"
+              class="secondaryToolbarButton rotateCcw pdf-icon-button rotate-counter-clockwise"
               title="Rotate Counterclockwise"
               tabindex="59"
               data-l10n-id="page_rotate_ccw"
@@ -264,7 +264,7 @@
             <button
               v-show="showElem('secondaryToolbar.cursorSelectTool')"
               id="cursorSelectTool"
-              class="secondaryToolbarButton selectTool toggled"
+              class="secondaryToolbarButton selectTool toggled pdf-icon-button select-tool"
               title="Enable Text Selection Tool"
               tabindex="60"
               data-l10n-id="cursor_text_select_tool"
@@ -276,7 +276,7 @@
             <button
               v-show="showElem('secondaryToolbar.cursorHandTool')"
               id="cursorHandTool"
-              class="secondaryToolbarButton handTool"
+              class="secondaryToolbarButton handTool pdf-icon-button hand-tool"
               title="Enable Hand Tool"
               tabindex="61"
               data-l10n-id="cursor_hand_tool"
@@ -289,7 +289,7 @@
             <button
               v-show="showElem('secondaryToolbar.scrollVertical')"
               id="scrollVertical"
-              class="secondaryToolbarButton scrollModeButtons scrollVertical toggled"
+              class="secondaryToolbarButton scrollModeButtons scrollVertical toggled pdf-icon-button scroll-vertical"
               title="Use Vertical Scrolling"
               tabindex="62"
               data-l10n-id="scroll_vertical"
@@ -301,7 +301,7 @@
             <button
               v-show="showElem('secondaryToolbar.scrollHorizontal')"
               id="scrollHorizontal"
-              class="secondaryToolbarButton scrollModeButtons scrollHorizontal"
+              class="secondaryToolbarButton scrollModeButtons scrollHorizontal pdf-icon-button scroll-horizontal"
               title="Use Horizontal Scrolling"
               tabindex="63"
               data-l10n-id="scroll_horizontal"
@@ -313,7 +313,7 @@
             <button
               v-show="showElem('secondaryToolbar.scrollWrapped')"
               id="scrollWrapped"
-              class="secondaryToolbarButton scrollModeButtons scrollWrapped"
+              class="secondaryToolbarButton scrollModeButtons scrollWrapped pdf-icon-button scroll-wrapped"
               title="Use Wrapped Scrolling"
               tabindex="64"
               data-l10n-id="scroll_wrapped"
@@ -326,7 +326,7 @@
             <button
               v-show="showElem('secondaryToolbar.spreadNone')"
               id="spreadNone"
-              class="secondaryToolbarButton spreadModeButtons spreadNone toggled"
+              class="secondaryToolbarButton spreadModeButtons spreadNone toggled pdf-icon-button spread-none"
               title="Do not join page spreads"
               tabindex="65"
               data-l10n-id="spread_none"
@@ -336,7 +336,7 @@
             <button
               v-show="showElem('secondaryToolbar.spreadOdd')"
               id="spreadOdd"
-              class="secondaryToolbarButton spreadModeButtons spreadOdd"
+              class="secondaryToolbarButton spreadModeButtons  pdf-icon-button spread-odd"
               title="Join page spreads starting with odd-numbered pages"
               tabindex="66"
               data-l10n-id="spread_odd"
@@ -346,7 +346,7 @@
             <button
               v-show="showElem('secondaryToolbar.spreadEven')"
               id="spreadEven"
-              class="secondaryToolbarButton spreadModeButtons spreadEven"
+              class="secondaryToolbarButton spreadModeButtons spreadEven pdf-icon-button spread-even"
               title="Join page spreads starting with even-numbered pages"
               tabindex="67"
               data-l10n-id="spread_even"
@@ -359,7 +359,7 @@
             <button
               v-show="showElem('secondaryToolbar.documentProperties')"
               id="documentProperties"
-              class="secondaryToolbarButton documentProperties"
+              class="secondaryToolbarButton documentProperties pdf-icon-button document-properties"
               title="Document Properties…"
               tabindex="68"
               data-l10n-id="document_properties"
@@ -395,7 +395,7 @@
                 <button
                   v-show="showElem('findbar')"
                   id="viewFind"
-                  class="toolbarButton"
+                  class="toolbarButton pdf-icon-button view-find"
                   title="Find in Document"
                   tabindex="12"
                   data-l10n-id="findbar"

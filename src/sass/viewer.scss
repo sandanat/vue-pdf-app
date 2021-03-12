@@ -32,6 +32,10 @@
   --pdf-toolbar-font-color: #{$pdf-toolbar-font-color};
   --pdf-button-hover-font-color: #{$pdf-button-hover-font-color};
   --pdf-button-toggled-color: #{$pdf-button-toggled-color};
+  --pdf-horizontal-toolbar-separator-color: #{$pdf-horizontal-toolbar-separator-color};
+  --pdf-input-color: #{$pdf-input-color};
+  --pdf-input-font-color: #{$pdf-input-font-color};
+  --pdf-find-input-placeholder-font-color: #{$pdf-find-input-placeholder-font-color};
 }
 
 .pdf-app * {
@@ -407,6 +411,8 @@ html[dir="rtl"] .pdf-app .findbar {
 
 .pdf-app #findInput::placeholder {
   font-style: italic;
+  color: $pdf-find-input-placeholder-font-color;
+  color: var(--pdf-find-input-placeholder-font-color);
 }
 .pdf-app #findInput[data-status="pending"] {
   background-size: 16px;
@@ -746,22 +752,6 @@ html[dir="rtl"] .pdf-app .dropdownToolbarButton::after {
   pointer-events: none;
 }
 
-.pdf-app #viewThumbnail.toolbarButton::before {
-  content: url(../assets/images/toolbarButton-viewThumbnail.png);
-}
-
-.pdf-app #viewOutline.toolbarButton::before {
-  content: url(../assets/images/toolbarButton-viewOutline.png);
-}
-
-.pdf-app #viewAttachments.toolbarButton::before {
-  content: url(../assets/images/toolbarButton-viewAttachments.png);
-}
-
-.pdf-app #viewFind.toolbarButton::before {
-  content: url(../assets/images/toolbarButton-search.png);
-}
-
 .pdf-app .toolbarButton.pdfSidebarNotification::after {
   position: absolute;
   display: inline-block;
@@ -812,65 +802,13 @@ html[dir="rtl"] .pdf-app .secondaryToolbarButton > span {
   padding-left: 4px;
 }
 
-.pdf-app .secondaryToolbarButton.firstPage::before {
-  content: url(../assets/images/secondaryToolbarButton-firstPage.png);
-}
-
-.pdf-app .secondaryToolbarButton.lastPage::before {
-  content: url(../assets/images/secondaryToolbarButton-lastPage.png);
-}
-
-.pdf-app .secondaryToolbarButton.rotateCcw::before {
-  content: url(../assets/images/secondaryToolbarButton-rotateCcw.png);
-}
-
-.pdf-app .secondaryToolbarButton.rotateCw::before {
-  content: url(../assets/images/secondaryToolbarButton-rotateCw.png);
-}
-
-.pdf-app .secondaryToolbarButton.selectTool::before {
-  content: url(../assets/images/secondaryToolbarButton-selectTool.png);
-}
-
-.pdf-app .secondaryToolbarButton.handTool::before {
-  content: url(../assets/images/secondaryToolbarButton-handTool.png);
-}
-
-.pdf-app .secondaryToolbarButton.scrollVertical::before {
-  content: url(../assets/images/secondaryToolbarButton-scrollVertical.png);
-}
-
-.pdf-app .secondaryToolbarButton.scrollHorizontal::before {
-  content: url(../assets/images/secondaryToolbarButton-scrollHorizontal.png);
-}
-
-.pdf-app .secondaryToolbarButton.scrollWrapped::before {
-  content: url(../assets/images/secondaryToolbarButton-scrollWrapped.png);
-}
-
-.pdf-app .secondaryToolbarButton.spreadNone::before {
-  content: url(../assets/images/secondaryToolbarButton-spreadNone.png);
-}
-
-.pdf-app .secondaryToolbarButton.spreadOdd::before {
-  content: url(../assets/images/secondaryToolbarButton-spreadOdd.png);
-}
-
-.pdf-app .secondaryToolbarButton.spreadEven::before {
-  content: url(../assets/images/secondaryToolbarButton-spreadEven.png);
-}
-
-.pdf-app .secondaryToolbarButton.documentProperties::before {
-  content: url(../assets/images/secondaryToolbarButton-documentProperties.png);
-}
-
 .pdf-app .verticalToolbarSeparator {
   display: block;
   padding: 8px 0;
   margin: 8px 4px;
   width: 1px;
-  background-color: rgba(0, 0, 0, 0.5);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+  background-color: $pdf-split-toolbar-button-separator-color;
+  background-color: var(--pdf-split-toolbar-button-separator-color);
 }
 html[dir="ltr"] .pdf-app .verticalToolbarSeparator {
   margin-left: 2px;
@@ -884,26 +822,21 @@ html[dir="rtl"] .pdf-app .verticalToolbarSeparator {
   margin: 0 0 4px 0;
   height: 1px;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+  background-color: $pdf-horizontal-toolbar-separator-color;
+  background-color: var(--pdf-horizontal-toolbar-separator-color);
 }
 
 .pdf-app .toolbarField {
   padding: 3px 6px;
   margin: 4px 0 4px 0;
   border-radius: 2px;
-  background-color: rgba(255, 255, 255, 0.09);
-  background-image: linear-gradient(
-    rgba(255, 255, 255, 0.05),
-    rgba(255, 255, 255, 0)
-  );
-  background-clip: padding-box;
+  background-color: $pdf-input-color;
+  background-color: var(--pdf-input-color);
   border-width: 1px;
   border-style: solid;
   border-color: rgba(0, 0, 0, 0.32) rgba(0, 0, 0, 0.38) rgba(0, 0, 0, 0.42);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05) inset,
-    0 1px 0 rgba(255, 255, 255, 0.05);
-  color: rgba(242, 242, 242, 1);
+  color: $pdf-input-font-color;
+  color: var(--pdf-input-font-color);
   font-size: 12px;
   line-height: 14px;
   outline-style: none;
@@ -912,6 +845,11 @@ html[dir="rtl"] .pdf-app .verticalToolbarSeparator {
 .pdf-app .toolbarField[type="checkbox"] {
   display: inline-block;
   margin: 8px 0px;
+  cursor: pointer;
+
+  & + label {
+    cursor: pointer;
+  }
 }
 
 .pdf-app .toolbarField.pageNumber {
@@ -934,24 +872,14 @@ html[dir="rtl"] .pdf-app .verticalToolbarSeparator {
   margin: 0;
 }
 
-.pdf-app .toolbarField:hover {
-  background-color: rgba(255, 255, 255, 0.11);
-  border-color: rgba(0, 0, 0, 0.4) rgba(0, 0, 0, 0.43) rgba(0, 0, 0, 0.45);
-}
-
-.pdf-app .toolbarField:focus {
-  background-color: rgba(255, 255, 255, 0.15);
-  border-color: rgba(77, 184, 255, 0.8) rgba(77, 184, 255, 0.85)
-    rgba(77, 184, 255, 0.9);
-}
-
 .pdf-app .toolbarLabel {
   min-width: 16px;
   padding: 3px 6px 3px 2px;
   margin: 4px 2px 4px 0;
   border: 1px solid rgba(0, 0, 0, 0);
   border-radius: 2px;
-  color: rgba(217, 217, 217, 1);
+  color: $pdf-toolbar-font-color;
+  color: var(--pdf-toolbar-font-color);
   font-size: 12px;
   line-height: 14px;
   text-align: left;
@@ -1019,31 +947,10 @@ html[dir="rtl"] .pdf-app .thumbnail {
 .pdf-app a:focus > .thumbnail > .thumbnailSelectionRing,
 .pdf-app .thumbnail:hover > .thumbnailSelectionRing {
   background-color: rgba(255, 255, 255, 0.15);
-  background-image: linear-gradient(
-    rgba(255, 255, 255, 0.05),
-    rgba(255, 255, 255, 0)
-  );
-  background-clip: padding-box;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset,
-    0 0 1px rgba(255, 255, 255, 0.2) inset, 0 0 1px rgba(0, 0, 0, 0.2);
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.pdf-app .thumbnail.selected > .thumbnailSelectionRing > .thumbnailImage {
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
-  opacity: 1;
 }
 
 .pdf-app .thumbnail.selected > .thumbnailSelectionRing {
   background-color: rgba(255, 255, 255, 0.3);
-  background-image: linear-gradient(
-    rgba(255, 255, 255, 0.05),
-    rgba(255, 255, 255, 0)
-  );
-  background-clip: padding-box;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset,
-    0 0 1px rgba(255, 255, 255, 0.1) inset, 0 0 1px rgba(0, 0, 0, 0.2);
-  color: rgba(255, 255, 255, 1);
 }
 
 .pdf-app #outlineView,
@@ -1426,7 +1333,7 @@ html[dir="rtl"] .pdf-app #documentPropertiesOverlay .row > * {
   cursor: inherit !important;
 }
 .pdf-app .grab-to-pan-grab:active,
-.pdf-app .grab-to-pan-grabbing {
+.grab-to-pan-grabbing {
   cursor: url(../assets/images/grabbing.cur), move !important;
   cursor: grabbing !important;
   position: fixed;
@@ -1449,137 +1356,6 @@ html[dir="rtl"] .pdf-app #documentPropertiesOverlay .row > * {
 }
 
 @media screen and (min-resolution: 1.1dppx) {
-  .pdf-app .toolbarField.pageNumber.visiblePageIsLoading,
-  .pdf-app #findInput[data-status="pending"] {
-    background-image: url(../assets/images/loading-icon.svg);
-    background-size: 16px;
-  }
-
-  .pdf-app .dropdownToolbarButton::after {
-    content: url(../assets/images/toolbarButton-menuArrows@2x.png);
-  }
-
-  .pdf-app .toolbarButton#secondaryToolbarToggle::before {
-    content: url(../assets/images/toolbarButton-secondaryToolbarToggle@2x.png);
-  }
-
-  .pdf-app .toolbarButton.findPrevious::before {
-    content: url(../assets/images/findbarButton-previous@2x.png);
-  }
-
-  .pdf-app .toolbarButton.findNext::before {
-    content: url(../assets/images/findbarButton-next@2x.png);
-  }
-
-  .pdf-app .toolbarButton.pageUp::before {
-    content: url(../assets/images/toolbarButton-pageUp@2x.png);
-  }
-
-  .pdf-app .toolbarButton.pageDown::before {
-    content: url(../assets/images/toolbarButton-pageDown@2x.png);
-  }
-
-  .pdf-app .toolbarButton.zoomIn::before {
-    content: url(../assets/images/toolbarButton-zoomIn@2x.png);
-  }
-
-  .pdf-app .toolbarButton.zoomOut::before {
-    content: url(../assets/images/toolbarButton-zoomOut@2x.png);
-  }
-
-  .pdf-app .toolbarButton.presentationMode::before,
-  .pdf-app .secondaryToolbarButton.presentationMode::before {
-    content: url(../assets/images/toolbarButton-presentationMode@2x.png);
-  }
-
-  .pdf-app .toolbarButton.print::before,
-  .pdf-app .secondaryToolbarButton.print::before {
-    content: url(../assets/images/toolbarButton-print@2x.png);
-  }
-
-  .pdf-app .toolbarButton.openFile::before,
-  .pdf-app .secondaryToolbarButton.openFile::before {
-    content: url(../assets/images/toolbarButton-openFile@2x.png);
-  }
-
-  .pdf-app .toolbarButton.download::before,
-  .pdf-app .secondaryToolbarButton.download::before {
-    content: url(../assets/images/toolbarButton-download@2x.png);
-  }
-
-  .pdf-app .toolbarButton.bookmark::before,
-  .pdf-app .secondaryToolbarButton.bookmark::before {
-    content: url(../assets/images/toolbarButton-bookmark@2x.png);
-  }
-
-  .pdf-app #viewThumbnail.toolbarButton::before {
-    content: url(../assets/images/toolbarButton-viewThumbnail@2x.png);
-  }
-
-  .pdf-app #viewOutline.toolbarButton::before {
-    content: url(../assets/images/toolbarButton-viewOutline@2x.png);
-  }
-
-  .pdf-app #viewAttachments.toolbarButton::before {
-    content: url(../assets/images/toolbarButton-viewAttachments@2x.png);
-  }
-
-  .pdf-app #viewFind.toolbarButton::before {
-    content: url(../assets/images/toolbarButton-search@2x.png);
-  }
-
-  .pdf-app .secondaryToolbarButton.firstPage::before {
-    content: url(../assets/images/secondaryToolbarButton-firstPage@2x.png);
-  }
-
-  .pdf-app .secondaryToolbarButton.lastPage::before {
-    content: url(../assets/images/secondaryToolbarButton-lastPage@2x.png);
-  }
-
-  .pdf-app .secondaryToolbarButton.rotateCcw::before {
-    content: url(../assets/images/secondaryToolbarButton-rotateCcw@2x.png);
-  }
-
-  .pdf-app .secondaryToolbarButton.rotateCw::before {
-    content: url(../assets/images/secondaryToolbarButton-rotateCw@2x.png);
-  }
-
-  .pdf-app .secondaryToolbarButton.selectTool::before {
-    content: url(../assets/images/secondaryToolbarButton-selectTool@2x.png);
-  }
-
-  .pdf-app .secondaryToolbarButton.handTool::before {
-    content: url(../assets/images/secondaryToolbarButton-handTool@2x.png);
-  }
-
-  .pdf-app .secondaryToolbarButton.scrollVertical::before {
-    content: url(../assets/images/secondaryToolbarButton-scrollVertical@2x.png);
-  }
-
-  .pdf-app .secondaryToolbarButton.scrollHorizontal::before {
-    content: url(../assets/images/secondaryToolbarButton-scrollHorizontal@2x.png);
-  }
-
-  .pdf-app .secondaryToolbarButton.scrollWrapped::before {
-    content: url(../assets/images/secondaryToolbarButton-scrollWrapped@2x.png);
-  }
-
-  .pdf-app .secondaryToolbarButton.spreadNone::before {
-    content: url(../assets/images/secondaryToolbarButton-spreadNone@2x.png);
-  }
-
-  .pdf-app .secondaryToolbarButton.spreadOdd::before {
-    content: url(../assets/images/secondaryToolbarButton-spreadOdd@2x.png);
-  }
-
-  .pdf-app .secondaryToolbarButton.spreadEven::before {
-    content: url(../assets/images/secondaryToolbarButton-spreadEven@2x.png);
-  }
-
-  .pdf-app .secondaryToolbarButton.documentProperties::before {
-    content: url(../assets/images/secondaryToolbarButton-documentProperties@2x.png);
-  }
-
   .pdf-app .outlineItemToggler::before {
     transform: scale(0.5);
     top: -1px;
