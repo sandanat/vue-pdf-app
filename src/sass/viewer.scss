@@ -16,7 +16,7 @@
 @import "@/sass/variables.scss";
 
 :root {
-  --sidebar-width: #{$pdf-sidebar-width};
+  --sidebar-width: 200px;
   --sidebar-transition-duration: #{$pdf-sidebar-transition-duration};
   --sidebar-transition-timing-function: #{$pdf-sidebar-transition-timing-function};
   --pdf-app-background-color: #{$pdf-app-background-color};
@@ -139,7 +139,7 @@
   position: absolute;
   top: 32px;
   bottom: 0;
-  width: $pdf-sidebar-width;
+  width: 200px;
   width: var(--sidebar-width);
   visibility: hidden;
   z-index: 100;
@@ -151,12 +151,12 @@
 }
 html[dir="ltr"] .pdf-app #sidebarContainer {
   transition-property: left;
-  left: calc(0px - $pdf-sidebar-width);
+  left: calc(0px - 200px);
   left: calc(0px - var(--sidebar-width));
 }
 html[dir="rtl"] .pdf-app #sidebarContainer {
   transition-property: right;
-  right: calc(0px - $pdf-sidebar-width);
+  right: calc(0px - 200px);
   right: calc(0px - var(--sidebar-width));
 }
 
@@ -243,7 +243,7 @@ html[dir="ltr"]
   #outerContainer.sidebarOpen
   #viewerContainer:not(.pdfPresentationMode) {
   transition-property: left;
-  left: $pdf-sidebar-width;
+  left: 200px;
   left: var(--sidebar-width);
 }
 html[dir="rtl"]
@@ -251,7 +251,7 @@ html[dir="rtl"]
   #outerContainer.sidebarOpen
   #viewerContainer:not(.pdfPresentationMode) {
   transition-property: right;
-  right: $pdf-sidebar-width;
+  right: 200px;
   right: var(--sidebar-width);
 }
 
