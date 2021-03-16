@@ -13,7 +13,7 @@ VUEjs v2 PDF viewer based on Mozilla's PDFJS.
 
 Easily localized configurable panel
 
-Cross-browser support
+Cross-browser support (including IE11)
 
 Built-in typescript support
 
@@ -161,7 +161,7 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
 ### @open(PDFViewerApplication)
 - Description: emitted when pdf is opened
 - Arguments:
-  - PDFViewerApplication - pdf application
+  - PDFViewerApplication - [pdf application](https://github.com/mozilla/pdf.js/blob/master/web/app.js#L198)
 - Usage:
 ```html
 <vue-pdf-viewer @open="openHandler" />

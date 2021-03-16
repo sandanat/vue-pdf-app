@@ -24,6 +24,7 @@
   --pdf-toolbar-sidebar-color: #{$pdf-toolbar-sidebar-color};
   --pdf-toolbar-color: #{$pdf-toolbar-color};
   --pdf-loading-bar-color: #{$pdf-loading-bar-color};
+  --pdf-loading-bar-secondary-color: #{$pdf-loading-bar-secondary-color};
   --pdf-find-results-count-color: #{$pdf-find-results-count-color};
   --pdf-find-results-count-font-color: #{$pdf-find-results-count-font-color};
   --pdf-find-message-font-color: #{$pdf-find-message-font-color};
@@ -330,8 +331,6 @@ html[dir="rtl"] .pdf-app #toolbarContainer,
   position: relative;
   width: 100%;
   height: 4px;
-  background-color: $pdf-loading-bar-color;
-  background-color: var(--pdf-loading-bar-color);
   border-bottom: 1px solid rgba(51, 51, 51, 1);
 }
 
@@ -341,7 +340,8 @@ html[dir="rtl"] .pdf-app #toolbarContainer,
   left: 0;
   width: 0%;
   height: 100%;
-  background-color: rgba(221, 221, 221, 1);
+  background-color: $pdf-loading-bar-color;
+  background-color: var(--pdf-loading-bar-color);
   overflow: hidden;
   transition: width 200ms;
 }
@@ -355,11 +355,6 @@ html[dir="rtl"] .pdf-app #toolbarContainer,
   }
 }
 
-.pdf-app #loadingBar .progress.indeterminate {
-  background-color: rgba(153, 153, 153, 1);
-  transition: none;
-}
-
 .pdf-app #loadingBar .progress.indeterminate .glimmer {
   position: absolute;
   top: 0;
@@ -368,12 +363,21 @@ html[dir="rtl"] .pdf-app #toolbarContainer,
   width: calc(100% + 150px);
   background: repeating-linear-gradient(
     135deg,
-    rgba(187, 187, 187, 1) 0,
-    rgba(153, 153, 153, 1) 5px,
-    rgba(153, 153, 153, 1) 45px,
-    rgba(221, 221, 221, 1) 55px,
-    rgba(221, 221, 221, 1) 95px,
-    rgba(187, 187, 187, 1) 100px
+    transparent 0,
+    $pdf-loading-bar-secondary-color 5px,
+    $pdf-loading-bar-secondary-color 45px,
+    transparent 55px,
+    transparent 95px,
+    transparent 100px
+  );
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0,
+    var(--pdf-loading-bar-secondary-color) 5px,
+    var(--pdf-loading-bar-secondary-color) 45px,
+    transparent 55px,
+    transparent 95px,
+    transparent 100px
   );
   animation: progressIndeterminate 950ms linear infinite;
 }
@@ -484,7 +488,8 @@ html[dir="rtl"] .pdf-app .secondaryToolbar {
 }
 .pdf-app .doorHanger:after,
 .pdf-app .doorHangerRight:after {
-  border-bottom-color: rgba(82, 82, 82, 0.99);
+  border-bottom-color: $pdf-toolbar-color;
+  border-bottom-color: var(--pdf-toolbar-color);
   border-width: 8px;
 }
 .pdf-app .doorHanger:before,
@@ -669,6 +674,10 @@ html[dir="rtl"] .pdf-app .splitToolbarButtonSeparator {
   cursor: default;
 }
 
+.pdf-app .findbar .toolbarButton {
+  cursor: pointer;
+}
+
 .pdf-app .dialog .overlayButton {
   background-color: $pdf-dialog-button-color;
   background-color: var(--pdf-dialog-button-color);
@@ -799,27 +808,27 @@ html[dir="rtl"] .pdf-app .toolbarButton.pdfSidebarNotification::after {
   width: auto;
   min-width: 100%;
   white-space: normal;
+
+  > span {
+    vertical-align: top;
+  }
 }
 html[dir="ltr"] .pdf-app .secondaryToolbarButton {
-  padding-left: 24px;
+  padding-left: 14px;
   text-align: left;
 }
 html[dir="rtl"] .pdf-app .secondaryToolbarButton {
-  padding-right: 24px;
+  padding-right: 14px;
   text-align: right;
 }
-html[dir="ltr"] .pdf-app .secondaryToolbarButton.bookmark {
-  padding-left: 27px;
-}
-html[dir="rtl"] .pdf-app .secondaryToolbarButton.bookmark {
-  padding-right: 27px;
-}
-
 html[dir="ltr"] .pdf-app .secondaryToolbarButton > span {
-  padding-right: 4px;
+  padding-left: 8px;
 }
 html[dir="rtl"] .pdf-app .secondaryToolbarButton > span {
-  padding-left: 4px;
+  padding-right: 8px;
+}
+html[dir="rtl"] .pdf-app .secondaryToolbarButton::before {
+  float: right;
 }
 
 .pdf-app .verticalToolbarSeparator {
