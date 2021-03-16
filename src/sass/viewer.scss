@@ -1374,6 +1374,9 @@ html[dir="rtl"] .pdf-app #documentPropertiesOverlay .row > * {
   .pdf-app .outlineItemToggler.outlineItemsHidden::before {
     content: url(../assets/images/treeitem-collapsed@2x.png);
   }
+  html[dir="rtl"] .pdf-app .outlineItemToggler.outlineItemsHidden::before {
+    transform: scaleX(-1) scale(0.5);
+  }
 }
 
 @media print {
