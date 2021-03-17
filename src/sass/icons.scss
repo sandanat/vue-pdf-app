@@ -1,11 +1,11 @@
 @font-face {
   font-family: "pdf";
   src: url("../assets/icons/font/pdf.eot");
-  src: url("../assets/icons/font/pdf.eot") format("embedded-opentype"),
+  src: url("../assets/icons/font/pdf.eot?#iefix") format("embedded-opentype"),
     url("../assets/icons/font/pdf.woff2") format("woff2"),
     url("../assets/icons/font/pdf.woff") format("woff"),
     url("../assets/icons/font/pdf.ttf") format("truetype"),
-    url("../assets/icons/font/pdf.svg") format("svg");
+    url("../assets/icons/font/pdf.svg?#pdf") format("svg");
   font-weight: normal;
   font-style: normal;
 }
