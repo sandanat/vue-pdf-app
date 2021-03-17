@@ -10,7 +10,7 @@
             <button
               v-show="showElem('sidebar.viewThumbnail')"
               id="viewThumbnail"
-              class="toolbarButton toggled pdf-icon-button view-thumbnail"
+              class="toolbarButton toggled vue-pdf-app-icon view-thumbnail"
               title="Show Thumbnails"
               tabindex="2"
               data-l10n-id="thumbs"
@@ -20,7 +20,7 @@
             <button
               v-show="showElem('sidebar.viewOutline')"
               id="viewOutline"
-              class="toolbarButton pdf-icon-button view-outline"
+              class="toolbarButton vue-pdf-app-icon view-outline"
               title="Show Document Outline (double-click to expand/collapse all items)"
               tabindex="3"
               data-l10n-id="document_outline"
@@ -32,7 +32,7 @@
             <button
               v-show="showElem('sidebar.viewAttachments')"
               id="viewAttachments"
-              class="toolbarButton pdf-icon-button view-attachments"
+              class="toolbarButton vue-pdf-app-icon view-attachments"
               title="Show Attachments"
               tabindex="4"
               data-l10n-id="attachments"
@@ -79,7 +79,7 @@
             <div class="splitToolbarButton">
               <button
                 id="findPrevious"
-                class="toolbarButton findPrevious pdf-icon-button find-previous"
+                class="toolbarButton findPrevious vue-pdf-app-icon find-previous"
                 title="Find the previous occurrence of the phrase"
                 tabindex="92"
                 data-l10n-id="find_previous"
@@ -89,7 +89,7 @@
               <div class="splitToolbarButtonSeparator"></div>
               <button
                 id="findNext"
-                class="toolbarButton findNext pdf-icon-button find-next"
+                class="toolbarButton findNext vue-pdf-app-icon find-next"
                 title="Find the next occurrence of the phrase"
                 tabindex="93"
                 data-l10n-id="find_next"
@@ -156,7 +156,7 @@
             <button
               v-show="showElem('secondaryToolbar.secondaryPresentationMode')"
               id="secondaryPresentationMode"
-              class="secondaryToolbarButton presentationMode visibleLargeView pdf-icon-button presentation-mode"
+              class="secondaryToolbarButton presentationMode visibleLargeView vue-pdf-app-icon presentation-mode"
               title="Switch to Presentation Mode"
               tabindex="51"
               data-l10n-id="presentation_mode"
@@ -169,7 +169,7 @@
             <button
               v-show="showElem('secondaryToolbar.secondaryOpenFile')"
               id="secondaryOpenFile"
-              class="secondaryToolbarButton openFile visibleLargeView pdf-icon-button open-file"
+              class="secondaryToolbarButton openFile visibleLargeView vue-pdf-app-icon open-file"
               title="Open File"
               tabindex="52"
               data-l10n-id="open_file"
@@ -180,7 +180,7 @@
             <button
               v-show="showElem('secondaryToolbar.secondaryPrint')"
               id="secondaryPrint"
-              class="secondaryToolbarButton print visibleMediumView pdf-icon-button print-button"
+              class="secondaryToolbarButton print visibleMediumView vue-pdf-app-icon print-button"
               title="Print"
               tabindex="53"
               data-l10n-id="print"
@@ -191,7 +191,7 @@
             <button
               v-show="showElem('secondaryToolbar.secondaryDownload')"
               id="secondaryDownload"
-              class="secondaryToolbarButton download visibleMediumView pdf-icon-button download-button"
+              class="secondaryToolbarButton download visibleMediumView vue-pdf-app-icon download-button"
               title="Download"
               tabindex="54"
               data-l10n-id="download"
@@ -203,7 +203,7 @@
               v-show="showElem('secondaryToolbar.secondaryViewBookmark')"
               href="#"
               id="secondaryViewBookmark"
-              class="secondaryToolbarButton bookmark visibleSmallView pdf-icon-button bookmark-button"
+              class="secondaryToolbarButton bookmark visibleSmallView vue-pdf-app-icon bookmark-button"
               title="Current view (copy or open in new window)"
               tabindex="55"
               data-l10n-id="bookmark"
@@ -216,7 +216,7 @@
             <button
               v-show="showElem('secondaryToolbar.firstPage')"
               id="firstPage"
-              class="secondaryToolbarButton firstPage pdf-icon-button first-page"
+              class="secondaryToolbarButton firstPage vue-pdf-app-icon first-page"
               title="Go to First Page"
               tabindex="56"
               data-l10n-id="first_page"
@@ -226,7 +226,7 @@
             <button
               v-show="showElem('secondaryToolbar.lastPage')"
               id="lastPage"
-              class="secondaryToolbarButton lastPage pdf-icon-button last-page"
+              class="secondaryToolbarButton lastPage vue-pdf-app-icon last-page"
               title="Go to Last Page"
               tabindex="57"
               data-l10n-id="last_page"
@@ -239,7 +239,7 @@
             <button
               v-show="showElem('secondaryToolbar.pageRotateCw')"
               id="pageRotateCw"
-              class="secondaryToolbarButton rotateCw pdf-icon-button rotate-clockwise"
+              class="secondaryToolbarButton rotateCw vue-pdf-app-icon rotate-clockwise"
               title="Rotate Clockwise"
               tabindex="58"
               data-l10n-id="page_rotate_cw"
@@ -249,7 +249,7 @@
             <button
               v-show="showElem('secondaryToolbar.pageRotateCcw')"
               id="pageRotateCcw"
-              class="secondaryToolbarButton rotateCcw pdf-icon-button rotate-counter-clockwise"
+              class="secondaryToolbarButton rotateCcw vue-pdf-app-icon rotate-counter-clockwise"
               title="Rotate Counterclockwise"
               tabindex="59"
               data-l10n-id="page_rotate_ccw"
@@ -264,7 +264,7 @@
             <button
               v-show="showElem('secondaryToolbar.cursorSelectTool')"
               id="cursorSelectTool"
-              class="secondaryToolbarButton selectTool toggled pdf-icon-button select-tool"
+              class="secondaryToolbarButton selectTool toggled vue-pdf-app-icon select-tool"
               title="Enable Text Selection Tool"
               tabindex="60"
               data-l10n-id="cursor_text_select_tool"
@@ -276,7 +276,7 @@
             <button
               v-show="showElem('secondaryToolbar.cursorHandTool')"
               id="cursorHandTool"
-              class="secondaryToolbarButton handTool pdf-icon-button hand-tool"
+              class="secondaryToolbarButton handTool vue-pdf-app-icon hand-tool"
               title="Enable Hand Tool"
               tabindex="61"
               data-l10n-id="cursor_hand_tool"
@@ -289,7 +289,7 @@
             <button
               v-show="showElem('secondaryToolbar.scrollVertical')"
               id="scrollVertical"
-              class="secondaryToolbarButton scrollModeButtons scrollVertical toggled pdf-icon-button scroll-vertical"
+              class="secondaryToolbarButton scrollModeButtons scrollVertical toggled vue-pdf-app-icon scroll-vertical"
               title="Use Vertical Scrolling"
               tabindex="62"
               data-l10n-id="scroll_vertical"
@@ -301,7 +301,7 @@
             <button
               v-show="showElem('secondaryToolbar.scrollHorizontal')"
               id="scrollHorizontal"
-              class="secondaryToolbarButton scrollModeButtons scrollHorizontal pdf-icon-button scroll-horizontal"
+              class="secondaryToolbarButton scrollModeButtons scrollHorizontal vue-pdf-app-icon scroll-horizontal"
               title="Use Horizontal Scrolling"
               tabindex="63"
               data-l10n-id="scroll_horizontal"
@@ -313,7 +313,7 @@
             <button
               v-show="showElem('secondaryToolbar.scrollWrapped')"
               id="scrollWrapped"
-              class="secondaryToolbarButton scrollModeButtons scrollWrapped pdf-icon-button scroll-wrapped"
+              class="secondaryToolbarButton scrollModeButtons scrollWrapped vue-pdf-app-icon scroll-wrapped"
               title="Use Wrapped Scrolling"
               tabindex="64"
               data-l10n-id="scroll_wrapped"
@@ -326,7 +326,7 @@
             <button
               v-show="showElem('secondaryToolbar.spreadNone')"
               id="spreadNone"
-              class="secondaryToolbarButton spreadModeButtons spreadNone toggled pdf-icon-button spread-none"
+              class="secondaryToolbarButton spreadModeButtons spreadNone toggled vue-pdf-app-icon spread-none"
               title="Do not join page spreads"
               tabindex="65"
               data-l10n-id="spread_none"
@@ -336,7 +336,7 @@
             <button
               v-show="showElem('secondaryToolbar.spreadOdd')"
               id="spreadOdd"
-              class="secondaryToolbarButton spreadModeButtons  pdf-icon-button spread-odd"
+              class="secondaryToolbarButton spreadModeButtons  vue-pdf-app-icon spread-odd"
               title="Join page spreads starting with odd-numbered pages"
               tabindex="66"
               data-l10n-id="spread_odd"
@@ -346,7 +346,7 @@
             <button
               v-show="showElem('secondaryToolbar.spreadEven')"
               id="spreadEven"
-              class="secondaryToolbarButton spreadModeButtons spreadEven pdf-icon-button spread-even"
+              class="secondaryToolbarButton spreadModeButtons spreadEven vue-pdf-app-icon spread-even"
               title="Join page spreads starting with even-numbered pages"
               tabindex="67"
               data-l10n-id="spread_even"
@@ -359,7 +359,7 @@
             <button
               v-show="showElem('secondaryToolbar.documentProperties')"
               id="documentProperties"
-              class="secondaryToolbarButton documentProperties pdf-icon-button document-properties"
+              class="secondaryToolbarButton documentProperties vue-pdf-app-icon document-properties"
               title="Document Properties…"
               tabindex="68"
               data-l10n-id="document_properties"
@@ -382,7 +382,7 @@
                 <button
                   v-show="showElem('sidebar')"
                   id="sidebarToggle"
-                  class="toolbarButton pdf-icon-button sidebar-toggle"
+                  class="toolbarButton vue-pdf-app-icon sidebar-toggle"
                   title="Toggle Sidebar"
                   tabindex="11"
                   data-l10n-id="toggle_sidebar"
@@ -395,7 +395,7 @@
                 <button
                   v-show="showElem('findbar')"
                   id="viewFind"
-                  class="toolbarButton pdf-icon-button view-find"
+                  class="toolbarButton vue-pdf-app-icon view-find"
                   title="Find in Document"
                   tabindex="12"
                   data-l10n-id="findbar"
@@ -405,7 +405,7 @@
                 <div class="splitToolbarButton hiddenSmallView">
                   <button
                     v-show="showElem('toolbar.toolbarViewerLeft.previous')"
-                    class="toolbarButton pageUp pdf-icon-button page-up"
+                    class="toolbarButton pageUp vue-pdf-app-icon page-up"
                     title="Previous Page"
                     id="previous"
                     tabindex="13"
@@ -416,7 +416,7 @@
                   <div class="splitToolbarButtonSeparator"></div>
                   <button
                     v-show="showElem('toolbar.toolbarViewerLeft.next')"
-                    class="toolbarButton pageDown pdf-icon-button page-down"
+                    class="toolbarButton pageDown vue-pdf-app-icon page-down"
                     title="Next Page"
                     id="next"
                     tabindex="14"
@@ -453,7 +453,7 @@
                     showElem('toolbar.toolbarViewerRight.presentationMode')
                   "
                   id="presentationMode"
-                  class="toolbarButton presentationMode hiddenLargeView pdf-icon-button presentation-mode"
+                  class="toolbarButton presentationMode hiddenLargeView vue-pdf-app-icon presentation-mode"
                   title="Switch to Presentation Mode"
                   tabindex="31"
                   data-l10n-id="presentation_mode"
@@ -466,7 +466,7 @@
                 <button
                   v-show="showElem('toolbar.toolbarViewerRight.openFile')"
                   id="openFile"
-                  class="toolbarButton openFile hiddenLargeView pdf-icon-button open-file"
+                  class="toolbarButton openFile hiddenLargeView vue-pdf-app-icon open-file"
                   title="Open File"
                   tabindex="32"
                   data-l10n-id="open_file"
@@ -477,7 +477,7 @@
                 <button
                   v-show="showElem('toolbar.toolbarViewerRight.print')"
                   id="print"
-                  class="toolbarButton print hiddenMediumView pdf-icon-button print-button"
+                  class="toolbarButton print hiddenMediumView vue-pdf-app-icon print-button"
                   title="Print"
                   tabindex="33"
                   data-l10n-id="print"
@@ -488,7 +488,7 @@
                 <button
                   v-show="showElem('toolbar.toolbarViewerRight.download')"
                   id="download"
-                  class="toolbarButton download hiddenMediumView pdf-icon-button download-button"
+                  class="toolbarButton download hiddenMediumView vue-pdf-app-icon download-button"
                   title="Download"
                   tabindex="34"
                   data-l10n-id="download"
@@ -499,7 +499,7 @@
                   v-show="showElem('toolbar.toolbarViewerRight.viewBookmark')"
                   href="#"
                   id="viewBookmark"
-                  class="toolbarButton bookmark hiddenSmallView pdf-icon-button bookmark-button"
+                  class="toolbarButton bookmark hiddenSmallView vue-pdf-app-icon bookmark-button"
                   title="Current view (copy or open in new window)"
                   tabindex="35"
                   data-l10n-id="bookmark"
@@ -516,7 +516,7 @@
                     )
                   "
                   id="secondaryToolbarToggle"
-                  class="toolbarButton pdf-icon-button secondary-toolbar-toggle"
+                  class="toolbarButton vue-pdf-app-icon secondary-toolbar-toggle"
                   title="Tools"
                   tabindex="36"
                   data-l10n-id="tools"
@@ -532,7 +532,7 @@
                   <button
                     v-show="showElem('toolbar.toolbarViewerMiddle.zoomOut')"
                     id="zoomOut"
-                    class="toolbarButton zoomOut pdf-icon-button zoom-out"
+                    class="toolbarButton zoomOut vue-pdf-app-icon zoom-out"
                     title="Zoom Out"
                     tabindex="21"
                     data-l10n-id="zoom_out"
@@ -543,7 +543,7 @@
                   <button
                     v-show="showElem('toolbar.toolbarViewerMiddle.zoomIn')"
                     id="zoomIn"
-                    class="toolbarButton zoomIn pdf-icon-button zoom-in"
+                    class="toolbarButton zoomIn vue-pdf-app-icon zoom-in"
                     title="Zoom In"
                     tabindex="22"
                     data-l10n-id="zoom_in"
@@ -558,7 +558,7 @@
                     )
                   "
                   id="scaleSelectContainer"
-                  class="dropdownToolbarButton pdf-icon-button dropdown-toolbar-button"
+                  class="dropdownToolbarButton vue-pdf-app-icon dropdown-toolbar-button"
                 >
                   <select
                     id="scaleSelect"

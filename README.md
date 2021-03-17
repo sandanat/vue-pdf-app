@@ -143,7 +143,7 @@ Use `<link rel="resource" type="application/l10n" href="path-to-localization-fil
 See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l10n "file examples").
 
 # API
-### :pdf
+## :pdf
 - Type: `string | null | ArrayBuffer | TypedArray`. 
 - Required: `false`
 - Usage:
@@ -151,14 +151,14 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
 <vue-pdf-viewer pdf="https://example.com/sample.pdf" />
 <vue-pdf-viewer :pdf="ArrayBuffer" />
 ```
-### :config
+## :config
 - Type: toolbar config (see above)
 - Required: `false`
 - Usage:
 ```html
 <vue-pdf-viewer :config="{ toolbar: false }" />
 ```
-### @open(PDFViewerApplication)
+## @open(PDFViewerApplication)
 - Description: emitted when pdf is opened
 - Arguments:
   - PDFViewerApplication - [pdf application](https://github.com/mozilla/pdf.js/blob/master/web/app.js#L198)

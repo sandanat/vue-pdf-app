@@ -1,5 +1,5 @@
 <template>
-  <pdf-viewer :config="config" :pdf="pdf"></pdf-viewer>
+  <pdf-viewer :config="config" :pdf="pdf" @open="open"></pdf-viewer>
 </template>
 
 <script>
@@ -17,5 +17,10 @@ export default {
       pdf: "/sample.pdf",
     };
   },
+  methods: {
+    open(pdfApp) {
+      window._pdfApp = pdfApp;
+    }
+  }
 };
 </script>
