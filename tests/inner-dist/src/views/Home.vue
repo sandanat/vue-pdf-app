@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import PdfApp from "../../../../dist/pdf-viewer.umd";
+import PdfApp from "../../../../dist/vue-pdf-app.umd";
 
 export default {
   name: "Home",

@@ -21,13 +21,13 @@ UMD/Unpkg support:
 
 | File                  | Size        | Gzipped    |
 | -                     | -           | -          |
-| pdf-viewer.umd.min.js | 1777.56 KiB | 508.94 KiB |
-| pdf-viewer.umd.js     | 3160.04 KiB | 709.14 KiB |
-| pdf-viewer.common.js  | 3159.57 KiB | 708.95 KiB |
+| vue-pdf-app.umd.min.js | 1777.56 KiB | 508.94 KiB |
+| vue-pdf-app.umd.js     | 3160.04 KiB | 709.14 KiB |
+| vue-pdf-app.common.js  | 3159.57 KiB | 708.95 KiB |
 
 
 # Example
-```html
+```vue
 <template>
   <pdf-viewer pdf="http://example.com/sample.pdf"></pdf-viewer>
 </template>
@@ -147,7 +147,7 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
 - Type: `string | null | ArrayBuffer | TypedArray`. 
 - Required: `false`
 - Usage:
-```html
+```vue
 <vue-pdf-viewer pdf="https://example.com/sample.pdf" />
 <vue-pdf-viewer :pdf="ArrayBuffer" />
 ```
@@ -155,7 +155,7 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
 - Type: toolbar config (see above)
 - Required: `false`
 - Usage:
-```html
+```vue
 <vue-pdf-viewer :config="{ toolbar: false }" />
 ```
 ## @open(PDFViewerApplication)
@@ -163,7 +163,7 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
 - Arguments:
   - PDFViewerApplication - [pdf application](https://github.com/mozilla/pdf.js/blob/master/web/app.js#L198)
 - Usage:
-```html
+```vue
 <vue-pdf-viewer @open="openHandler" />
 ```
 
@@ -195,7 +195,7 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
   <script>
     new Vue({
       components: {
-        PdfApp: window["pdf-viewer"]
+        PdfApp: window["vue-pdf-app"]
       }
     }).$mount('#app')
   </script>
@@ -204,7 +204,7 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
 </html>
 ```
 ## typescript
-```html
+```vue
 <template>
   <div id="app">
     <pdf-app pdf="/sample.pdf"></pdf-app>
@@ -226,7 +226,7 @@ export default class App extends Vue {}
 ## Lazy loading
 PDFJS is a huge package (see the library size table above).
 So use lazy loading to split your bundle into small pieces.
-```html
+```vue
 <template>
   <div id="app">
     <pdf-viewer></pdf-viewer>
@@ -254,7 +254,7 @@ export default {
 ```
 ## PDFJS interaction
 You can interact with pdfjs library when pdf is opened via `open` event.
-```html
+```vue
 <template>
   <div id="app">
     <div id="pdf-wrapper">

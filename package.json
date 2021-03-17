@@ -2,8 +2,8 @@
   "name": "vue-pdf-app",
   "version": "1.0.1",
   "description": "Vue 2 pdf viewer",
-  "main": "dist/pdf-viewer.umd.js",
-  "unpkg": "dist/pdf-viewer.umd.min.js",
+  "main": "dist/vue-pdf-app.umd.js",
+  "unpkg": "dist/vue-pdf-app.umd.min.js",
   "private": false,
   "types": "src/types/pdf-viewer.d.ts",
   "repository": {
@@ -30,7 +30,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "build:npm": "vue-cli-service build --target lib --name pdf-viewer src/components/pdf-viewer.vue",
+    "build:npm": "vue-cli-service build --target lib --name vue-pdf-app src/components/pdf-viewer.vue",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
