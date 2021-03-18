@@ -25,146 +25,144 @@
   }
 }
 
-.pdf-app {
-  .sidebar-toggle::before {
-    content: "\f0c9";
-  }
-
-  .dropdown-toolbar-button::after {
-    content: "\e810";
-  }
-
-  .secondary-toolbar-toggle::before {
-    content: "\f142";
-  }
-
-  .find-previous::before {
-    content: "\e813";
-  }
-
-  .find-next::before {
-    content: "\e812";
-  }
-
-  .page-up::before {
-    content: "\e801";
-  }
-
-  .page-down::before {
-    content: "\e802";
-  }
-
-  .zoom-out::before {
-    content: "\e820";
-  }
-
-  .zoom-in::before {
-    content: "\e821";
-  }
-
-  .presentation-mode::before {
-    content: "\f0b2";
-  }
-
-  .print-button::before {
-    content: "\e81f";
-  }
-
-  .open-file::before {
-    content: "\f115";
-  }
-
-  .download-button::before {
-    content: "\e81c";
-  }
-
-  .bookmark-button::before {
-    content: "\f097";
-  }
-
-  .view-thumbnail::before {
-    content: "\e815";
-  }
-
-  .view-outline::before {
-    content: "\e814";
-  }
-
-  .view-attachments::before {
-    content: "\e807";
-  }
-
-  .view-find::before {
-    content: "\e817";
-  }
-
-  .first-page::before {
-    content: "\e830";
-  }
-
-  .last-page::before {
-    content: "\e82f";
-  }
-
-  .rotate-clockwise::before {
-    content: "\e829";
-  }
-
-  .rotate-counter-clockwise::before {
-    content: "\e82a";
-  }
-
-  .select-tool::before {
-    content: "\f246";
-  }
-
-  .hand-tool::before {
-    content: "\f256";
-  }
-
-  .scroll-vertical::before {
-    content: "\e836";
-  }
-
-  .scroll-horizontal::before {
-    content: "\e835";
-  }
-
-  .scroll-wrapped::before {
-    content: "\e816";
-  }
-
-  .spread-none::before {
-    content: "\e831";
-  }
-
-  .spread-odd::before {
-    content: "\e83d";
-  }
-
-  .spread-even::before {
-    content: "\e83c";
-  }
-
-  .document-properties::before {
-    content: "\f129";
-  }
+.vue-pdf-app-icon.sidebar-toggle::before {
+  content: "\f0c9";
 }
 
-html[dir="rtl"] .pdf-app {
-  .find-previous::before {
+.vue-pdf-app-icon.dropdown-toolbar-button::after {
+  content: "\e810";
+}
+
+.vue-pdf-app-icon.secondary-toolbar-toggle::before {
+  content: "\f142";
+}
+
+.vue-pdf-app-icon.find-previous::before {
+  content: "\e813";
+}
+
+.vue-pdf-app-icon.find-next::before {
+  content: "\e812";
+}
+
+.vue-pdf-app-icon.page-up::before {
+  content: "\e801";
+}
+
+.vue-pdf-app-icon.page-down::before {
+  content: "\e802";
+}
+
+.vue-pdf-app-icon.zoom-out::before {
+  content: "\e820";
+}
+
+.vue-pdf-app-icon.zoom-in::before {
+  content: "\e821";
+}
+
+.vue-pdf-app-icon.presentation-mode::before {
+  content: "\f0b2";
+}
+
+.vue-pdf-app-icon.print-button::before {
+  content: "\e81f";
+}
+
+.vue-pdf-app-icon.open-file::before {
+  content: "\f115";
+}
+
+.vue-pdf-app-icon.download-button::before {
+  content: "\e81c";
+}
+
+.vue-pdf-app-icon.bookmark-button::before {
+  content: "\f097";
+}
+
+.vue-pdf-app-icon.view-thumbnail::before {
+  content: "\e815";
+}
+
+.vue-pdf-app-icon.view-outline::before {
+  content: "\e814";
+}
+
+.vue-pdf-app-icon.view-attachments::before {
+  content: "\e807";
+}
+
+.vue-pdf-app-icon.view-find::before {
+  content: "\e817";
+}
+
+.vue-pdf-app-icon.first-page::before {
+  content: "\e830";
+}
+
+.vue-pdf-app-icon.last-page::before {
+  content: "\e82f";
+}
+
+.vue-pdf-app-icon.rotate-clockwise::before {
+  content: "\e829";
+}
+
+.vue-pdf-app-icon.rotate-counter-clockwise::before {
+  content: "\e82a";
+}
+
+.vue-pdf-app-icon.select-tool::before {
+  content: "\f246";
+}
+
+.vue-pdf-app-icon.hand-tool::before {
+  content: "\f256";
+}
+
+.vue-pdf-app-icon.scroll-vertical::before {
+  content: "\e836";
+}
+
+.vue-pdf-app-icon.scroll-horizontal::before {
+  content: "\e835";
+}
+
+.vue-pdf-app-icon.scroll-wrapped::before {
+  content: "\e816";
+}
+
+.vue-pdf-app-icon.spread-none::before {
+  content: "\e831";
+}
+
+.vue-pdf-app-icon.spread-odd::before {
+  content: "\e83d";
+}
+
+.vue-pdf-app-icon.spread-even::before {
+  content: "\e83c";
+}
+
+.vue-pdf-app-icon.document-properties::before {
+  content: "\f129";
+}
+
+html[dir="rtl"] {
+  .vue-pdf-app-icon.find-previous::before {
     content: "\e812";
   }
 
-  .find-next::before {
+  .vue-pdf-app-icon.find-next::before {
     content: "\e813";
   }
 
-  .first-page::before {
+  .vue-pdf-app-icon.first-page::before {
     content: "\e82f";
   }
 
-  .last-page::before {
+  .vue-pdf-app-icon.last-page::before {
     content: "\e830";
   }
 }

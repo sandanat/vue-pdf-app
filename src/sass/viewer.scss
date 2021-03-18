@@ -37,8 +37,8 @@
   --pdf-input-color: #{$pdf-input-color};
   --pdf-input-font-color: #{$pdf-input-font-color};
   --pdf-find-input-placeholder-font-color: #{$pdf-find-input-placeholder-font-color};
-  --pdf-thumbnail-selection-ring: #{$pdf-thumbnail-selection-ring};
-  --pdf-thumbnail-selection-ring-selected: #{$pdf-thumbnail-selection-ring-selected};
+  --pdf-thumbnail-selection-ring-color: #{$pdf-thumbnail-selection-ring-color};
+  --pdf-thumbnail-selection-ring-selected-color: #{$pdf-thumbnail-selection-ring-selected-color};
   --pdf-error-wrapper-color: #{$pdf-error-wrapper-color};
   --pdf-error-more-info-color: #{$pdf-error-more-info-color};
   --pdf-error-more-info-font-color: #{$pdf-error-more-info-font-color};
@@ -975,13 +975,13 @@ html[dir="rtl"] .pdf-app .thumbnail {
 
 .pdf-app a:focus > .thumbnail > .thumbnailSelectionRing,
 .pdf-app .thumbnail:hover > .thumbnailSelectionRing {
-  background-color: $pdf-thumbnail-selection-ring;
-  background-color: var(--pdf-thumbnail-selection-ring);
+  background-color: $pdf-thumbnail-selection-ring-color;
+  background-color: var(--pdf-thumbnail-selection-ring-color);
 }
 
 .pdf-app .thumbnail.selected > .thumbnailSelectionRing {
-  background-color: $pdf-thumbnail-selection-ring-selected;
-  background-color: var(--pdf-thumbnail-selection-ring-selected);
+  background-color: $pdf-thumbnail-selection-ring-selected-color;
+  background-color: var(--pdf-thumbnail-selection-ring-selected-color);
 }
 
 .pdf-app #outlineView,

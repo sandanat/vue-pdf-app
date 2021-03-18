@@ -114,217 +114,283 @@ Colors of the pdf viewer are customized via custom css properties:
     <tr>
       <td>--pdf-app-background-color</td>
       <td>.pdf-app</td>
-      <td>Root pdf container</td>
+      <td>Background color for root pdf container</td>
     </tr>
     <tr>
       <td>--pdf-button-hover-font-color</td>
       <td>
         .pdf-app .toolbarButton:hover
-        <br>
+        <hr>
         .pdf-app .toolbarButton:focus
-        <br>
+        <hr>
         .pdf-app .dropdownToolbarButton:hover
-        <br>
+        <hr>
         .pdf-app .secondaryToolbarButton:hover
-        <br>
+        <hr>
         .pdf-app .secondaryToolbarButton:focus
-        <br>
+        <hr>
       </td>
-      <td>Hover buttons for toolbar and secondary toolbar</td>
+      <td>Hover color for buttons of toolbar and secondary toolbar</td>
     </tr>
     <tr>
       <td>--pdf-button-toggled-color</td>
       <td>
         .pdf-app .toolbarButton.toggled
-        <br>
+        <hr>
         .pdf-app .splitToolbarButton.toggled > .toolbarButton.toggled
-        <br>
+        <hr>
         .pdf-app .secondaryToolbarButton.toggled
-        <br>
+        <hr>
         .pdf-app .outlineItemToggler:hover
-        <br>
+        <hr>
         .pdf-app .outlineItemToggler:hover + a
-        <br>
+        <hr>
         .pdf-app .outlineItemToggler:hover ~ .outlineItems
-        <br>
+        <hr>
         .pdf-app .outlineItem > a:hover
-        <br>
+        <hr>
         .pdf-app .attachmentsItem > button:hover
       </td>
-      <td>Toggleable buttons when selected, outline items on hover, attachment items on hover
-      <img src="./readme/toggleable-items.jpg" alt="toggleable items"/>
+      <td>
+        Background color for toggleable buttons when selected, outline items on hover, attachment items on hover
+        <img src="./readme/toggleable-items.jpg" alt="toggleable items">
        </td>
     </tr>
     <tr>
       <td>--pdf-dialog-button-color</td>
       <td>.pdf-app .dialog .overlayButton</td>
-      <td></td>
+      <td>
+        <img src="./readme/dialog-buttons.jpg" alt="dialog buttons">
+      </td>
     </tr>
     <tr>
       <td>--pdf-dialog-button-font-color</td>
       <td>.pdf-app .dialog .overlayButton</td>
-      <td></td>
+      <td>
+        <img src="./readme/dialog-buttons.jpg" alt="dialog buttons">
+      </td>
     </tr>
     <tr>
       <td>--pdf-error-more-info-color</td>
       <td>.pdf-app #errorMoreInfo</td>
-      <td></td>
+      <td>
+        <img src="./readme/error-more-info.jpg" alt="error more info">      
+      </td>
     </tr>
     <tr>
       <td>--pdf-error-more-info-font-color</td>
       <td>.pdf-app #errorMoreInfo</td>
-      <td></td>
+      <td>
+        <img src="./readme/error-more-info.jpg" alt="error more info">      
+      </td>
     </tr>
     <tr>
       <td>--pdf-error-wrapper-color</td>
       <td>.pdf-app #errorWrapper</td>
-      <td></td>
+      <td>
+        <img src="./readme/error-wrapper.jpg" alt="error wrapper">      
+      </td>
     </tr>
     <tr>
       <td>--pdf-find-input-placeholder-font-color</td>
       <td>.pdf-app #findInput::placeholder</td>
-      <td></td>
+      <td>
+        <img src="./readme/find-input-placeholder.jpg" alt="find input placeholder">      
+      </td>
     </tr>
     <tr>
       <td>--pdf-find-message-font-color</td>
       <td>.pdf-app #findMsg</td>
-      <td></td>
+      <td>
+        <img src="./readme/find-message.jpg" alt="find message">      
+      </td>
     </tr>
     <tr>
       <td>--pdf-find-results-count-color</td>
       <td>.pdf-app #findResultsCount</td>
-      <td></td>
+      <td>
+        <img src="./readme/find-results-count.jpg" alt="find results count">      
+      </td>
     </tr>
     <tr>
       <td>--pdf-find-results-count-font-color</td>
       <td>.pdf-app #findResultsCount</td>
-      <td></td>
+      <td>
+        <img src="./readme/find-results-count.jpg" alt="find results count">      
+      </td>
     </tr>
     <tr>
       <td>--pdf-horizontal-toolbar-separator-color</td>
       <td>.pdf-app .horizontalToolbarSeparator</td>
-      <td></td>
+      <td>
+        <img src="./readme/horizontal-separator.jpg" alt="horizontal separator">      
+      </td>
     </tr>
     <tr>
       <td>--pdf-input-color</td>
       <td>.pdf-app .toolbarField</td>
-      <td></td>
+      <td>
+        <img src="./readme/toolbar-field.jpg" alt="toolbar field">      
+      </td>
     </tr>
     <tr>
       <td>--pdf-input-font-color</td>
       <td>.pdf-app .toolbarField</td>
-      <td></td>
+      <td>
+        <img src="./readme/toolbar-field.jpg" alt="toolbar field">      
+      </td>
     </tr>
     <tr>
       <td>--pdf-loading-bar-color</td>
       <td>.pdf-app #loadingBar .progress</td>
-      <td></td>
+      <td>
+        <img src="./readme/loading-bar-color.jpg" alt="loading bar color">      
+      </td>
     </tr>
     <tr>
       <td>--pdf-loading-bar-secondary-color</td>
       <td>.pdf-app #loadingBar .progress.indeterminate .glimmer</td>
-      <td></td>
+      <td>
+        <img src="./readme/loading-bar-secondary-color.jpg" alt="loading bar secondary color">      
+      </td>
     </tr>
     <tr>
       <td>--pdf-not-found-color</td>
       <td>.pdf-app #findInput.notFound</td>
-      <td></td>
+      <td>
+        <img src="./readme/not-found.jpg" alt="not found">      
+      </td>
     </tr>
     <tr>
       <td>--pdf-overlay-container-color</td>
       <td>.pdf-app #overlayContainer</td>
-      <td></td>
+      <td>Background color for overlay container of dialogs</td>
     </tr>
     <tr>
       <td>--pdf-overlay-container-dialog-color</td>
       <td>.pdf-app #overlayContainer > .container > .dialog</td>
-      <td></td>
+      <td>
+        Background color for document properties, password, print dialogs
+      </td>
     </tr>
     <tr>
       <td>--pdf-overlay-container-dialog-font-color</td>
       <td>.pdf-app #overlayContainer > .container > .dialog</td>
-      <td></td>
+      <td>
+        Font color for document properties, password, print dialogs
+      </td>
     </tr>
     <tr>
       <td>--pdf-overlay-container-dialog-separator-color</td>
       <td>.pdf-app .dialog .separator</td>
-      <td></td>
+      <td>
+        <img src="./readme/dialog-separator.jpg" alt="dialog separator">      
+      </td>
     </tr>
     <tr>
       <td>--pdf-sidebar-content-color</td>
       <td>.pdf-app #sidebarContent</td>
-      <td></td>
+      <td>
+        Background color for sidebar
+      </td>
     </tr>
     <tr>
       <td>--pdf-split-toolbar-button-separator-color</td>
       <td>
         .pdf-app .splitToolbarButtonSeparator
-        <br>
+        <hr>
         .pdf-app .verticalToolbarSeparator
       </td>
-      <td></td>
+      <td>
+        <img src="./readme/vertical-separator.jpg" alt="vertical separator">      
+      </td>
     </tr>
     <tr>
-      <td>--pdf-thumbnail-selection-ring-selected</td>
+      <td>--pdf-thumbnail-selection-ring-selected-color</td>
       <td>.pdf-app .thumbnail.selected > .thumbnailSelectionRing</td>
-      <td></td>
+      <td>
+        Border color for selected thumbnail
+        <img src="./readme/thumbnail-border.jpg" alt="thumbnail border">
+      </td>
     </tr>
     <tr>
-      <td>--pdf-thumbnail-selection-ring</td>
+      <td>--pdf-thumbnail-selection-ring-color</td>
       <td>
         .pdf-app a:focus > .thumbnail > .thumbnailSelectionRing
-        <br>
+        <hr>
         .pdf-app .thumbnail:hover > .thumbnailSelectionRing
       </td>
-      <td></td>
+      <td>
+        Border color for thumbnail on hover and focus
+        <img src="./readme/thumbnail-border.jpg" alt="thumbnail border">
+      </td>
     </tr>
     <tr>
       <td>--pdf-toolbar-color</td>
       <td>
         .pdf-app #toolbarContainer
-        <br>
+        <hr>
         .pdf-app .findbar
-        <br>
+        <hr>
         .pdf-app .secondaryToolbar
-        <br>
+        <hr>
         .pdf-app .doorHanger:after
-        <br>
+        <hr>
         .pdf-app .doorHangerRight:after
-        <br>
+        <hr>
         .pdf-app .dropdownToolbarButton > select
-        <br>
+        <hr>
         .pdf-app .dropdownToolbarButton > select > option
       </td>
-      <td></td>
+      <td>
+        Background color for toolbar, findbar, secondary toolbar, page scale dropdown
+      </td>
     </tr>
     <tr>
       <td>--pdf-toolbar-font-color</td>
       <td>
         .pdf-app .toolbarButton
-        <br>
+        <hr>
         .pdf-app .dropdownToolbarButton
-        <br>
+        <hr>
         .pdf-app .secondaryToolbarButton
-        <br>
-        .pdf-app .overlayButton
-        <br>
+        <hr>
         .pdf-app .dropdownToolbarButton > select
-        <br>
+        <hr>
         .pdf-app .toolbarLabel
-        <br>
+        <hr>
         .pdf-app .outlineItem > a
-        <br>
+        <hr>
         .pdf-app .attachmentsItem > button
       </td>
-      <td></td>
+      <td>
+        Font color for toolbar, findbar, secondary toolbar, page scale dropdown, attachments name</td>
     </tr>
     <tr>
       <td>--pdf-toolbar-sidebar-color</td>
       <td>.pdf-app #toolbarSidebar</td>
-      <td></td>
+      <td>
+        <img src="./readme/sidebar.jpg" alt="sidebar">
+      </td>
     </tr>
   </table>
 </details>
+
+# Icons customization
+
+To use default icons you have to `import "vue-pdf-app/icons/main.css";`
+To use custom icons you have to implement [icons.css](https://github.com/sandanat/vue-pdf-app/blob/master/src/sass/icons.scss):
+
+```css
+.vue-pdf-app-icon::before,
+.vue-pdf-app-icon::after {
+  font-family: "your font family";
+}
+
+.vue-pdf-app-icon.zoom-out::before {
+  content: "icon code";
+}
+```
 
 # Configurable panel
 
