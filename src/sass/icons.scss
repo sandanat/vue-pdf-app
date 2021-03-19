@@ -1,0 +1,168 @@
+@font-face {
+  font-family: "pdf";
+  src: url("../assets/icons/font/pdf.eot");
+  src: url("../assets/icons/font/pdf.eot?#iefix") format("embedded-opentype"),
+    url("../assets/icons/font/pdf.woff2") format("woff2"),
+    url("../assets/icons/font/pdf.woff") format("woff"),
+    url("../assets/icons/font/pdf.ttf") format("truetype"),
+    url("../assets/icons/font/pdf.svg?#pdf") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.vue-pdf-app-icon {
+  &::before,
+  &::after {
+    font-family: "pdf";
+    font-size: 1.1rem;
+    display: inline;
+    text-decoration: inherit;
+    text-align: center;
+    font-variant: normal;
+    text-transform: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+.vue-pdf-app-icon.sidebar-toggle::before {
+  content: "\f0c9";
+}
+
+.vue-pdf-app-icon.dropdown-toolbar-button::after {
+  content: "\e810";
+}
+
+.vue-pdf-app-icon.secondary-toolbar-toggle::before {
+  content: "\f142";
+}
+
+.vue-pdf-app-icon.find-previous::before {
+  content: "\e813";
+}
+
+.vue-pdf-app-icon.find-next::before {
+  content: "\e812";
+}
+
+.vue-pdf-app-icon.page-up::before {
+  content: "\e801";
+}
+
+.vue-pdf-app-icon.page-down::before {
+  content: "\e802";
+}
+
+.vue-pdf-app-icon.zoom-out::before {
+  content: "\e820";
+}
+
+.vue-pdf-app-icon.zoom-in::before {
+  content: "\e821";
+}
+
+.vue-pdf-app-icon.presentation-mode::before {
+  content: "\f0b2";
+}
+
+.vue-pdf-app-icon.print-button::before {
+  content: "\e81f";
+}
+
+.vue-pdf-app-icon.open-file::before {
+  content: "\f115";
+}
+
+.vue-pdf-app-icon.download-button::before {
+  content: "\e81c";
+}
+
+.vue-pdf-app-icon.bookmark-button::before {
+  content: "\f097";
+}
+
+.vue-pdf-app-icon.view-thumbnail::before {
+  content: "\e815";
+}
+
+.vue-pdf-app-icon.view-outline::before {
+  content: "\e814";
+}
+
+.vue-pdf-app-icon.view-attachments::before {
+  content: "\e807";
+}
+
+.vue-pdf-app-icon.view-find::before {
+  content: "\e817";
+}
+
+.vue-pdf-app-icon.first-page::before {
+  content: "\e830";
+}
+
+.vue-pdf-app-icon.last-page::before {
+  content: "\e82f";
+}
+
+.vue-pdf-app-icon.rotate-clockwise::before {
+  content: "\e829";
+}
+
+.vue-pdf-app-icon.rotate-counter-clockwise::before {
+  content: "\e82a";
+}
+
+.vue-pdf-app-icon.select-tool::before {
+  content: "\f246";
+}
+
+.vue-pdf-app-icon.hand-tool::before {
+  content: "\f256";
+}
+
+.vue-pdf-app-icon.scroll-vertical::before {
+  content: "\e836";
+}
+
+.vue-pdf-app-icon.scroll-horizontal::before {
+  content: "\e835";
+}
+
+.vue-pdf-app-icon.scroll-wrapped::before {
+  content: "\e816";
+}
+
+.vue-pdf-app-icon.spread-none::before {
+  content: "\e831";
+}
+
+.vue-pdf-app-icon.spread-odd::before {
+  content: "\e83d";
+}
+
+.vue-pdf-app-icon.spread-even::before {
+  content: "\e83c";
+}
+
+.vue-pdf-app-icon.document-properties::before {
+  content: "\f129";
+}
+
+html[dir="rtl"] {
+  .vue-pdf-app-icon.find-previous::before {
+    content: "\e812";
+  }
+
+  .vue-pdf-app-icon.find-next::before {
+    content: "\e813";
+  }
+
+  .vue-pdf-app-icon.first-page::before {
+    content: "\e82f";
+  }
+
+  .vue-pdf-app-icon.last-page::before {
+    content: "\e830";
+  }
+}
