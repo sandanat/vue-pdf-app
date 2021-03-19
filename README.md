@@ -82,13 +82,33 @@ export default {
 
 ## @open(PDFViewerApplication)
 
-- Description: emitted when pdf is opened
+- Description: emitted when pdf is opened (pages may not be rendered at this time)
 - Arguments:
   - PDFViewerApplication - [pdf application](https://github.com/mozilla/pdf.js/blob/master/web/app.js#L198)
 - Usage:
 
 ```vue
 <vue-pdf-viewer @open="openHandler" />
+```
+
+## Slots
+
+- toolbar-left-prepend
+- toolbar-left-append
+- toolbar-middle-prepend
+- toolbar-middle-append
+- toolbar-right-prepend
+- toolbar-right-append
+- secondary-toolbar-prepend
+- secondary-toolbar-append
+- footer
+
+```vue
+<vue-pdf-app>
+  <template #toolbar-left-prepend>
+    <button type="button">Click me</button>
+  </template>
+</vue-pdf-app>
 ```
 
 # Color customization (IE11 not supported)
