@@ -1,5 +1,16 @@
 <template>
-  <pdf-viewer :config="config" :pdf="pdf" @open="open"></pdf-viewer>
+  <pdf-viewer
+    :config="config"
+    :pdf="pdf"
+    @open="open"
+    style="position: relative"
+  >
+    <template #footer>
+      <div class="footer">
+        <span>Footer</span>
+      </div>
+    </template>
+  </pdf-viewer>
 </template>
 
 <script>
@@ -12,7 +23,11 @@ export default {
   data() {
     return {
       config: {
-        toolbar: { toolbarViewerLeft: false },
+        toolbar: {
+          toolbarViewerLeft: {
+            pageNumber: false,
+          },
+        },
       },
       pdf: "/sample.pdf",
     };
@@ -20,7 +35,24 @@ export default {
   methods: {
     open(pdfApp) {
       window._pdfApp = pdfApp;
-    }
-  }
+    },
+  },
 };
 </script>
+
+<style lang="scss" scoped>
+$footer-height: 50px;
+
+.footer {
+  background: red;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: $footer-height;
+}
+
+::v-deep #outerContainer {
+  height: calc(100% - #{$footer-height}) !important;
+}
+</style>

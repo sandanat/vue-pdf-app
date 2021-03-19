@@ -1,5 +1,5 @@
 <template>
-  <div id="pdf" class="pdf-app" style="overflow: hidden">
+  <div id="pdf" class="pdf-app">
     <script type="application/l10n">
       {{ defaultLocale }}
     </script>
@@ -153,6 +153,7 @@
           class="secondaryToolbar hidden doorHangerRight"
         >
           <div id="secondaryToolbarButtonContainer">
+            <slot name="secondary-toolbar-prepend"></slot>
             <button
               v-show="showElem('secondaryToolbar.secondaryPresentationMode')"
               id="secondaryPresentationMode"
@@ -336,7 +337,7 @@
             <button
               v-show="showElem('secondaryToolbar.spreadOdd')"
               id="spreadOdd"
-              class="secondaryToolbarButton spreadModeButtons  vue-pdf-app-icon spread-odd"
+              class="secondaryToolbarButton spreadModeButtons vue-pdf-app-icon spread-odd"
               title="Join page spreads starting with odd-numbered pages"
               tabindex="66"
               data-l10n-id="spread_odd"
@@ -368,6 +369,7 @@
                 >Document Properties…</span
               >
             </button>
+            <slot name="secondary-toolbar-append"></slot>
           </div>
         </div>
         <!-- secondaryToolbar -->
@@ -379,6 +381,7 @@
                 v-show="showElem('toolbar.toolbarViewerLeft')"
                 id="toolbarViewerLeft"
               >
+                <slot name="toolbar-left-prepend"></slot>
                 <button
                   v-show="showElem('sidebar')"
                   id="sidebarToggle"
@@ -443,11 +446,13 @@
                   id="numPages"
                   class="toolbarLabel"
                 ></span>
+                <slot name="toolbar-left-append"></slot>
               </div>
               <div
                 v-show="showElem('toolbar.toolbarViewerRight')"
                 id="toolbarViewerRight"
               >
+                <slot name="toolbar-right-prepend"></slot>
                 <button
                   v-show="
                     showElem('toolbar.toolbarViewerRight.presentationMode')
@@ -523,11 +528,13 @@
                 >
                   <span data-l10n-id="tools_label">Tools</span>
                 </button>
+                <slot name="toolbar-right-append"></slot>
               </div>
               <div
                 v-show="showElem('toolbar.toolbarViewerMiddle')"
                 id="toolbarViewerMiddle"
               >
+                <slot name="toolbar-middle-prepend"></slot>
                 <div class="splitToolbarButton">
                   <button
                     v-show="showElem('toolbar.toolbarViewerMiddle.zoomOut')"
@@ -672,6 +679,7 @@
                     </option>
                   </select>
                 </span>
+                <slot name="toolbar-middle-append"></slot>
               </div>
             </div>
             <div id="loadingBar">
@@ -879,6 +887,7 @@
       <!-- overlayContainer -->
     </div>
     <!-- outerContainer -->
+    <slot name="footer"></slot>
   </div>
 </template>
 
@@ -1017,5 +1026,6 @@ export default class PdfViewer extends Vue {
 <style>
 .pdf-app {
   height: 100%;
+  overflow-x: hidden;
 }
 </style>
