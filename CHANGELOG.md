@@ -4,7 +4,7 @@
 
 1. **<span style="background: #bd011b; color:black; border-radius: 2px; padding: 0 5px">breaking</span>** Added pdf-viewer icons customization.
 1. Added pdf viewer color customization via custom css properties. Refer [README.md](./README.md "README.md").
-1. Added slots fot toolbar and footer.
+1. Added slots for toolbar and footer.
 
 ## Other
 
