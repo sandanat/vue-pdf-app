@@ -33,17 +33,17 @@ UMD/Unpkg support:
 
 ```vue
 <template>
-  <pdf-viewer pdf="http://example.com/sample.pdf"></pdf-viewer>
+  <vue-pdf-app pdf="http://example.com/sample.pdf"></vue-pdf-app>
 </template>
 
 <script>
-import PdfViewer from "vue-pdf-app";
+import VuePdfApp from "vue-pdf-app";
 // import this to use default icons for buttons
-import "vue-pdf-app/icons/main.css";
+import "vue-pdf-app/dist/icons/main.css";
 
 export default {
   components: {
-    PdfViewer
+    VuePdfApp
   }
 };
 </script>

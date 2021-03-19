@@ -1,5 +1,9 @@
 <template>
-  <vue-pdf-app pdf="sample.pdf"></vue-pdf-app>
+  <vue-pdf-app pdf="sample.pdf">
+    <template #toolbar-middle-prepend>
+      <button type="button">click</button>
+    </template>
+  </vue-pdf-app>
 </template>
 
 <script>

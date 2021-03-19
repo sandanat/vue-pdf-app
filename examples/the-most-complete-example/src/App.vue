@@ -2,9 +2,12 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Basic</router-link> |
+      <router-link to="/slots">Slots</router-link> |
       <router-link to="/about">About</router-link>
     </div>
-    <router-view/>
+    <div class="container">
+      <router-view />
+    </div>
   </div>
 </template>
 
@@ -28,5 +31,11 @@
       color: #42b983;
     }
   }
+}
+</style>
+
+<style lang="scss" scoped>
+.container {
+  height: 90vh;
 }
 </style>
