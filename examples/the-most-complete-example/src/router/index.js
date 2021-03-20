@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Basic from "@/views/Basic.vue";
 import Slots from "@/views/Slots.vue";
+import PdfjsInteraction from "@/views/PdfjsInteraction.vue";
 
 Vue.use(VueRouter);
 
@@ -15,6 +16,11 @@ const routes = [
     path: "/slots",
     name: "slots",
     component: Slots
+  },
+  {
+    path: "/pdfjs-interaction",
+    name: "pdfjs-interaction",
+    component: PdfjsInteraction
   },
   {
     path: "/about",

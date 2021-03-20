@@ -1,7 +1,7 @@
 <template>
-  <div id="app">
+  <div class="wrapper">
     <div id="pdf-wrapper">
-      <pdf-app pdf="/sample.pdf" @open="openHandler"></pdf-app>
+      <vue-pdf-app pdf="/sample.pdf" @open="openHandler"></vue-pdf-app>
     </div>
     <div id="info">
       <h1>PDF info:</h1>
@@ -14,12 +14,11 @@
 </template>
 
 <script>
-import PdfApp from "vue-pdf-app";
+import VuePdfApp from "vue-pdf-app";
 
 export default {
-  name: "App",
   components: {
-    PdfApp,
+    VuePdfApp,
   },
   data() {
     return {
@@ -54,7 +53,7 @@ export default {
 </script>
 
 <style>
-#app {
+.wrapper {
   height: 100%;
   display: flex;
 }
@@ -69,7 +68,8 @@ export default {
   align-self: center;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
 }
