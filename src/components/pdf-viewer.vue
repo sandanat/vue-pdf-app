@@ -6,6 +6,7 @@
     <div id="outerContainer">
       <div v-show="showElem('sidebar')" id="sidebarContainer">
         <div id="toolbarSidebar">
+          <slot name="toolbar-sidebar-prepend"></slot>
           <div class="splitToolbarButton toggled">
             <button
               v-show="showElem('sidebar.viewThumbnail')"
@@ -40,6 +41,7 @@
               <span data-l10n-id="attachments_label">Attachments</span>
             </button>
           </div>
+          <slot name="toolbar-sidebar-append"></slot>
         </div>
         <div v-show="showElem('sidebar')" id="sidebarContent">
           <div

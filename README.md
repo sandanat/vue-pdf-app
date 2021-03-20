@@ -99,6 +99,8 @@ export default {
 - toolbar-middle-append
 - toolbar-right-prepend
 - toolbar-right-append
+- toolbar-sidebar-prepend
+- toolbar-sidebar-append
 - secondary-toolbar-prepend
 - secondary-toolbar-append
 - footer
@@ -508,12 +510,6 @@ Use `<link rel="resource" type="application/l10n" href="path-to-localization-fil
 See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l10n "file examples").
 
 # Examples
-
-[See examples](https://github.com/sandanat/vue-pdf-app/tree/master/examples "Examples source code") source code.
-
-[Live demo](https://codesandbox.io/s/vue-2-vue-pdf-app-wz5kv)
-
-[Live demo 2](https://codepen.io/sandanat/pen/xxVdgYM)
 
 ## script tag (unpkg)
 
