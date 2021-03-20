@@ -51,11 +51,11 @@ export default {
 
 ![pdf sample](./readme/sample.png "Pdf expample")
 
-[See examples](https://github.com/sandanat/vue-pdf-app/tree/master/examples "Examples source code")
-
 [Live demo](https://codesandbox.io/s/vue-2-vue-pdf-app-wz5kv)
 
 [Live demo 2](https://codepen.io/sandanat/pen/xxVdgYM)
+
+[Examples source code](https://github.com/sandanat/vue-pdf-app/tree/master/examples "Examples source code")
 
 # API
 

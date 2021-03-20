@@ -15,6 +15,7 @@
 
 <script>
 import VuePdfApp from "vue-pdf-app";
+import "vue-pdf-app/dist/icons/main.css"
 
 export default {
   components: {

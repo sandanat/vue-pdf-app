@@ -96,6 +96,13 @@ button.secondary-toolbar-slot {
   content: "\f185";
 }
 
+#toolbarSidebar {
+  & .prepend, & .append {
+    position: relative;
+    top: -10px;
+  }
+}
+
 .footer {
   background: var(--pdf-button-toggled-color);
   color: var(--pdf-toolbar-font-color);
