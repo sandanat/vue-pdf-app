@@ -14,13 +14,10 @@
 </template>
 
 <script>
-import VuePdfApp from "vue-pdf-app";
-import "vue-pdf-app/dist/icons/main.css"
+// VuePdfApp component is registered in src/main.js
 
 export default {
-  components: {
-    VuePdfApp,
-  },
+  name: "PdfjsInteraction",
   data() {
     return {
       info: [],
@@ -67,11 +64,5 @@ export default {
   text-align: center;
   flex: 4 0 10px;
   align-self: center;
-}
-
-html,
-body {
-  height: 100%;
-  margin: 0;
 }
 </style>

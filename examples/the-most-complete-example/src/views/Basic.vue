@@ -3,13 +3,9 @@
 </template>
 
 <script>
-import VuePdfApp from "vue-pdf-app";
-import "vue-pdf-app/dist/icons/main.css"
+// VuePdfApp component is registered in src/main.js
 
 export default {
   name: "basic",
-  components: {
-    VuePdfApp,
-  },
 };
 </script>

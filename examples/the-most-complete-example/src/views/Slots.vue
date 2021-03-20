@@ -45,14 +45,10 @@
 </template>
 
 <script>
-import VuePdfApp from "vue-pdf-app";
-import "vue-pdf-app/dist/icons/main.css";
+// VuePdfApp component is registered in src/main.js
 
 export default {
   name: "slots",
-  components: {
-    VuePdfApp,
-  },
 };
 </script>
 
@@ -80,7 +76,7 @@ button.secondary-toolbar-slot {
   outline: none;
   border: none;
   font-size: 1.1rem;
-  color: var(--pdf-toolbar-font-color);
+  color: red;
   margin: 5px;
 
   &:hover {
@@ -97,14 +93,15 @@ button.secondary-toolbar-slot {
 }
 
 #toolbarSidebar {
-  & .prepend, & .append {
+  & .prepend,
+  & .append {
     position: relative;
     top: -10px;
   }
 }
 
 .footer {
-  background: var(--pdf-button-toggled-color);
+  background: palevioletred;
   color: var(--pdf-toolbar-font-color);
   height: $footer-height;
   position: absolute;
