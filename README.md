@@ -66,8 +66,8 @@ export default {
 - Usage:
 
 ```vue
-<vue-pdf-viewer pdf="https://example.com/sample.pdf" />
-<vue-pdf-viewer :pdf="ArrayBuffer" />
+<vue-pdf-app pdf="https://example.com/sample.pdf" />
+<vue-pdf-app :pdf="ArrayBuffer" />
 ```
 
 ## :config
@@ -77,19 +77,52 @@ export default {
 - Usage:
 
 ```vue
-<vue-pdf-viewer :config="{ toolbar: false }" />
+<vue-pdf-app :config="{ toolbar: false }" />
 ```
 
-## @open(PDFViewerApplication)
+## @after-created(PDFViewerApplication)
 
-- Description: emitted when pdf is opened (pages may not be rendered at this time)
+- Description: emitted only once when Pdfjs library is binded to vue component. Can be used to set Pdfjs config before pdf document opening. For example, to prevent browser tab title changing to pdf document name.
 - Arguments:
   - PDFViewerApplication - [pdf application](https://github.com/mozilla/pdf.js/blob/master/web/app.js#L198)
 - Usage:
 
 ```vue
-<vue-pdf-viewer @open="openHandler" />
+<vue-pdf-app @after-created="afterCreated" />
+...
+afterCreated(pdfApp) {
+  // to prevent browser tab title changing to pdf document name
+  pdfApp.isViewerEmbedded = true;
+}
 ```
+
+## @open(PDFViewerApplication)
+
+- Description: emitted when pdf is opened but pages are not rendered.
+- Arguments:
+  - PDFViewerApplication - [pdf application](https://github.com/mozilla/pdf.js/blob/master/web/app.js#L198)
+- Usage:
+
+```vue
+<vue-pdf-app @open="openHandler" />
+```
+
+## @pages-rendered(PDFViewerApplication)
+
+- Description: emitted when pdf document pages are rendered. Can be used to set default pages scale, for instance.
+- Arguments:
+  - PDFViewerApplication - [pdf application](https://github.com/mozilla/pdf.js/blob/master/web/app.js#L198)
+- Usage:
+
+```vue
+<vue-pdf-app @pages-rendered="pagesRendered" />
+...
+pagesRendered(pdfApp) {
+  pdfApp.pdfViewer.currentScale = "page-height"
+}
+```
+
+> :information_source: Events are triggered in the following order `after-created (once) => open => pages-rendered`
 
 ## Slots
 

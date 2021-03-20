@@ -171,6 +171,7 @@
 
             <button
               v-show="showElem('secondaryToolbar.secondaryOpenFile')"
+              @click.once="bindOpenHandler"
               id="secondaryOpenFile"
               class="secondaryToolbarButton openFile visibleLargeView vue-pdf-app-icon open-file"
               title="Open File"
@@ -472,6 +473,7 @@
 
                 <button
                   v-show="showElem('toolbar.toolbarViewerRight.openFile')"
+                  @click.once="bindOpenHandler"
                   id="openFile"
                   class="toolbarButton openFile hiddenLargeView vue-pdf-app-icon open-file"
                   title="Open File"
@@ -933,12 +935,15 @@ export default class PdfViewer extends Vue {
 
   private defaultLocale = JSON.stringify(locale);
 
+  private isOpenHandlerBinded = false;
+
   private beforeDestroy() {
     this.destroyPdf();
   }
 
   private created() {
     window.print = pdfPrint;
+    this.$emit("after-created", pdfApp.PDFViewerApplication);
   }
 
   private mounted() {
@@ -968,6 +973,24 @@ export default class PdfViewer extends Vue {
     return !(getToolbarConfigValue(this.config, path) === false);
   }
 
+  private bindOpenHandler() {
+    if (this.isOpenHandlerBinded) return;
+
+    const fileInput = document.getElementById(PDF_FILE_INPUT_ID);
+    const fileInputHandler = async () => {
+      // @ts-ignore
+      await pdfApp.PDFViewerApplication.pdfLoadingTask?.promise;
+      this.openDocument();
+    };
+
+    fileInput?.addEventListener("change", fileInputHandler);
+    this.$once("hook:beforeDestroy", () => {
+      fileInput?.removeEventListener("change", fileInputHandler);
+    });
+
+    this.isOpenHandlerBinded = true;
+  }
+
   private open() {
     this.clearCacheTimeout();
     if (!pdfApp.PDFViewerApplication) return;
@@ -976,8 +999,21 @@ export default class PdfViewer extends Vue {
       pdfApp.PDFViewerApplication.close();
     } else {
       pdfApp.PDFViewerApplication.open(this.pdf)
-        .then(() => this.$emit("open", pdfApp.PDFViewerApplication))
+        .then(this.openDocument.bind(this))
         .catch(errorHandler);
+    }
+  }
+
+  private async openDocument() {
+    this.$emit("open", pdfApp.PDFViewerApplication);
+
+    // @ts-ignore
+    if (pdfApp.PDFViewerApplication?.pdfViewer?.pagesPromise) {
+      // @ts-ignore
+      await pdfApp.PDFViewerApplication.pdfViewer.pagesPromise.catch(
+        errorHandler
+      );
+      this.$emit("pages-rendered", pdfApp.PDFViewerApplication);
     }
   }
 

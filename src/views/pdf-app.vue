@@ -1,8 +1,10 @@
 <template>
   <pdf-viewer
-    :config="config"
     :pdf="pdf"
+    :config="config"
+    @after-created="afterCreated"
     @open="open"
+    @pages-rendered="pagesRendered"
     style="position: relative"
   >
     <template #footer>
@@ -33,8 +35,17 @@ export default {
     };
   },
   methods: {
-    open(pdfApp) {
+    afterCreated(pdfApp) {
+      // for not changing document.title
+      pdfApp.isViewerEmbedded = true;
       window._pdfApp = pdfApp;
+      console.log("===***=== After created");
+    },
+    open() {
+      console.log("===***=== Opened");
+    },
+    pagesRendered() {
+      console.log("===***=== Pages rendered");
     },
   },
 };
