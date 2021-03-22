@@ -1,11 +1,12 @@
 <template>
-  <div id="pdf" class="pdf-app" style="overflow: hidden">
+  <div id="pdf" class="pdf-app">
     <script type="application/l10n">
       {{ defaultLocale }}
     </script>
     <div id="outerContainer">
       <div v-show="showElem('sidebar')" id="sidebarContainer">
         <div id="toolbarSidebar">
+          <slot name="toolbar-sidebar-prepend"></slot>
           <div class="splitToolbarButton toggled">
             <button
               v-show="showElem('sidebar.viewThumbnail')"
@@ -40,6 +41,7 @@
               <span data-l10n-id="attachments_label">Attachments</span>
             </button>
           </div>
+          <slot name="toolbar-sidebar-append"></slot>
         </div>
         <div v-show="showElem('sidebar')" id="sidebarContent">
           <div
@@ -153,6 +155,7 @@
           class="secondaryToolbar hidden doorHangerRight"
         >
           <div id="secondaryToolbarButtonContainer">
+            <slot name="secondary-toolbar-prepend"></slot>
             <button
               v-show="showElem('secondaryToolbar.secondaryPresentationMode')"
               id="secondaryPresentationMode"
@@ -168,6 +171,7 @@
 
             <button
               v-show="showElem('secondaryToolbar.secondaryOpenFile')"
+              @click.once="bindOpenHandler"
               id="secondaryOpenFile"
               class="secondaryToolbarButton openFile visibleLargeView vue-pdf-app-icon open-file"
               title="Open File"
@@ -336,7 +340,7 @@
             <button
               v-show="showElem('secondaryToolbar.spreadOdd')"
               id="spreadOdd"
-              class="secondaryToolbarButton spreadModeButtons  vue-pdf-app-icon spread-odd"
+              class="secondaryToolbarButton spreadModeButtons vue-pdf-app-icon spread-odd"
               title="Join page spreads starting with odd-numbered pages"
               tabindex="66"
               data-l10n-id="spread_odd"
@@ -368,6 +372,7 @@
                 >Document Properties…</span
               >
             </button>
+            <slot name="secondary-toolbar-append"></slot>
           </div>
         </div>
         <!-- secondaryToolbar -->
@@ -379,6 +384,7 @@
                 v-show="showElem('toolbar.toolbarViewerLeft')"
                 id="toolbarViewerLeft"
               >
+                <slot name="toolbar-left-prepend"></slot>
                 <button
                   v-show="showElem('sidebar')"
                   id="sidebarToggle"
@@ -443,11 +449,13 @@
                   id="numPages"
                   class="toolbarLabel"
                 ></span>
+                <slot name="toolbar-left-append"></slot>
               </div>
               <div
                 v-show="showElem('toolbar.toolbarViewerRight')"
                 id="toolbarViewerRight"
               >
+                <slot name="toolbar-right-prepend"></slot>
                 <button
                   v-show="
                     showElem('toolbar.toolbarViewerRight.presentationMode')
@@ -465,6 +473,7 @@
 
                 <button
                   v-show="showElem('toolbar.toolbarViewerRight.openFile')"
+                  @click.once="bindOpenHandler"
                   id="openFile"
                   class="toolbarButton openFile hiddenLargeView vue-pdf-app-icon open-file"
                   title="Open File"
@@ -523,11 +532,13 @@
                 >
                   <span data-l10n-id="tools_label">Tools</span>
                 </button>
+                <slot name="toolbar-right-append"></slot>
               </div>
               <div
                 v-show="showElem('toolbar.toolbarViewerMiddle')"
                 id="toolbarViewerMiddle"
               >
+                <slot name="toolbar-middle-prepend"></slot>
                 <div class="splitToolbarButton">
                   <button
                     v-show="showElem('toolbar.toolbarViewerMiddle.zoomOut')"
@@ -554,7 +565,7 @@
                 <span
                   v-show="
                     showElem(
-                      'toolbar.toolbarViewerMiddle.scaleSelectContatiner'
+                      'toolbar.toolbarViewerMiddle.scaleSelectContainer'
                     )
                   "
                   id="scaleSelectContainer"
@@ -672,6 +683,7 @@
                     </option>
                   </select>
                 </span>
+                <slot name="toolbar-middle-append"></slot>
               </div>
             </div>
             <div id="loadingBar">
@@ -879,6 +891,7 @@
       <!-- overlayContainer -->
     </div>
     <!-- outerContainer -->
+    <slot name="footer"></slot>
   </div>
 </template>
 
@@ -922,12 +935,15 @@ export default class PdfViewer extends Vue {
 
   private defaultLocale = JSON.stringify(locale);
 
+  private isOpenHandlerBinded = false;
+
   private beforeDestroy() {
     this.destroyPdf();
   }
 
   private created() {
     window.print = pdfPrint;
+    this.$emit("after-created", pdfApp.PDFViewerApplication);
   }
 
   private mounted() {
@@ -957,6 +973,24 @@ export default class PdfViewer extends Vue {
     return !(getToolbarConfigValue(this.config, path) === false);
   }
 
+  private bindOpenHandler() {
+    if (this.isOpenHandlerBinded) return;
+
+    const fileInput = document.getElementById(PDF_FILE_INPUT_ID);
+    const fileInputHandler = async () => {
+      // @ts-ignore
+      await pdfApp.PDFViewerApplication.pdfLoadingTask?.promise;
+      this.openDocument();
+    };
+
+    fileInput?.addEventListener("change", fileInputHandler);
+    this.$once("hook:beforeDestroy", () => {
+      fileInput?.removeEventListener("change", fileInputHandler);
+    });
+
+    this.isOpenHandlerBinded = true;
+  }
+
   private open() {
     this.clearCacheTimeout();
     if (!pdfApp.PDFViewerApplication) return;
@@ -965,8 +999,21 @@ export default class PdfViewer extends Vue {
       pdfApp.PDFViewerApplication.close();
     } else {
       pdfApp.PDFViewerApplication.open(this.pdf)
-        .then(() => this.$emit("open", pdfApp.PDFViewerApplication))
+        .then(this.openDocument.bind(this))
         .catch(errorHandler);
+    }
+  }
+
+  private async openDocument() {
+    this.$emit("open", pdfApp.PDFViewerApplication);
+
+    // @ts-ignore
+    if (pdfApp.PDFViewerApplication?.pdfViewer?.pagesPromise) {
+      // @ts-ignore
+      await pdfApp.PDFViewerApplication.pdfViewer.pagesPromise.catch(
+        errorHandler
+      );
+      this.$emit("pages-rendered", pdfApp.PDFViewerApplication);
     }
   }
 
@@ -1013,9 +1060,3 @@ export default class PdfViewer extends Vue {
   }
 }
 </script>
-
-<style>
-.pdf-app {
-  height: 100%;
-}
-</style>

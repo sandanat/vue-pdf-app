@@ -9,6 +9,7 @@ VUEjs v2 PDF viewer based on Mozilla's PDFJS.
 - rotate
 - text selection
 - search panel
+- pdf document password
 - thumbnail, outline, attachments, annotation layers
 
 Easily localized configurable panel
@@ -23,27 +24,28 @@ Built-in typescript support
 
 UMD/Unpkg support:
 
-| File                   | Size        | Gzipped    |
-| ---------------------- | ----------- | ---------- |
-| vue-pdf-app.umd.min.js | 1777.56 KiB | 508.94 KiB |
-| vue-pdf-app.umd.js     | 3160.04 KiB | 709.14 KiB |
-| vue-pdf-app.common.js  | 3159.57 KiB | 708.95 KiB |
+| File                   | Size                               | Gzipped    |
+| ---------------------- | ---------------------------------- | ---------- |
+| vue-pdf-app.umd.min.js | 1731.76 KiB                        | 476.97 KiB |
+| vue-pdf-app.umd.js     | 3097.46 KiB                        | 674.95KiB  |
+| vue-pdf-app.common.js  | 3096.98 KiB                        | 674.79 KiB |
+| icons/main.css         | 15 - 40 KiB (depends from browser) |            |
 
 # Example
 
 ```vue
 <template>
-  <pdf-viewer pdf="http://example.com/sample.pdf"></pdf-viewer>
+  <vue-pdf-app pdf="http://example.com/sample.pdf"></vue-pdf-app>
 </template>
 
 <script>
-import PdfViewer from "vue-pdf-app";
+import VuePdfApp from "vue-pdf-app";
 // import this to use default icons for buttons
-import "vue-pdf-app/icons/main.css";
+import "vue-pdf-app/dist/icons/main.css";
 
 export default {
   components: {
-    PdfViewer
+    VuePdfApp
   }
 };
 </script>
@@ -51,11 +53,11 @@ export default {
 
 ![pdf sample](./readme/sample.png "Pdf expample")
 
-[See examples](https://github.com/sandanat/vue-pdf-app/tree/master/examples "Examples source code")
-
 [Live demo](https://codesandbox.io/s/vue-2-vue-pdf-app-wz5kv)
 
 [Live demo 2](https://codepen.io/sandanat/pen/xxVdgYM)
+
+[Examples source code](https://github.com/sandanat/vue-pdf-app/tree/master/examples "Examples source code")
 
 # API
 
@@ -66,29 +68,187 @@ export default {
 - Usage:
 
 ```vue
-<vue-pdf-viewer pdf="https://example.com/sample.pdf" />
-<vue-pdf-viewer :pdf="ArrayBuffer" />
+<vue-pdf-app pdf="https://example.com/sample.pdf" />
+<vue-pdf-app :pdf="ArrayBuffer" />
 ```
 
 ## :config
 
+- Description: available by default. Specify `false` for buttons or whole group of buttons to disable them.
 - Type: toolbar config (see below)
 - Required: `false`
 - Usage:
 
 ```vue
-<vue-pdf-viewer :config="{ toolbar: false }" />
+<vue-pdf-app :config="config" />
+
+<script>
+export default {
+  data() {
+    return {
+      // disable "Previous page" button
+      config: {
+        toolbar: {
+          toolbarViewerLeft: {
+            previous: false
+          }
+        }
+      },
+
+      // disable whole page navigation panel
+      config2: {
+        toolbar: {
+          toolbarViewerLeft: false
+        }
+      },
+
+      // disable whole panel
+      config3: {
+        toolbar: false
+      }
+    };
+  }
+};
+<script>
 ```
 
-## @open(PDFViewerApplication)
+<details>
+<summary>Config specification</summary>
 
-- Description: emitted when pdf is opened
+![Config legend](./readme/config-legend.jpg "Config legend")
+
+<code>
+<pre>
+{
+  sidebar: {
+    viewThumbnail: true,
+    viewOutline: true,
+    viewAttachments: true,
+  },
+  findbar: true,
+  secondaryToolbar: {
+    secondaryPresentationMode: true,
+    secondaryOpenFile: true,
+    secondaryPrint: true,
+    secondaryDownload: true,
+    secondaryViewBookmark: true,
+    firstPage: true,
+    lastPage: true,
+    pageRotateCw: true,
+    pageRotateCcw: true,
+    cursorSelectTool: true,
+    cursorHandTool: true,
+    scrollVertical: true,
+    scrollHorizontal: true,
+    scrollWrapped: true,
+    spreadNone: true,
+    spreadOdd: true,
+    spreadEven: true,
+    documentProperties: true,
+  },
+  toolbar: {
+    toolbarViewerLeft: {
+      previous: true,
+      next: true,
+      pageNumber: true,
+    },
+    toolbarViewerRight: {
+      presentationMode: true,
+      openFile: true,
+      print: true,
+      download: true,
+      viewBookmark: true,
+      secondaryToolbarToggle: true,
+    },
+    toolbarViewerMiddle: {
+      zoomOut: true,
+      zoomIn: true,
+      scaleSelectContainer: true,
+    },
+  },
+  viewerContextMenu: true,
+  errorWrapper: true,
+};
+</pre>
+</code>
+</details>
+
+## @after-created(PDFViewerApplication)
+
+- Description: emitted only once when Pdfjs library is binded to vue component. Can be used to set Pdfjs config before pdf document opening. For example, to prevent browser tab title changing to pdf document name.
 - Arguments:
   - PDFViewerApplication - [pdf application](https://github.com/mozilla/pdf.js/blob/master/web/app.js#L198)
 - Usage:
 
 ```vue
-<vue-pdf-viewer @open="openHandler" />
+<vue-pdf-app @after-created="afterCreated" />
+
+<script>
+export default {
+  methods: {
+    afterCreated(pdfApp) {
+      // to prevent browser tab title changing to pdf document name
+      pdfApp.isViewerEmbedded = true;
+    }
+  }
+};
+</script>
+```
+
+## @open(PDFViewerApplication)
+
+- Description: emitted when pdf is opened but pages are not rendered.
+- Arguments:
+  - PDFViewerApplication - [pdf application](https://github.com/mozilla/pdf.js/blob/master/web/app.js#L198)
+- Usage:
+
+```vue
+<vue-pdf-app @open="openHandler" />
+```
+
+## @pages-rendered(PDFViewerApplication)
+
+- Description: emitted when pdf document pages are rendered. Can be used to set default pages scale, for instance.
+- Arguments:
+  - PDFViewerApplication - [pdf application](https://github.com/mozilla/pdf.js/blob/master/web/app.js#L198)
+- Usage:
+
+```vue
+<vue-pdf-app @pages-rendered="pagesRendered" />
+
+<script>
+export default {
+  methods: {
+    pagesRendered(pdfApp) {
+      pdfApp.pdfViewer.currentScaleValue = "page-height";
+    }
+  }
+};
+</script>
+```
+
+> ℹ️ Events are triggered in the following order `after-created (once) => open => pages-rendered`
+
+## Slots
+
+- toolbar-left-prepend
+- toolbar-left-append
+- toolbar-middle-prepend
+- toolbar-middle-append
+- toolbar-right-prepend
+- toolbar-right-append
+- toolbar-sidebar-prepend
+- toolbar-sidebar-append
+- secondary-toolbar-prepend
+- secondary-toolbar-append
+- footer
+
+```vue
+<vue-pdf-app>
+  <template #toolbar-left-prepend>
+    <button type="button">Click me</button>
+  </template>
+</vue-pdf-app>
 ```
 
 # Color customization (IE11 not supported)
@@ -378,7 +538,7 @@ Colors of the pdf viewer are customized via custom css properties:
 
 # Icons customization
 
-To use default icons `import "vue-pdf-app/icons/main.css";`.
+To use default icons `import "vue-pdf-app/dist/icons/main.css";`.
 
 To use custom icons you have to implement [icons.css](https://github.com/sandanat/vue-pdf-app/blob/master/src/sass/icons.scss):
 
@@ -393,94 +553,6 @@ To use custom icons you have to implement [icons.css](https://github.com/sandana
 }
 ```
 
-# Configurable panel
-
-Toolbar is available by default and is customized via `config` prop.
-Specify `false` for buttons or whole group of buttons to disable them.
-
-```javascript
-// disable "Previous page" button
-{
-  toolbar: {
-    toolbarViewerLeft: {
-      previous: false
-    }
-  }
-}
-
-// disable whole page navigation panel
-{
-  toolbar: {
-    toolbarViewerLeft: false
-}
-
-// disable whole panel
-{
-  toolbar: false
-}
-```
-
-<details>
-<summary>Config specification</summary>
-
-![Config legend](./readme/config-legend.jpg "Config legend")
-
-<code>
-<pre>
-{
-  sidebar: {
-    viewThumbnail: true,
-    viewOutline: true,
-    viewAttachments: true,
-  },
-  findbar: true,
-  secondaryToolbar: {
-    secondaryPresentationMode: true,
-    secondaryOpenFile: true,
-    secondaryPrint: true,
-    secondaryDownload: true,
-    secondaryViewBookmark: true,
-    firstPage: true,
-    lastPage: true,
-    pageRotateCw: true,
-    pageRotateCcw: true,
-    cursorSelectTool: true,
-    cursorHandTool: true,
-    scrollVertical: true,
-    scrollHorizontal: true,
-    scrollWrapped: true,
-    spreadNone: true,
-    spreadOdd: true,
-    spreadEven: true,
-    documentProperties: true,
-  },
-  toolbar: {
-    toolbarViewerLeft: {
-      previous: true,
-      next: true,
-      pageNumber: true,
-    },
-    toolbarViewerRight: {
-      presentationMode: true,
-      openFile: true,
-      print: true,
-      download: true,
-      viewBookmark: true,
-      secondaryToolbarToggle: true,
-    },
-    toolbarViewerMiddle: {
-      zoomOut: true,
-      zoomIn: true,
-      scaleSelectContatiner: true,
-    },
-  },
-  viewerContextMenu: true,
-  errorWrapper: true,
-};
-</pre>
-</code>
-</details>
-
 # Localized panel
 
 English is the default language for panel.
@@ -488,12 +560,6 @@ Use `<link rel="resource" type="application/l10n" href="path-to-localization-fil
 See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l10n "file examples").
 
 # Examples
-
-[See examples](https://github.com/sandanat/vue-pdf-app/tree/master/examples "Examples source code") source code.
-
-[Live demo](https://codesandbox.io/s/vue-2-vue-pdf-app-wz5kv)
-
-[Live demo 2](https://codepen.io/sandanat/pen/xxVdgYM)
 
 ## script tag (unpkg)
 
@@ -503,14 +569,14 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset="utf-8" />
-    <title>pdf-viewer demo</title>
+    <title>Vue-pdf-app demo</title>
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/vue-pdf-app"></script>
   </head>
 
   <body>
     <div id="app" style="height: 100%;">
-      <pdf-app pdf="/sample.pdf"></pdf-app>
+      <vue-pdf-app pdf="/sample.pdf"></vue-pdf-app>
     </div>
     <script>
       new Vue({
@@ -528,17 +594,17 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
 ```vue
 <template>
   <div id="app">
-    <pdf-app pdf="/sample.pdf"></pdf-app>
+    <vue-pdf-app pdf="/sample.pdf"></vue-pdf-app>
   </div>
 </template>
 
 <script lang="ts">
-import PdfApp from "vue-pdf-app";
+import "vue-pdf-app/dist/icons/main.css";
 import { Component, Vue } from "vue-property-decorator";
 
 @Component({
   components: {
-    PdfApp
+    VuePdfApp
   }
 })
 export default class App extends Vue {}
@@ -553,17 +619,18 @@ So use lazy loading to split your bundle into small pieces.
 ```vue
 <template>
   <div id="app">
-    <pdf-viewer></pdf-viewer>
+    <vue-pdf-app></vue-pdf-app>
   </div>
 </template>
 
 <script>
+import "vue-pdf-app/dist/icons/main.css";
 import Loader from "./components/Loader.vue";
 
 export default {
   name: "App",
   components: {
-    "pdf-viewer": () => ({
+    "vue-pdf-app": () => ({
       component: new Promise((res) => {
         return setTimeout(
           () => res(import(/* webpackChunkName: "pdf-viewer" */ "vue-pdf-app")),
@@ -585,7 +652,7 @@ You can interact with pdfjs library when pdf is opened via `open` event.
 <template>
   <div id="app">
     <div id="pdf-wrapper">
-      <pdf-app pdf="/sample.pdf" @open="openHandler"></pdf-app>
+      <vue-pdf-app pdf="/sample.pdf" @open="openHandler"></vue-pdf-app>
     </div>
     <div id="info">
       <h1>PDF info:</h1>
@@ -598,12 +665,13 @@ You can interact with pdfjs library when pdf is opened via `open` event.
 </template>
 
 <script>
-import PdfApp from "vue-pdf-app";
+import "vue-pdf-app/dist/icons/main.css";
+import VuePdfApp from "vue-pdf-app";
 
 export default {
   name: "App",
   components: {
-    PdfApp
+    VuePdfApp
   },
   data() {
     return {
@@ -611,9 +679,9 @@ export default {
     };
   },
   methods: {
-    async openHandler(PDFViewerApplication) {
+    async openHandler(pdfApp) {
       this.info = [];
-      const info = await PDFViewerApplication.pdfDocument
+      const info = await pdfApp.pdfDocument
         .getMetadata()
         .catch(console.error.bind(console));
 
