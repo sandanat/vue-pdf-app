@@ -180,9 +180,18 @@ export default {
 - Usage:
 
 ```vue
-<vue-pdf-app @after-created="afterCreated" /> ... afterCreated(pdfApp) { // to
-prevent browser tab title changing to pdf document name pdfApp.isViewerEmbedded
-= true; }
+<vue-pdf-app @after-created="afterCreated" />
+
+<script>
+export default {
+  methods: {
+    afterCreated(pdfApp) {
+      // to prevent browser tab title changing to pdf document name
+      pdfApp.isViewerEmbedded = true;
+    }
+  }
+};
+</script>
 ```
 
 ## @open(PDFViewerApplication)
@@ -204,11 +213,20 @@ prevent browser tab title changing to pdf document name pdfApp.isViewerEmbedded
 - Usage:
 
 ```vue
-<vue-pdf-app @pages-rendered="pagesRendered" /> ... pagesRendered(pdfApp) {
-pdfApp.pdfViewer.currentScale = "page-height" }
+<vue-pdf-app @pages-rendered="pagesRendered" />
+
+<script>
+export default {
+  methods: {
+    pagesRendered(pdfApp) {
+      pdfApp.pdfViewer.currentScaleValue = "page-height";
+    }
+  }
+};
+</script>
 ```
 
-> :information_source: Events are triggered in the following order `after-created (once) => open => pages-rendered`
+> ℹ️ Events are triggered in the following order `after-created (once) => open => pages-rendered`
 
 ## Slots
 

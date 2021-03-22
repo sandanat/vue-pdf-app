@@ -1,7 +1,12 @@
 <template>
   <div class="wrapper">
     <div id="pdf-wrapper">
-      <vue-pdf-app pdf="/sample.pdf" @open="openHandler"></vue-pdf-app>
+      <vue-pdf-app
+        pdf="/sample.pdf"
+        @after-created="afterCreatedHandler"
+        @open="openHandler"
+        @pages-rendered="pagesRenderedHandler"
+      ></vue-pdf-app>
     </div>
     <div id="info">
       <h1>PDF info:</h1>
@@ -23,16 +28,14 @@ export default {
       info: [],
     };
   },
-  created() {
-    // not reactive
-    this.pageTitle = document.title;
-  },
   methods: {
-    async openHandler(PDFViewerApplication) {
-      PDFViewerApplication.setTitle(this.pageTitle);
-
+    afterCreatedHandler(pdfApp) {
+      // to prevent browser tab title changing to pdf document name
+      pdfApp.isViewerEmbedded = true;
+    },
+    async openHandler(pdfApp) {
       this.info = [];
-      const info = await PDFViewerApplication.pdfDocument
+      const info = await pdfApp.pdfDocument
         .getMetadata()
         .catch(console.error.bind(console));
 
@@ -45,6 +48,9 @@ export default {
         };
         this.info.push(obj);
       });
+    },
+    pagesRenderedHandler(pdfApp) {
+      pdfApp.pdfViewer.currentScaleValue = "page-height";
     },
   },
 };

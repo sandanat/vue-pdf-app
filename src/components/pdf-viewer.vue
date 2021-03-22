@@ -1060,10 +1060,3 @@ export default class PdfViewer extends Vue {
   }
 }
 </script>
-
-<style>
-.pdf-app {
-  height: 100%;
-  overflow-x: hidden;
-}
-</style>

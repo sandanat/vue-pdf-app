@@ -50,6 +50,11 @@
   --pdf-dialog-button-color: #{$pdf-dialog-button-color};
 }
 
+.pdf-app {
+  height: 100%;
+  overflow-x: hidden;
+}
+
 .pdf-app * {
   padding: 0;
   margin: 0;
