@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div style="height: 100%; display: flex">
     <div id="pdf-wrapper">
       <vue-pdf-app
         pdf="/sample.pdf"
@@ -57,11 +57,6 @@ export default {
 </script>
 
 <style>
-.wrapper {
-  height: 100%;
-  display: flex;
-}
-
 #pdf-wrapper {
   flex: 8 0 10px;
 }

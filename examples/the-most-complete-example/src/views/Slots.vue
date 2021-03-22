@@ -61,12 +61,12 @@ span.legend {
 
 button.secondary-toolbar-slot {
   margin-left: 12px;
+}
 
-  & span {
-    font-family: Arial, Helvetica, sans-serif;
-    padding-left: 5px;
-    font-size: 12px;
-  }
+button.secondary-toolbar-slot span {
+  font-family: Arial, Helvetica, sans-serif;
+  padding-left: 5px;
+  font-size: 12px;
 }
 
 .append,
@@ -78,10 +78,11 @@ button.secondary-toolbar-slot {
   font-size: 1.1rem;
   color: red;
   margin: 5px;
+}
 
-  &:hover {
-    color: var(--pdf-button-hover-font-color);
-  }
+.append:hover,
+.prepend:hover {
+  color: var(--pdf-button-hover-font-color);
 }
 
 .append::before {
@@ -92,12 +93,10 @@ button.secondary-toolbar-slot {
   content: "\f185";
 }
 
-#toolbarSidebar {
-  & .prepend,
-  & .append {
-    position: relative;
-    top: -10px;
-  }
+#toolbarSidebar .prepend,
+#toolbarSidebar .append {
+  position: relative;
+  top: -10px;
 }
 
 .footer {

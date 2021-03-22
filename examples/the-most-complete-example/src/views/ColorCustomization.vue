@@ -11,9 +11,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// Don't use :root selector as it will owerride colors of pdf in each route of this repo.
-// Meanwhile :root selector can be used in a certain project
-.pdf-app {
+// Don't use a single :root selector as it will owerride colors of pdf in each route of this repo.
+// Meanwhile a single :root selector can be used in a certain project
+:root .pdf-app::v-deep {
   --pdf-app-background-color: peachpuff;
   --pdf-button-hover-font-color: white;
   --pdf-button-toggled-color: gainsboro;

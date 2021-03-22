@@ -6,6 +6,9 @@
     "serve": "vue-cli-service serve"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.3",
+    "@mdi/font": "^5.9.55",
+    "bootstrap-icons": "^1.4.0",
     "core-js": "^3.6.5",
     "uuid": "^8.3.2",
     "vue": "^2.6.11",

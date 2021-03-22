@@ -6,6 +6,7 @@
       <router-link to="/pdfjs-interaction">Pdfjs interaction</router-link> |
       <router-link to="/slots">Slots</router-link> |
       <router-link to="/color-customization">Color customization</router-link> |
+      <router-link to="/icons-customization">Icons customization</router-link> |
       <router-link to="/about">About</router-link>
     </div>
     <div class="container">
@@ -29,6 +30,10 @@
   a {
     font-weight: bold;
     color: #2c3e50;
+
+    &:hover {
+      color: chocolate;
+    }
 
     &.router-link-exact-active {
       color: #42b983;

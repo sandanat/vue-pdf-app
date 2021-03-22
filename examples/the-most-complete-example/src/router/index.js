@@ -5,6 +5,7 @@ import Slots from "@/views/Slots.vue";
 import PdfjsInteraction from "@/views/PdfjsInteraction.vue";
 import ToolbarConfiguration from "@/views/ToolbarConfiguration.vue";
 import ColorCustomization from "@/views/ColorCustomization.vue";
+import IconsCustomization from "@/views/IconsCustomization.vue";
 
 Vue.use(VueRouter);
 
@@ -33,6 +34,11 @@ const routes = [
     path: "/color-customization",
     name: "color-customization",
     component: ColorCustomization
+  },
+  {
+    path: "/icons-customization",
+    name: "icons-customization",
+    component: IconsCustomization
   },
   {
     path: "/about",

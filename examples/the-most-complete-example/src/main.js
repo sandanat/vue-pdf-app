@@ -1,5 +1,6 @@
 import "vue-pdf-app/dist/icons/main.css";
 import VuePdfApp from "vue-pdf-app";
+
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";

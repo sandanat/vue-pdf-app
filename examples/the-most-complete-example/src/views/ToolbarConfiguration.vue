@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class="toolbar-demo-wrapper">
     <vue-pdf-app pdf="sample.pdf" :config="config"></vue-pdf-app>
     <div>
       <h1>Toolbar configuration</h1>
@@ -254,16 +254,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.wrapper {
+.toolbar-demo-wrapper {
   display: flex;
   height: 100%;
 }
 
-.wrapper > :first-child {
+.toolbar-demo-wrapper > :first-child {
   flex: 8 0 10px;
 }
 
-.wrapper > :last-child {
+.toolbar-demo-wrapper > :last-child {
   flex: 4 0 10px;
 }
 </style>
