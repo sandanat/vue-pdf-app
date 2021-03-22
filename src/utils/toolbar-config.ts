@@ -44,7 +44,7 @@ const toolbarConfig: ToolbarConfig = {
     toolbarViewerMiddle: {
       zoomOut: true,
       zoomIn: true,
-      scaleSelectContatiner: true,
+      scaleSelectContainer: true,
     },
   },
   viewerContextMenu: true,

@@ -9,6 +9,7 @@ VUEjs v2 PDF viewer based on Mozilla's PDFJS.
 - rotate
 - text selection
 - search panel
+- pdf document password
 - thumbnail, outline, attachments, annotation layers
 
 Easily localized configurable panel
@@ -72,13 +73,104 @@ export default {
 
 ## :config
 
+- Description: available by default. Specify `false` for buttons or whole group of buttons to disable them.
 - Type: toolbar config (see below)
 - Required: `false`
 - Usage:
 
 ```vue
-<vue-pdf-app :config="{ toolbar: false }" />
+<vue-pdf-app :config="config" />
+
+<script>
+export default {
+  data() {
+    return {
+      // disable "Previous page" button
+      config: {
+        toolbar: {
+          toolbarViewerLeft: {
+            previous: false
+          }
+        }
+      },
+
+      // disable whole page navigation panel
+      config2: {
+        toolbar: {
+          toolbarViewerLeft: false
+        }
+      },
+
+      // disable whole panel
+      config3: {
+        toolbar: false
+      }
+    };
+  }
+};
+<script>
 ```
+
+<details>
+<summary>Config specification</summary>
+
+![Config legend](./readme/config-legend.jpg "Config legend")
+
+<code>
+<pre>
+{
+  sidebar: {
+    viewThumbnail: true,
+    viewOutline: true,
+    viewAttachments: true,
+  },
+  findbar: true,
+  secondaryToolbar: {
+    secondaryPresentationMode: true,
+    secondaryOpenFile: true,
+    secondaryPrint: true,
+    secondaryDownload: true,
+    secondaryViewBookmark: true,
+    firstPage: true,
+    lastPage: true,
+    pageRotateCw: true,
+    pageRotateCcw: true,
+    cursorSelectTool: true,
+    cursorHandTool: true,
+    scrollVertical: true,
+    scrollHorizontal: true,
+    scrollWrapped: true,
+    spreadNone: true,
+    spreadOdd: true,
+    spreadEven: true,
+    documentProperties: true,
+  },
+  toolbar: {
+    toolbarViewerLeft: {
+      previous: true,
+      next: true,
+      pageNumber: true,
+    },
+    toolbarViewerRight: {
+      presentationMode: true,
+      openFile: true,
+      print: true,
+      download: true,
+      viewBookmark: true,
+      secondaryToolbarToggle: true,
+    },
+    toolbarViewerMiddle: {
+      zoomOut: true,
+      zoomIn: true,
+      scaleSelectContainer: true,
+    },
+  },
+  viewerContextMenu: true,
+  errorWrapper: true,
+};
+</pre>
+</code>
+</details>
 
 ## @after-created(PDFViewerApplication)
 
@@ -88,12 +180,9 @@ export default {
 - Usage:
 
 ```vue
-<vue-pdf-app @after-created="afterCreated" />
-...
-afterCreated(pdfApp) {
-  // to prevent browser tab title changing to pdf document name
-  pdfApp.isViewerEmbedded = true;
-}
+<vue-pdf-app @after-created="afterCreated" /> ... afterCreated(pdfApp) { // to
+prevent browser tab title changing to pdf document name pdfApp.isViewerEmbedded
+= true; }
 ```
 
 ## @open(PDFViewerApplication)
@@ -115,11 +204,8 @@ afterCreated(pdfApp) {
 - Usage:
 
 ```vue
-<vue-pdf-app @pages-rendered="pagesRendered" />
-...
-pagesRendered(pdfApp) {
-  pdfApp.pdfViewer.currentScale = "page-height"
-}
+<vue-pdf-app @pages-rendered="pagesRendered" /> ... pagesRendered(pdfApp) {
+pdfApp.pdfViewer.currentScale = "page-height" }
 ```
 
 > :information_source: Events are triggered in the following order `after-created (once) => open => pages-rendered`
@@ -447,94 +533,6 @@ To use custom icons you have to implement [icons.css](https://github.com/sandana
   content: "icon code";
 }
 ```
-
-# Configurable panel
-
-Toolbar is available by default and is customized via `config` prop.
-Specify `false` for buttons or whole group of buttons to disable them.
-
-```javascript
-// disable "Previous page" button
-{
-  toolbar: {
-    toolbarViewerLeft: {
-      previous: false
-    }
-  }
-}
-
-// disable whole page navigation panel
-{
-  toolbar: {
-    toolbarViewerLeft: false
-}
-
-// disable whole panel
-{
-  toolbar: false
-}
-```
-
-<details>
-<summary>Config specification</summary>
-
-![Config legend](./readme/config-legend.jpg "Config legend")
-
-<code>
-<pre>
-{
-  sidebar: {
-    viewThumbnail: true,
-    viewOutline: true,
-    viewAttachments: true,
-  },
-  findbar: true,
-  secondaryToolbar: {
-    secondaryPresentationMode: true,
-    secondaryOpenFile: true,
-    secondaryPrint: true,
-    secondaryDownload: true,
-    secondaryViewBookmark: true,
-    firstPage: true,
-    lastPage: true,
-    pageRotateCw: true,
-    pageRotateCcw: true,
-    cursorSelectTool: true,
-    cursorHandTool: true,
-    scrollVertical: true,
-    scrollHorizontal: true,
-    scrollWrapped: true,
-    spreadNone: true,
-    spreadOdd: true,
-    spreadEven: true,
-    documentProperties: true,
-  },
-  toolbar: {
-    toolbarViewerLeft: {
-      previous: true,
-      next: true,
-      pageNumber: true,
-    },
-    toolbarViewerRight: {
-      presentationMode: true,
-      openFile: true,
-      print: true,
-      download: true,
-      viewBookmark: true,
-      secondaryToolbarToggle: true,
-    },
-    toolbarViewerMiddle: {
-      zoomOut: true,
-      zoomIn: true,
-      scaleSelectContatiner: true,
-    },
-  },
-  viewerContextMenu: true,
-  errorWrapper: true,
-};
-</pre>
-</code>
-</details>
 
 # Localized panel
 

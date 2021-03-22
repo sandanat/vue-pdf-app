@@ -565,7 +565,7 @@
                 <span
                   v-show="
                     showElem(
-                      'toolbar.toolbarViewerMiddle.scaleSelectContatiner'
+                      'toolbar.toolbarViewerMiddle.scaleSelectContainer'
                     )
                   "
                   id="scaleSelectContainer"
