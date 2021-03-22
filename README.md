@@ -24,11 +24,12 @@ Built-in typescript support
 
 UMD/Unpkg support:
 
-| File                   | Size        | Gzipped    |
-| ---------------------- | ----------- | ---------- |
-| vue-pdf-app.umd.min.js | 1777.56 KiB | 508.94 KiB |
-| vue-pdf-app.umd.js     | 3160.04 KiB | 709.14 KiB |
-| vue-pdf-app.common.js  | 3159.57 KiB | 708.95 KiB |
+| File                   | Size                               | Gzipped    |
+| ---------------------- | ---------------------------------- | ---------- |
+| vue-pdf-app.umd.min.js | 1731.76 KiB                        | 476.97 KiB |
+| vue-pdf-app.umd.js     | 3097.46 KiB                        | 674.95KiB  |
+| vue-pdf-app.common.js  | 3096.98 KiB                        | 674.79 KiB |
+| icons/main.css         | 15 - 40 KiB (depends from browser) |            |
 
 # Example
 
@@ -568,14 +569,14 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset="utf-8" />
-    <title>pdf-viewer demo</title>
+    <title>Vue-pdf-app demo</title>
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/vue-pdf-app"></script>
   </head>
 
   <body>
     <div id="app" style="height: 100%;">
-      <pdf-app pdf="/sample.pdf"></pdf-app>
+      <vue-pdf-app pdf="/sample.pdf"></vue-pdf-app>
     </div>
     <script>
       new Vue({
@@ -593,17 +594,17 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
 ```vue
 <template>
   <div id="app">
-    <pdf-app pdf="/sample.pdf"></pdf-app>
+    <vue-pdf-app pdf="/sample.pdf"></vue-pdf-app>
   </div>
 </template>
 
 <script lang="ts">
-import PdfApp from "vue-pdf-app";
+import "vue-pdf-app/dist/icons/main.css";
 import { Component, Vue } from "vue-property-decorator";
 
 @Component({
   components: {
-    PdfApp
+    VuePdfApp
   }
 })
 export default class App extends Vue {}
@@ -618,17 +619,18 @@ So use lazy loading to split your bundle into small pieces.
 ```vue
 <template>
   <div id="app">
-    <pdf-viewer></pdf-viewer>
+    <vue-pdf-app></vue-pdf-app>
   </div>
 </template>
 
 <script>
+import "vue-pdf-app/dist/icons/main.css";
 import Loader from "./components/Loader.vue";
 
 export default {
   name: "App",
   components: {
-    "pdf-viewer": () => ({
+    "vue-pdf-app": () => ({
       component: new Promise((res) => {
         return setTimeout(
           () => res(import(/* webpackChunkName: "pdf-viewer" */ "vue-pdf-app")),
@@ -650,7 +652,7 @@ You can interact with pdfjs library when pdf is opened via `open` event.
 <template>
   <div id="app">
     <div id="pdf-wrapper">
-      <pdf-app pdf="/sample.pdf" @open="openHandler"></pdf-app>
+      <vue-pdf-app pdf="/sample.pdf" @open="openHandler"></vue-pdf-app>
     </div>
     <div id="info">
       <h1>PDF info:</h1>
@@ -663,12 +665,13 @@ You can interact with pdfjs library when pdf is opened via `open` event.
 </template>
 
 <script>
-import PdfApp from "vue-pdf-app";
+import "vue-pdf-app/dist/icons/main.css";
+import VuePdfApp from "vue-pdf-app";
 
 export default {
   name: "App",
   components: {
-    PdfApp
+    VuePdfApp
   },
   data() {
     return {
@@ -676,9 +679,9 @@ export default {
     };
   },
   methods: {
-    async openHandler(PDFViewerApplication) {
+    async openHandler(pdfApp) {
       this.info = [];
-      const info = await PDFViewerApplication.pdfDocument
+      const info = await pdfApp.pdfDocument
         .getMetadata()
         .catch(console.error.bind(console));
 
