@@ -537,7 +537,7 @@ Colors of the pdf viewer are customized via custom css properties:
 
 # Icons customization
 
-To use default icons `import "vue-pdf-app/icons/main.css";`.
+To use default icons `import "vue-pdf-app/dist/icons/main.css";`.
 
 To use custom icons you have to implement [icons.css](https://github.com/sandanat/vue-pdf-app/blob/master/src/sass/icons.scss):
 

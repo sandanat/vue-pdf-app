@@ -335,7 +335,6 @@ html[dir="rtl"] .pdf-app #toolbarContainer,
   position: relative;
   width: 100%;
   height: 4px;
-  border-bottom: 1px solid rgba(51, 51, 51, 1);
 }
 
 .pdf-app #loadingBar .progress {
@@ -1141,7 +1140,7 @@ html[dir="rtl"] .pdf-app .outlineItemToggler::before {
 
 .pdf-app #errorMoreInfo {
   background-color: $pdf-error-more-info-color;
-  background-color: var(--$pdf-error-more-info-color);
+  background-color: var(--pdf-error-more-info-color);
   color: $pdf-error-more-info-font-color;
   color: var(--pdf-error-more-info-font-color);
   padding: 3px;

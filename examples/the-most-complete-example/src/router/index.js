@@ -4,6 +4,7 @@ import Basic from "@/views/Basic.vue";
 import Slots from "@/views/Slots.vue";
 import PdfjsInteraction from "@/views/PdfjsInteraction.vue";
 import ToolbarConfiguration from "@/views/ToolbarConfiguration.vue";
+import ColorCustomization from "@/views/ColorCustomization.vue";
 
 Vue.use(VueRouter);
 
@@ -19,14 +20,19 @@ const routes = [
     component: ToolbarConfiguration
   },
   {
+    path: "/pdfjs-interaction",
+    name: "pdfjs-interaction",
+    component: PdfjsInteraction
+  },
+  {
     path: "/slots",
     name: "slots",
     component: Slots
   },
   {
-    path: "/pdfjs-interaction",
-    name: "pdfjs-interaction",
-    component: PdfjsInteraction
+    path: "/color-customization",
+    name: "color-customization",
+    component: ColorCustomization
   },
   {
     path: "/about",
