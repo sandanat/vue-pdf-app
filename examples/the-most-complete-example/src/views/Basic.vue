@@ -6,6 +6,6 @@
 // VuePdfApp component is registered in src/main.js
 
 export default {
-  name: "basic",
+  name: "Basic",
 };
 </script>

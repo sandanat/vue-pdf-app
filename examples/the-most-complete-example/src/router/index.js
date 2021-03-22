@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import Basic from "@/views/Basic.vue";
 import Slots from "@/views/Slots.vue";
 import PdfjsInteraction from "@/views/PdfjsInteraction.vue";
+import ToolbarConfiguration from "@/views/ToolbarConfiguration.vue";
 
 Vue.use(VueRouter);
 
@@ -11,6 +12,11 @@ const routes = [
     path: "/",
     name: "basic",
     component: Basic
+  },
+  {
+    path: "/toolbar-configuration",
+    name: "toolbar-configuration",
+    component: ToolbarConfiguration
   },
   {
     path: "/slots",

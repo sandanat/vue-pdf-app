@@ -48,7 +48,7 @@
 // VuePdfApp component is registered in src/main.js
 
 export default {
-  name: "slots",
+  name: "Slots",
 };
 </script>
 
