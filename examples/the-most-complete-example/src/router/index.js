@@ -6,6 +6,7 @@ import PdfjsInteraction from "@/views/PdfjsInteraction.vue";
 import ToolbarConfiguration from "@/views/ToolbarConfiguration.vue";
 import ColorCustomization from "@/views/ColorCustomization.vue";
 import IconsCustomization from "@/views/IconsCustomization.vue";
+import ThemeToggling from "@/views/ThemeToggling.vue";
 
 Vue.use(VueRouter);
 
@@ -39,6 +40,11 @@ const routes = [
     path: "/icons-customization",
     name: "icons-customization",
     component: IconsCustomization
+  },
+  {
+    path: "/theme-toggling",
+    name: "theme-toggling",
+    component: ThemeToggling
   },
   {
     path: "/about",

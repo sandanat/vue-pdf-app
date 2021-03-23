@@ -13,41 +13,12 @@
  * limitations under the License.
  */
 
-@import "@/sass/variables.scss";
+@import "@/sass/colors.scss";
 
 :root {
   --sidebar-width: 200px;
   --sidebar-transition-duration: #{$pdf-sidebar-transition-duration};
   --sidebar-transition-timing-function: #{$pdf-sidebar-transition-timing-function};
-  --pdf-app-background-color: #{$pdf-app-background-color};
-  --pdf-sidebar-content-color: #{$pdf-sidebar-content-color};
-  --pdf-toolbar-sidebar-color: #{$pdf-toolbar-sidebar-color};
-  --pdf-toolbar-color: #{$pdf-toolbar-color};
-  --pdf-loading-bar-color: #{$pdf-loading-bar-color};
-  --pdf-loading-bar-secondary-color: #{$pdf-loading-bar-secondary-color};
-  --pdf-find-results-count-color: #{$pdf-find-results-count-color};
-  --pdf-find-results-count-font-color: #{$pdf-find-results-count-font-color};
-  --pdf-find-message-font-color: #{$pdf-find-message-font-color};
-  --pdf-not-found-color: #{$pdf-not-found-color};
-  --pdf-split-toolbar-button-separator-color: #{$pdf-split-toolbar-button-separator-color};
-  --pdf-toolbar-font-color: #{$pdf-toolbar-font-color};
-  --pdf-button-hover-font-color: #{$pdf-button-hover-font-color};
-  --pdf-button-toggled-color: #{$pdf-button-toggled-color};
-  --pdf-horizontal-toolbar-separator-color: #{$pdf-horizontal-toolbar-separator-color};
-  --pdf-input-color: #{$pdf-input-color};
-  --pdf-input-font-color: #{$pdf-input-font-color};
-  --pdf-find-input-placeholder-font-color: #{$pdf-find-input-placeholder-font-color};
-  --pdf-thumbnail-selection-ring-color: #{$pdf-thumbnail-selection-ring-color};
-  --pdf-thumbnail-selection-ring-selected-color: #{$pdf-thumbnail-selection-ring-selected-color};
-  --pdf-error-wrapper-color: #{$pdf-error-wrapper-color};
-  --pdf-error-more-info-color: #{$pdf-error-more-info-color};
-  --pdf-error-more-info-font-color: #{$pdf-error-more-info-font-color};
-  --pdf-overlay-container-color: #{$pdf-overlay-container-color};
-  --pdf-overlay-container-dialog-color: #{$pdf-overlay-container-dialog-color};
-  --pdf-overlay-container-dialog-font-color: #{$pdf-overlay-container-dialog-font-color};
-  --pdf-overlay-container-dialog-separator-color: #{$pdf-overlay-container-dialog-separator-color};
-  --pdf-dialog-button-font-color: #{$pdf-dialog-button-font-color};
-  --pdf-dialog-button-color: #{$pdf-dialog-button-color};
 }
 
 .pdf-app {
@@ -78,11 +49,6 @@
   #viewBookmark {
     cursor: pointer;
   }
-}
-
-.pdf-app {
-  background-color: $pdf-app-background-color; /* fallback for IE11 */
-  background-color: var(--pdf-app-background-color);
 }
 
 .pdf-app input,
@@ -203,8 +169,6 @@ html[dir="rtl"] .pdf-app #outerContainer.sidebarOpen #sidebarContainer {
   -webkit-overflow-scrolling: touch;
   position: absolute;
   width: 100%;
-  background-color: $pdf-sidebar-content-color;
-  background-color: var(--pdf-sidebar-content-color);
 }
 html[dir="ltr"] .pdf-app #sidebarContent {
   left: 0;
@@ -275,8 +239,6 @@ html[dir="rtl"]
 .pdf-app #toolbarSidebar {
   width: 100%;
   height: 32px;
-  background-color: $pdf-toolbar-sidebar-color;
-  background-color: var(--pdf-toolbar-sidebar-color);
 }
 html[dir="ltr"] .pdf-app #toolbarSidebar {
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.25),
@@ -309,8 +271,6 @@ html[dir="rtl"] .pdf-app #sidebarResizer {
 .pdf-app .secondaryToolbar {
   position: relative;
   height: 32px;
-  background-color: $pdf-toolbar-color;
-  background-color: var(--pdf-toolbar-color);
 }
 html[dir="ltr"] .pdf-app #toolbarContainer,
 .pdf-app .findbar,
@@ -343,8 +303,6 @@ html[dir="rtl"] .pdf-app #toolbarContainer,
   left: 0;
   width: 0%;
   height: 100%;
-  background-color: $pdf-loading-bar-color;
-  background-color: var(--pdf-loading-bar-color);
   overflow: hidden;
   transition: width 200ms;
 }
@@ -364,24 +322,6 @@ html[dir="rtl"] .pdf-app #toolbarContainer,
   left: 0;
   height: 100%;
   width: calc(100% + 150px);
-  background: repeating-linear-gradient(
-    135deg,
-    transparent 0,
-    $pdf-loading-bar-secondary-color 5px,
-    $pdf-loading-bar-secondary-color 45px,
-    transparent 55px,
-    transparent 95px,
-    transparent 100px
-  );
-  background: repeating-linear-gradient(
-    135deg,
-    transparent 0,
-    var(--pdf-loading-bar-secondary-color) 5px,
-    var(--pdf-loading-bar-secondary-color) 45px,
-    transparent 55px,
-    transparent 95px,
-    transparent 100px
-  );
   animation: progressIndeterminate 950ms linear infinite;
 }
 
@@ -429,8 +369,6 @@ html[dir="rtl"] .pdf-app .findbar {
 
 .pdf-app #findInput::placeholder {
   font-style: italic;
-  color: $pdf-find-input-placeholder-font-color;
-  color: var(--pdf-find-input-placeholder-font-color);
 }
 .pdf-app #findInput[data-status="pending"] {
   background-size: 16px;
@@ -491,8 +429,6 @@ html[dir="rtl"] .pdf-app .secondaryToolbar {
 }
 .pdf-app .doorHanger:after,
 .pdf-app .doorHangerRight:after {
-  border-bottom-color: $pdf-toolbar-color;
-  border-bottom-color: var(--pdf-toolbar-color);
   border-width: 8px;
 }
 .pdf-app .doorHanger:before,
@@ -526,26 +462,15 @@ html[dir="ltr"] .pdf-app .doorHangerRight:before {
 }
 
 .pdf-app #findResultsCount {
-  background-color: $pdf-find-results-count-color;
-  background-color: var(--pdf-find-results-count-color);
-  color: $pdf-find-results-count-font-color;
-  color: var(--pdf-find-results-count-font-color);
   text-align: center;
   padding: 3px 4px;
 }
 
 .pdf-app #findMsg {
   font-style: italic;
-  color: $pdf-find-message-font-color;
-  color: var(--pdf-find-message-font-color);
 }
 .pdf-app #findMsg:empty {
   display: none;
-}
-
-.pdf-app #findInput.notFound {
-  background-color: $pdf-not-found-color;
-  background-color: var(--pdf-not-found-color);
 }
 
 .pdf-app #toolbarViewerMiddle {
@@ -596,9 +521,15 @@ html[dir="rtl"] .pdf-app .splitToolbarButton > .toolbarButton {
 
 .pdf-app .toolbarButton,
 .pdf-app .secondaryToolbarButton,
+.vue-pdf-app-icon,
 .pdf-app .overlayButton {
   border: 0 none;
   background: none;
+}
+
+.pdf-app .toolbarButton,
+.pdf-app .secondaryToolbarButton,
+.pdf-app .overlayButton {
   width: 32px;
   height: 25px;
 }
@@ -644,8 +575,6 @@ html[dir="rtl"] .pdf-app .splitToolbarButton > .toolbarButton:first-child {
 .pdf-app .splitToolbarButtonSeparator {
   padding: 8px 0;
   width: 1px;
-  background-color: $pdf-split-toolbar-button-separator-color;
-  background-color: var(--pdf-split-toolbar-button-separator-color);
   z-index: 99;
   display: inline-block;
   margin: 5px 0;
@@ -668,8 +597,6 @@ html[dir="rtl"] .pdf-app .splitToolbarButtonSeparator {
 .pdf-app .overlayButton {
   min-width: 16px;
   padding: 2px 6px 0;
-  color: $pdf-toolbar-font-color;
-  color: var(--pdf-toolbar-font-color);
   font-size: 12px;
   line-height: 14px;
   user-select: none;
@@ -677,15 +604,12 @@ html[dir="rtl"] .pdf-app .splitToolbarButtonSeparator {
   cursor: default;
 }
 
-.pdf-app .findbar .toolbarButton {
+.pdf-app .findbar .toolbarButton,
+.vue-pdf-app-icon {
   cursor: pointer;
 }
 
 .pdf-app .dialog .overlayButton {
-  background-color: $pdf-dialog-button-color;
-  background-color: var(--pdf-dialog-button-color);
-  color: $pdf-dialog-button-font-color;
-  color: var(--pdf-dialog-button-font-color);
   cursor: pointer;
   border-radius: 2px;
 }
@@ -705,21 +629,9 @@ html[dir="rtl"] .pdf-app .dropdownToolbarButton {
   cursor: pointer;
 }
 
-.pdf-app .toolbarButton:hover,
-.pdf-app .toolbarButton:focus,
-.pdf-app .dropdownToolbarButton:hover,
-.pdf-app .overlayButton,
-.pdf-app .secondaryToolbarButton:hover,
-.pdf-app .secondaryToolbarButton:focus {
-  color: $pdf-button-hover-font-color;
-  color: var(--pdf-button-hover-font-color);
-}
-
 .pdf-app .toolbarButton.toggled,
 .pdf-app .splitToolbarButton.toggled > .toolbarButton.toggled,
 .pdf-app .secondaryToolbarButton.toggled {
-  background-color: $pdf-button-toggled-color;
-  background-color: var(--pdf-button-toggled-color);
   border-radius: 3px;
 }
 
@@ -744,18 +656,9 @@ html[dir="rtl"] .pdf-app .dropdownToolbarButton::after {
   width: 162px;
   height: 23px;
   font-size: 12px;
-  color: $pdf-toolbar-font-color;
-  color: var(--pdf-toolbar-font-color);
   margin: 0;
   padding: 3px 2px 2px;
   border: none;
-  background: $pdf-toolbar-color;
-  background: var(--pdf-toolbar-color);
-}
-
-.pdf-app .dropdownToolbarButton > select > option {
-  background: $pdf-toolbar-color;
-  background: var(--pdf-toolbar-color);
 }
 
 .pdf-app #customScaleOption {
@@ -839,8 +742,6 @@ html[dir="rtl"] .pdf-app .secondaryToolbarButton::before {
   padding: 8px 0;
   margin: 8px 4px;
   width: 1px;
-  background-color: $pdf-split-toolbar-button-separator-color;
-  background-color: var(--pdf-split-toolbar-button-separator-color);
 }
 html[dir="ltr"] .pdf-app .verticalToolbarSeparator {
   margin-left: 2px;
@@ -854,21 +755,15 @@ html[dir="rtl"] .pdf-app .verticalToolbarSeparator {
   margin: 0 0 4px 0;
   height: 1px;
   width: 100%;
-  background-color: $pdf-horizontal-toolbar-separator-color;
-  background-color: var(--pdf-horizontal-toolbar-separator-color);
 }
 
 .pdf-app .toolbarField {
   padding: 3px 6px;
   margin: 4px 0 4px 0;
   border-radius: 2px;
-  background-color: $pdf-input-color;
-  background-color: var(--pdf-input-color);
   border-width: 1px;
   border-style: solid;
   border-color: rgba(0, 0, 0, 0.32) rgba(0, 0, 0, 0.38) rgba(0, 0, 0, 0.42);
-  color: $pdf-input-font-color;
-  color: var(--pdf-input-font-color);
   font-size: 12px;
   line-height: 14px;
   outline-style: none;
@@ -910,8 +805,6 @@ html[dir="rtl"] .pdf-app .verticalToolbarSeparator {
   margin: 4px 2px 4px 0;
   border: 1px solid rgba(0, 0, 0, 0);
   border-radius: 2px;
-  color: $pdf-toolbar-font-color;
-  color: var(--pdf-toolbar-font-color);
   font-size: 12px;
   line-height: 14px;
   text-align: left;
@@ -976,17 +869,6 @@ html[dir="rtl"] .pdf-app .thumbnail {
   opacity: 0.9;
 }
 
-.pdf-app a:focus > .thumbnail > .thumbnailSelectionRing,
-.pdf-app .thumbnail:hover > .thumbnailSelectionRing {
-  background-color: $pdf-thumbnail-selection-ring-color;
-  background-color: var(--pdf-thumbnail-selection-ring-color);
-}
-
-.pdf-app .thumbnail.selected > .thumbnailSelectionRing {
-  background-color: $pdf-thumbnail-selection-ring-selected-color;
-  background-color: var(--pdf-thumbnail-selection-ring-selected-color);
-}
-
 .pdf-app #outlineView,
 .pdf-app #attachmentsView {
   position: absolute;
@@ -1027,8 +909,6 @@ html[dir="rtl"] .pdf-app .outlineItem > .outlineItems {
   height: auto;
   margin-bottom: 1px;
   border-radius: 2px;
-  color: $pdf-toolbar-font-color;
-  color: var(--pdf-toolbar-font-color);
   font-size: 13px;
   line-height: 15px;
   user-select: none;
@@ -1096,7 +976,6 @@ html[dir="rtl"] .pdf-app .outlineItemToggler::before {
 .pdf-app .outlineItemToggler:hover ~ .outlineItems,
 .pdf-app .outlineItem > a:hover,
 .pdf-app .attachmentsItem > button:hover {
-  background-color: $pdf-button-toggled-color;
   border-radius: 2px;
 }
 
@@ -1115,9 +994,6 @@ html[dir="rtl"] .pdf-app .outlineItemToggler::before {
 }
 
 .pdf-app #errorWrapper {
-  background: none repeat scroll 0 0 rgba(255, 85, 85, 1);
-  background-color: $pdf-error-wrapper-color;
-  background-color: var(--pdf-error-wrapper-color);
   color: rgba(255, 255, 255, 1);
   left: 0;
   position: absolute;
@@ -1139,10 +1015,6 @@ html[dir="rtl"] .pdf-app .outlineItemToggler::before {
 }
 
 .pdf-app #errorMoreInfo {
-  background-color: $pdf-error-more-info-color;
-  background-color: var(--pdf-error-more-info-color);
-  color: $pdf-error-more-info-font-color;
-  color: var(--pdf-error-more-info-font-color);
   padding: 3px;
   margin: 3px;
   width: 98%;
@@ -1159,8 +1031,6 @@ html[dir="rtl"] .pdf-app .outlineItemToggler::before {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: $pdf-overlay-container-color;
-  background-color: var(--pdf-overlay-container-color);
   z-index: 40000;
 }
 .pdf-app #overlayContainer > * {
@@ -1178,10 +1048,6 @@ html[dir="rtl"] .pdf-app .outlineItemToggler::before {
   display: inline-block;
   padding: 15px;
   border-spacing: 4px;
-  background-color: $pdf-overlay-container-dialog-color;
-  background-color: var(--pdf-overlay-container-dialog-color);
-  color: $pdf-overlay-container-dialog-font-color;
-  color: var(--pdf-overlay-container-dialog-font-color);
   font-size: 12px;
   line-height: 14px;
   border: 1px solid rgba(0, 0, 0, 0.5);
@@ -1205,8 +1071,6 @@ html[dir="rtl"] .pdf-app .outlineItemToggler::before {
   margin: 4px 0 4px 0;
   height: 1px;
   width: 100%;
-  background-color: $pdf-overlay-container-dialog-separator-color;
-  background-color: var(--pdf-overlay-container-dialog-separator-color);
 }
 
 .pdf-app .dialog .buttonRow {
