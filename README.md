@@ -61,6 +61,8 @@ export default {
 
 [Examples source code](https://github.com/sandanat/vue-pdf-app/tree/master/examples "Examples source code")
 
+[FAQ](https://github.com/sandanat/vue-pdf-app/blob/master/FAQ.md)
+
 # API
 
 ## :pdf

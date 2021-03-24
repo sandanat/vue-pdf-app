@@ -1,3 +1,12 @@
+- [Can I use two pdf viewers on a page?](#can-i-use-two-pdf-viewers-on-a-page)
+- [Can I interract with Mozilla's pdfjs library outside the event handlers of pdf viewer?](#can-i-interract-with-mozilla's-pdfjs-library-outside-the-event-handlers-of-pdf-viewer)
+- [Can I disable browser tab title rename to pdf file name?](#can-i-disable-browser-tab-title-rename-to-pdf-file-name)
+- [Can I use pdf viewer in a dialog?](#can-i-use-pdf-viewer-in-a-dialog)
+- [Can I set a default page scale when a pdf document is opening?](#can-i-set-a-default-page-scale-when-a-pdf-document-is-opening)
+- [Can I programmatically jump to the certain page when a pdf document is opening?](#can-i-programmatically-jump-to-the-certain-page-when-a-pdf-document-is-opening)
+
+Still have a question? Create an issue!
+
 # Can I use two pdf viewers on a page?
 
 It is impossible. The package repeats the structure of Mozilla's pdf viewer and internally it uses elements IDs to bind functionality. When two pdf viewers are used elements with equal IDs are created. That means that only the first pdf viewer can be operable.
@@ -71,7 +80,7 @@ export default {
 </script>
 ```
 
-# Can I programmatically jump to the certain page?
+# Can I programmatically jump to the certain page when a pdf document is opening?
 
 ```vue
 <vue-pdf-app @pages-rendered="pagesRenderedHandler"></vue-pdf-app>

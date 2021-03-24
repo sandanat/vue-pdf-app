@@ -3,6 +3,7 @@ import Router from "vue-router";
 import PdfViewer from "@/views/pdf-app.vue";
 import ThemeToggling from "@/views/ThemeToggling.vue";
 import About from "@/components/about.vue";
+import Sandbox from "@/views/Sandbox.vue";
 
 Vue.use(Router);
 
@@ -19,6 +20,11 @@ export default new Router({
       path: "/theme-toggling",
       name: "theme-togglingh",
       component: ThemeToggling
+    },
+    {
+      path: "/sandbox",
+      name: "sandbox",
+      component: Sandbox
     },
     {
       path: "/about",
