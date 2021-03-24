@@ -34,6 +34,12 @@ export default {
 <style lang="scss" scoped>
 $footer-height: 20px;
 
+.pdf-app.light {
+  --pdf-app-background-color: red;
+  --pdf-toolbar-font-color: green;
+  --pdf-button-hover-font-color: yellow;
+}
+
 .footer {
   background: var(--pdf-button-toggled-color);
   color: var(--pdf-toolbar-font-color);

@@ -391,29 +391,31 @@
 }
 /****** end fallback for IE11 ******/
 
-.pdf-app {
+// [class] selector is to make specifity equal to .pdf-app.light
+// otherwise color customization for light theme doesn't work
+.pdf-app[class] {
   background-color: var(--pdf-app-background-color);
 }
 
-.pdf-app #sidebarContent {
+.pdf-app[class] #sidebarContent {
   background-color: var(--pdf-sidebar-content-color);
 }
 
-.pdf-app #toolbarSidebar {
+.pdf-app[class] #toolbarSidebar {
   background-color: var(--pdf-toolbar-sidebar-color);
 }
 
-.pdf-app #toolbarContainer,
-.pdf-app .findbar,
-.pdf-app .secondaryToolbar {
+.pdf-app[class] #toolbarContainer,
+.pdf-app[class] .findbar,
+.pdf-app[class] .secondaryToolbar {
   background-color: var(--pdf-toolbar-color);
 }
 
-.pdf-app #loadingBar .progress {
+.pdf-app[class] #loadingBar .progress {
   background-color: var(--pdf-loading-bar-color);
 }
 
-.pdf-app #loadingBar .progress.indeterminate .glimmer {
+.pdf-app[class] #loadingBar .progress.indeterminate .glimmer {
   background: repeating-linear-gradient(
     135deg,
     transparent 0,
@@ -425,130 +427,130 @@
   );
 }
 
-.pdf-app #findInput::placeholder {
+.pdf-app[class] #findInput::placeholder {
   color: var(--pdf-find-input-placeholder-font-color);
 }
 
-.pdf-app .doorHanger:after,
-.pdf-app .doorHangerRight:after {
+.pdf-app[class] .doorHanger:after,
+.pdf-app[class] .doorHangerRight:after {
   border-bottom-color: var(--pdf-toolbar-color);
 }
 
-.pdf-app #findResultsCount {
+.pdf-app[class] #findResultsCount {
   background-color: var(--pdf-find-results-count-color);
   color: var(--pdf-find-results-count-font-color);
 }
 
-.pdf-app #findMsg {
+.pdf-app[class] #findMsg {
   color: var(--pdf-find-message-font-color);
 }
 
-.pdf-app #findInput.notFound {
+.pdf-app[class] #findInput.notFound {
   background-color: var(--pdf-not-found-color);
 }
 
-.pdf-app .splitToolbarButtonSeparator {
+.pdf-app[class] .splitToolbarButtonSeparator {
   background-color: var(--pdf-split-toolbar-button-separator-color);
 }
 
-.pdf-app .toolbarButton,
-.pdf-app .dropdownToolbarButton,
-.pdf-app .secondaryToolbarButton,
-.pdf-app .overlayButton {
+.pdf-app[class] .toolbarButton,
+.pdf-app[class] .dropdownToolbarButton,
+.pdf-app[class] .secondaryToolbarButton,
+.pdf-app[class] .overlayButton {
   color: var(--pdf-toolbar-font-color);
 }
 
-.vue-pdf-app-icon {
+.vue-pdf-app-icon[class] {
   color: var(--pdf-toolbar-font-color);
 }
 
-.pdf-app .dialog .overlayButton {
+.pdf-app[class] .dialog .overlayButton {
   background-color: var(--pdf-dialog-button-color);
   color: var(--pdf-dialog-button-font-color);
 }
 
-.pdf-app .toolbarButton:hover,
-.pdf-app .toolbarButton:focus,
-.pdf-app .dropdownToolbarButton:hover,
-.pdf-app .overlayButton,
-.pdf-app .secondaryToolbarButton:hover,
-.vue-pdf-app-icon:hover,
-.pdf-app .secondaryToolbarButton:focus {
+.pdf-app[class] .toolbarButton:hover,
+.pdf-app[class] .toolbarButton:focus,
+.pdf-app[class] .dropdownToolbarButton:hover,
+.pdf-app[class] .overlayButton,
+.pdf-app[class] .secondaryToolbarButton:hover,
+.vue-pdf-app-icon:hover[class],
+.pdf-app[class] .secondaryToolbarButton:focus {
   color: var(--pdf-button-hover-font-color);
 }
 
-.pdf-app .dropdownToolbarButton > select {
+.pdf-app[class] .dropdownToolbarButton > select {
   color: var(--pdf-toolbar-font-color);
   background: var(--pdf-toolbar-color);
 }
 
-.pdf-app .dropdownToolbarButton > select > option {
+.pdf-app[class] .dropdownToolbarButton > select > option {
   background: var(--pdf-toolbar-color);
 }
 
-.pdf-app .verticalToolbarSeparator {
+.pdf-app[class] .verticalToolbarSeparator {
   background-color: var(--pdf-split-toolbar-button-separator-color);
 }
 
-.pdf-app .horizontalToolbarSeparator {
+.pdf-app[class] .horizontalToolbarSeparator {
   background-color: var(--pdf-horizontal-toolbar-separator-color);
 }
 
-.pdf-app .toolbarField {
+.pdf-app[class] .toolbarField {
   background-color: var(--pdf-input-color);
   color: var(--pdf-input-font-color);
 }
 
-.pdf-app .toolbarLabel {
+.pdf-app[class] .toolbarLabel {
   color: var(--pdf-toolbar-font-color);
 }
 
-.pdf-app a:focus > .thumbnail > .thumbnailSelectionRing,
-.pdf-app .thumbnail:hover > .thumbnailSelectionRing {
+.pdf-app[class] a:focus > .thumbnail > .thumbnailSelectionRing,
+.pdf-app[class] .thumbnail:hover > .thumbnailSelectionRing {
   background-color: var(--pdf-thumbnail-selection-ring-color);
 }
 
-.pdf-app .thumbnail.selected > .thumbnailSelectionRing {
+.pdf-app[class] .thumbnail.selected > .thumbnailSelectionRing {
   background-color: var(--pdf-thumbnail-selection-ring-selected-color);
 }
 
-.pdf-app .outlineItem > a,
-.pdf-app .attachmentsItem > button {
+.pdf-app[class] .outlineItem > a,
+.pdf-app[class] .attachmentsItem > button {
   color: var(--pdf-toolbar-font-color);
 }
 
-.pdf-app .outlineItemToggler:hover,
-.pdf-app .outlineItemToggler:hover + a,
-.pdf-app .outlineItemToggler:hover ~ .outlineItems,
-.pdf-app .outlineItem > a:hover,
-.pdf-app .attachmentsItem > button:hover {
+.pdf-app[class] .outlineItemToggler:hover,
+.pdf-app[class] .outlineItemToggler:hover + a,
+.pdf-app[class] .outlineItemToggler:hover ~ .outlineItems,
+.pdf-app[class] .outlineItem > a:hover,
+.pdf-app[class] .attachmentsItem > button:hover {
   background-color: var(--pdf-button-toggled-color);
 }
 
-.pdf-app #errorWrapper {
+.pdf-app[class] #errorWrapper {
   background-color: var(--pdf-error-wrapper-color);
 }
 
-.pdf-app #errorMoreInfo {
+.pdf-app[class] #errorMoreInfo {
   background-color: var(--pdf-error-more-info-color);
   color: var(--pdf-error-more-info-font-color);
 }
 
-.pdf-app #overlayContainer {
+.pdf-app[class] #overlayContainer {
   background-color: var(--pdf-overlay-container-color);
 }
 
-.pdf-app #overlayContainer > .container > .dialog {
+.pdf-app[class] #overlayContainer > .container > .dialog {
   background-color: var(--pdf-overlay-container-dialog-color);
   color: var(--pdf-overlay-container-dialog-font-color);
 }
 
-.pdf-app .dialog .separator {
+.pdf-app[class] .dialog .separator {
   background-color: var(--pdf-overlay-container-dialog-separator-color);
 }
 
-.pdf-app .toolbarButton.toggled,
-.pdf-app .splitToolbarButton.toggled > .toolbarButton.toggled,
-.pdf-app .secondaryToolbarButton.toggled {
+.pdf-app[class] .toolbarButton.toggled,
+.pdf-app[class] .splitToolbarButton.toggled > .toolbarButton.toggled,
+.pdf-app[class] .secondaryToolbarButton.toggled {
   background-color: var(--pdf-button-toggled-color);
 }

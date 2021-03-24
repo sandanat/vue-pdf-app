@@ -10,11 +10,41 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-// Don't use a single :root selector as it will owerride colors of pdf in each route of this repo.
-// Meanwhile a single :root selector can be used in a certain project
-:root .pdf-app::v-deep {
-  --pdf-app-background-color: peachpuff;
+<style scoped>
+.pdf-app.light {
+  --pdf-app-background-color: white;
+  --pdf-button-hover-font-color: black;
+  --pdf-button-toggled-color: gray;
+  --pdf-dialog-button-color: gray;
+  --pdf-dialog-button-font-color: yellow;
+  --pdf-error-more-info-color: black;
+  --pdf-error-more-info-font-color: cyan;
+  --pdf-error-wrapper-color: blue;
+  --pdf-find-input-placeholder-font-color: black;
+  --pdf-find-message-font-color: brown;
+  --pdf-find-results-count-color: orange;
+  --pdf-find-results-count-font-color: green;
+  --pdf-horizontal-toolbar-separator-color: black;
+  --pdf-input-color: black;
+  --pdf-input-font-color: pink;
+  --pdf-loading-bar-color: green;
+  --pdf-loading-bar-secondary-color: blue;
+  --pdf-not-found-color: blue;
+  --pdf-overlay-container-color: gray;
+  --pdf-overlay-container-dialog-color: gray;
+  --pdf-overlay-container-dialog-font-color: black;
+  --pdf-overlay-container-dialog-separator-color: darkblue;
+  --pdf-sidebar-content-color: pink;
+  --pdf-split-toolbar-button-separator-color: black;
+  --pdf-thumbnail-selection-ring-color: darkorange;
+  --pdf-thumbnail-selection-ring-selected-color: darkgreen;
+  --pdf-toolbar-color: gray;
+  --pdf-toolbar-font-color: violet;
+  --pdf-toolbar-sidebar-color: gray;
+}
+
+.pdf-app.dark {
+  --pdf-app-background-color: black;
   --pdf-button-hover-font-color: white;
   --pdf-button-toggled-color: gainsboro;
   --pdf-dialog-button-color: ivory;
