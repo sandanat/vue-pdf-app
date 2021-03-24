@@ -7,6 +7,7 @@
       <router-link to="/slots">Slots</router-link> |
       <router-link to="/color-customization">Color customization</router-link> |
       <router-link to="/icons-customization">Icons customization</router-link> |
+      <router-link to="/theme-toggling">Theme toggling</router-link> |
       <router-link to="/about">About</router-link>
     </div>
     <div class="container">

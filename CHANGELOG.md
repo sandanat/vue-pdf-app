@@ -6,6 +6,7 @@
 1. Added pdf viewer color customization via custom css properties.
 1. Added slots for toolbar and footer.
 1. Added events `pages-rendered` and `after-created`.
+1. Added theme toggle.
 
 ## Other
 

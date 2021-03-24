@@ -1,12 +1,12 @@
 <template>
-  <div id="pdf" class="pdf-app">
+  <div id="vuePdfApp" :class="[localTheme]" class="pdf-app">
     <script type="application/l10n">
       {{ defaultLocale }}
     </script>
     <div id="outerContainer">
       <div v-show="showElem('sidebar')" id="sidebarContainer">
         <div id="toolbarSidebar">
-          <slot name="toolbar-sidebar-prepend"></slot>
+          <slot v-bind="{ toggleTheme }" name="toolbar-sidebar-prepend"></slot>
           <div class="splitToolbarButton toggled">
             <button
               v-show="showElem('sidebar.viewThumbnail')"
@@ -41,7 +41,7 @@
               <span data-l10n-id="attachments_label">Attachments</span>
             </button>
           </div>
-          <slot name="toolbar-sidebar-append"></slot>
+          <slot v-bind="{ toggleTheme }" name="toolbar-sidebar-append"></slot>
         </div>
         <div v-show="showElem('sidebar')" id="sidebarContent">
           <div
@@ -155,7 +155,7 @@
           class="secondaryToolbar hidden doorHangerRight"
         >
           <div id="secondaryToolbarButtonContainer">
-            <slot name="secondary-toolbar-prepend"></slot>
+            <slot v-bind="{ toggleTheme }" name="secondary-toolbar-prepend"></slot>
             <button
               v-show="showElem('secondaryToolbar.secondaryPresentationMode')"
               id="secondaryPresentationMode"
@@ -372,7 +372,7 @@
                 >Document Properties…</span
               >
             </button>
-            <slot name="secondary-toolbar-append"></slot>
+            <slot v-bind="{ toggleTheme }" name="secondary-toolbar-append"></slot>
           </div>
         </div>
         <!-- secondaryToolbar -->
@@ -384,7 +384,7 @@
                 v-show="showElem('toolbar.toolbarViewerLeft')"
                 id="toolbarViewerLeft"
               >
-                <slot name="toolbar-left-prepend"></slot>
+                <slot v-bind="{ toggleTheme }" name="toolbar-left-prepend"></slot>
                 <button
                   v-show="showElem('sidebar')"
                   id="sidebarToggle"
@@ -449,13 +449,13 @@
                   id="numPages"
                   class="toolbarLabel"
                 ></span>
-                <slot name="toolbar-left-append"></slot>
+                <slot v-bind="{ toggleTheme }" name="toolbar-left-append"></slot>
               </div>
               <div
                 v-show="showElem('toolbar.toolbarViewerRight')"
                 id="toolbarViewerRight"
               >
-                <slot name="toolbar-right-prepend"></slot>
+                <slot v-bind="{ toggleTheme }" name="toolbar-right-prepend"></slot>
                 <button
                   v-show="
                     showElem('toolbar.toolbarViewerRight.presentationMode')
@@ -532,13 +532,13 @@
                 >
                   <span data-l10n-id="tools_label">Tools</span>
                 </button>
-                <slot name="toolbar-right-append"></slot>
+                <slot v-bind="{ toggleTheme }" name="toolbar-right-append"></slot>
               </div>
               <div
                 v-show="showElem('toolbar.toolbarViewerMiddle')"
                 id="toolbarViewerMiddle"
               >
-                <slot name="toolbar-middle-prepend"></slot>
+                <slot v-bind="{ toggleTheme }" name="toolbar-middle-prepend"></slot>
                 <div class="splitToolbarButton">
                   <button
                     v-show="showElem('toolbar.toolbarViewerMiddle.zoomOut')"
@@ -564,9 +564,7 @@
                 </div>
                 <span
                   v-show="
-                    showElem(
-                      'toolbar.toolbarViewerMiddle.scaleSelectContainer'
-                    )
+                    showElem('toolbar.toolbarViewerMiddle.scaleSelectContainer')
                   "
                   id="scaleSelectContainer"
                   class="dropdownToolbarButton vue-pdf-app-icon dropdown-toolbar-button"
@@ -683,7 +681,7 @@
                     </option>
                   </select>
                 </span>
-                <slot name="toolbar-middle-append"></slot>
+                <slot v-bind="{ toggleTheme }" name="toolbar-middle-append"></slot>
               </div>
             </div>
             <div id="loadingBar">
@@ -891,7 +889,7 @@
       <!-- overlayContainer -->
     </div>
     <!-- outerContainer -->
-    <slot name="footer"></slot>
+    <slot v-bind="{ toggleTheme }" name="footer"></slot>
   </div>
 </template>
 
@@ -906,7 +904,7 @@ import "@/pdfjs-dist/lib/web/genericcom";
 import "@/pdfjs-dist/lib/web/pdf_print_service";
 import "@/pdfjs-dist/build/pdf.worker.entry";
 import "@/sass/index.scss";
-import { ToolbarConfig } from "@/types";
+import { ToolbarConfig, Theme } from "@/types";
 import getAppConfig from "@/utils/get-pdf-config";
 import toolbarConfig from "@/utils/toolbar-config";
 import { PDF_FILE_INPUT_ID } from "@/utils/constants";
@@ -917,6 +915,7 @@ if (AppOptions) {
   AppOptions.set("defaultUrl", null);
 }
 
+const themeCacheKey = "vue-pdf-app-theme";
 const errorHandler = console.error.bind(console);
 
 // pdf_print_service reassigns window.print.
@@ -928,14 +927,35 @@ window.print = (window as any).__nativePrint__ || pdfPrint;
 @Component
 export default class PdfViewer extends Vue {
   // can accept string URL
-  @Prop({ required: false }) private pdf!: string | ArrayBuffer;
+  @Prop({ required: false, type: [String, ArrayBuffer] }) private pdf?: string | ArrayBuffer;
 
   @Prop({ required: false, default: () => toolbarConfig })
   private config!: ToolbarConfig;
 
+  @Prop({ required: false, type: String })
+  private theme?: Theme;
+
   private defaultLocale = JSON.stringify(locale);
 
   private isOpenHandlerBinded = false;
+
+  private cacheTheme = window.localStorage.getItem(
+    themeCacheKey
+  ) as Theme | null;
+
+  private get localTheme(): Theme {
+    if (this.theme) return this.theme;
+
+    if (this.cacheTheme) return this.cacheTheme;
+
+    const prefersTheme = window
+      .getComputedStyle(document.documentElement)
+      .getPropertyValue("content")
+      .replace(/"/g, "") as Theme;
+    if (["light", "dark"].includes(prefersTheme)) return prefersTheme;
+
+    return "dark";
+  }
 
   private beforeDestroy() {
     this.destroyPdf();
@@ -1054,9 +1074,34 @@ export default class PdfViewer extends Vue {
     window.print = (window as any).__nativePrint__ || window.print;
   }
 
+  private toggleTheme() {
+    const newTheme = this.localTheme === "dark" ? "light" : "dark";
+    this.$emit("update:theme", newTheme);
+    this.cacheTheme = newTheme;
+    window.localStorage.setItem(themeCacheKey, newTheme);
+  }
+
   @Watch("pdf")
   handler() {
     this.open();
   }
 }
 </script>
+
+<style>
+html {
+  content: "";
+}
+
+@media (prefers-color-scheme: light) {
+  html {
+    content: "light";
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    content: "dark";
+  }
+}
+</style>

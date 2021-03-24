@@ -2,9 +2,9 @@
   <div style="height: 95%">
     <span class="fontawesome-legend"> Fontawesome icons</span>
     <span> | </span>
-    <span class="mdi-legend"> Material design icons</span>
-    <span> | </span>
     <span class="bootstrap-legend"> Bootstrap icons</span>
+    <span> | </span>
+    <span class="mdi-legend"> Material design icons</span>
     <vue-pdf-app pdf="sample.pdf"></vue-pdf-app>
   </div>
 </template>
