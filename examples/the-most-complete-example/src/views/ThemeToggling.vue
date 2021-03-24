@@ -1,9 +1,11 @@
 <template>
-  <vue-pdf-app pdf="sample.pdf" style="position: relative">
-    <template #footer>
+  <vue-pdf-app pdf="sample.pdf" style="position: relative"
+  >
+    <template #footer="{ toggleTheme }">
       <div class="footer">
         <span>This is a footer</span>
         <button
+          @click="toggleTheme"
           class="vue-pdf-app-icon theme-toggle"
           type="button"
           title="Toggle theme"
@@ -18,6 +20,11 @@
 
 export default {
   name: "ThemeToggling",
+  data() {
+    return {
+      theme: "dark",
+    };
+  },
 };
 </script>
 
@@ -36,17 +43,8 @@ $footer-height: 20px;
 }
 
 .footer button {
-  outline: none;
-  background: transparent;
-  border: none;
   float: right;
   margin-right: 5px;
-  cursor: pointer;
-  color: var(--pdf-toolbar-font-color);
-}
-
-.footer button:hover {
-  color: var(--pdf-button-hover-font-color);
 }
 
 .theme-toggle::before {

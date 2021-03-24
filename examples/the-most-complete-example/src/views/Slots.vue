@@ -3,37 +3,45 @@
     <span class="legend prepend"> Prepend slot |</span>
     <span class="legend append"> Append slot</span>
     <vue-pdf-app pdf="sample.pdf" style="position: relative">
-      <template #toolbar-left-prepend>
-        <button type="button" class="prepend"></button>
+      <template #toolbar-left-prepend="{ toggleTheme }">
+        <button @click="toggleTheme" type="button" class="prepend"></button>
       </template>
-      <template #toolbar-left-append>
-        <button type="button" class="append"></button>
+      <template #toolbar-left-append="{ toggleTheme }">
+        <button @click="toggleTheme" type="button" class="append"></button>
       </template>
-      <template #toolbar-middle-prepend>
-        <button type="button" class="prepend"></button>
+      <template #toolbar-middle-prepend="{ toggleTheme }">
+        <button @click="toggleTheme" type="button" class="prepend"></button>
       </template>
-      <template #toolbar-middle-append>
-        <button type="button" class="append"></button>
+      <template #toolbar-middle-append="{ toggleTheme }">
+        <button @click="toggleTheme" type="button" class="append"></button>
       </template>
-      <template #toolbar-right-prepend>
-        <button type="button" class="prepend"></button>
+      <template #toolbar-right-prepend="{ toggleTheme }">
+        <button @click="toggleTheme" type="button" class="prepend"></button>
       </template>
-      <template #toolbar-right-append>
-        <button type="button" class="append"></button>
+      <template #toolbar-right-append="{ toggleTheme }">
+        <button @click="toggleTheme" type="button" class="append"></button>
       </template>
-      <template #toolbar-sidebar-prepend>
-        <button type="button" class="prepend"></button>
+      <template #toolbar-sidebar-prepend="{ toggleTheme }">
+        <button @click="toggleTheme" type="button" class="prepend"></button>
       </template>
-      <template #toolbar-sidebar-append>
-        <button type="button" sergeev class="append"></button>
+      <template #toolbar-sidebar-append="{ toggleTheme }">
+        <button @click="toggleTheme" type="button" class="append"></button>
       </template>
-      <template #secondary-toolbar-prepend>
-        <button type="button" class="secondary-toolbar-slot prepend">
+      <template #secondary-toolbar-prepend="{ toggleTheme }">
+        <button
+          @click="toggleTheme"
+          type="button"
+          class="secondary-toolbar-slot prepend"
+        >
           <span>Sun is shining</span>
         </button>
       </template>
-      <template #secondary-toolbar-append>
-        <button type="button" class="secondary-toolbar-slot append">
+      <template #secondary-toolbar-append="{ toggleTheme }">
+        <button
+          @click="toggleTheme"
+          type="button"
+          class="secondary-toolbar-slot append"
+        >
           <span>Moon is shining</span>
         </button>
       </template>

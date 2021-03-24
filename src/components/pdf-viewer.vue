@@ -6,7 +6,7 @@
     <div id="outerContainer">
       <div v-show="showElem('sidebar')" id="sidebarContainer">
         <div id="toolbarSidebar">
-          <slot name="toolbar-sidebar-prepend"></slot>
+          <slot v-bind="{ toggleTheme }" name="toolbar-sidebar-prepend"></slot>
           <div class="splitToolbarButton toggled">
             <button
               v-show="showElem('sidebar.viewThumbnail')"
@@ -41,7 +41,7 @@
               <span data-l10n-id="attachments_label">Attachments</span>
             </button>
           </div>
-          <slot name="toolbar-sidebar-append"></slot>
+          <slot v-bind="{ toggleTheme }" name="toolbar-sidebar-append"></slot>
         </div>
         <div v-show="showElem('sidebar')" id="sidebarContent">
           <div
@@ -155,7 +155,7 @@
           class="secondaryToolbar hidden doorHangerRight"
         >
           <div id="secondaryToolbarButtonContainer">
-            <slot name="secondary-toolbar-prepend"></slot>
+            <slot v-bind="{ toggleTheme }" name="secondary-toolbar-prepend"></slot>
             <button
               v-show="showElem('secondaryToolbar.secondaryPresentationMode')"
               id="secondaryPresentationMode"
@@ -372,7 +372,7 @@
                 >Document Properties…</span
               >
             </button>
-            <slot name="secondary-toolbar-append"></slot>
+            <slot v-bind="{ toggleTheme }" name="secondary-toolbar-append"></slot>
           </div>
         </div>
         <!-- secondaryToolbar -->
@@ -384,7 +384,7 @@
                 v-show="showElem('toolbar.toolbarViewerLeft')"
                 id="toolbarViewerLeft"
               >
-                <slot name="toolbar-left-prepend"></slot>
+                <slot v-bind="{ toggleTheme }" name="toolbar-left-prepend"></slot>
                 <button
                   v-show="showElem('sidebar')"
                   id="sidebarToggle"
@@ -449,13 +449,13 @@
                   id="numPages"
                   class="toolbarLabel"
                 ></span>
-                <slot name="toolbar-left-append"></slot>
+                <slot v-bind="{ toggleTheme }" name="toolbar-left-append"></slot>
               </div>
               <div
                 v-show="showElem('toolbar.toolbarViewerRight')"
                 id="toolbarViewerRight"
               >
-                <slot name="toolbar-right-prepend"></slot>
+                <slot v-bind="{ toggleTheme }" name="toolbar-right-prepend"></slot>
                 <button
                   v-show="
                     showElem('toolbar.toolbarViewerRight.presentationMode')
@@ -532,13 +532,13 @@
                 >
                   <span data-l10n-id="tools_label">Tools</span>
                 </button>
-                <slot name="toolbar-right-append"></slot>
+                <slot v-bind="{ toggleTheme }" name="toolbar-right-append"></slot>
               </div>
               <div
                 v-show="showElem('toolbar.toolbarViewerMiddle')"
                 id="toolbarViewerMiddle"
               >
-                <slot name="toolbar-middle-prepend"></slot>
+                <slot v-bind="{ toggleTheme }" name="toolbar-middle-prepend"></slot>
                 <div class="splitToolbarButton">
                   <button
                     v-show="showElem('toolbar.toolbarViewerMiddle.zoomOut')"
@@ -681,7 +681,7 @@
                     </option>
                   </select>
                 </span>
-                <slot name="toolbar-middle-append"></slot>
+                <slot v-bind="{ toggleTheme }" name="toolbar-middle-append"></slot>
               </div>
             </div>
             <div id="loadingBar">
