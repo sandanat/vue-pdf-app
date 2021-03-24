@@ -20,6 +20,8 @@ Color customization (IE11 not supported)
 
 Buttons icons customization
 
+Light/dark themes
+
 Built-in typescript support
 
 UMD/Unpkg support:
@@ -63,13 +65,25 @@ export default {
 
 ## :pdf
 
-- Type: `string | null | ArrayBuffer | TypedArray`.
+- Type: `string | null | ArrayBuffer | TypedArray`
 - Required: `false`
 - Usage:
 
 ```vue
 <vue-pdf-app pdf="https://example.com/sample.pdf" />
 <vue-pdf-app :pdf="ArrayBuffer" />
+```
+
+## :theme.sync
+
+- Type: `"dark" | "light"`
+- Required: `false`
+- Usage:
+
+```vue
+<vue-pdf-app theme="dark" />
+<vue-pdf-app :theme="theme" />
+<vue-pdf-app :theme.sync="theme" />
 ```
 
 ## :config
@@ -231,22 +245,24 @@ export default {
 
 ## Slots
 
-- toolbar-left-prepend
-- toolbar-left-append
-- toolbar-middle-prepend
-- toolbar-middle-append
-- toolbar-right-prepend
-- toolbar-right-append
-- toolbar-sidebar-prepend
-- toolbar-sidebar-append
-- secondary-toolbar-prepend
-- secondary-toolbar-append
-- footer
+| Slot name                 | Prop name   | Prop type | Prop description        |
+| ------------------------- | ----------- | --------- | ----------------------- |
+| toolbar-left-prepend      | toggleTheme | function  | toggle light/dark theme |
+| toolbar-left-append       | toggleTheme | function  | toggle light/dark theme |
+| toolbar-middle-prepend    | toggleTheme | function  | toggle light/dark theme |
+| toolbar-middle-append     | toggleTheme | function  | toggle light/dark theme |
+| toolbar-right-prepend     | toggleTheme | function  | toggle light/dark theme |
+| toolbar-right-append      | toggleTheme | function  | toggle light/dark theme |
+| toolbar-sidebar-prepend   | toggleTheme | function  | toggle light/dark theme |
+| toolbar-sidebar-append    | toggleTheme | function  | toggle light/dark theme |
+| secondary-toolbar-prepend | toggleTheme | function  | toggle light/dark theme |
+| secondary-toolbar-append  | toggleTheme | function  | toggle light/dark theme |
+| footer                    | toggleTheme | function  | toggle light/dark theme |
 
 ```vue
 <vue-pdf-app>
-  <template #toolbar-left-prepend>
-    <button type="button">Click me</button>
+  <template #toolbar-left-prepend="{ toggleTheme }">
+    <button @click="toggleTheme" type="button">Toggle theme</button>
   </template>
 </vue-pdf-app>
 ```
@@ -257,8 +273,14 @@ Colors of the pdf viewer are customized via custom css properties:
 
 ```html
 <style>
-  :root {
-    --pdf-toolbar-color: red;
+  /* for dark theme */
+  .pdf-app.dark {
+    --pdf-toolbar-color: black;
+  }
+
+  /* for light theme */
+  .pdf-app.light {
+    --pdf-toolbar-color: white;
   }
 </style>
 ```
@@ -551,6 +573,25 @@ To use custom icons you have to implement [icons.css](https://github.com/sandana
 .vue-pdf-app-icon.zoom-out::before {
   content: "icon code";
 }
+```
+
+# Light/dark themes
+
+<details>
+<summary>Algorithm of theme apply</summary>
+<img src="./readme/algorithm-of-theme-apply.jpg" alt="Algorithm of theme apply">
+</details>
+
+Toggle theme button is not implemented by default.
+It's up to you to decide where to place it.
+The button can be implemented with slots:
+
+```vue
+<vue-pdf-app>
+  <template #footer="{ toggleTheme }">
+    <button @click="toggleTheme" type="button">Toggle theme</button>
+  </template>
+</vue-pdf-app>
 ```
 
 # Localized panel
