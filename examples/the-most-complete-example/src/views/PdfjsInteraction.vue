@@ -50,7 +50,7 @@ export default {
       });
     },
     pagesRenderedHandler(pdfApp) {
-      pdfApp.pdfViewer.currentScaleValue = "page-height";
+      setTimeout(() => (pdfApp.pdfViewer.currentScaleValue = "page-height"));
     },
   },
 };

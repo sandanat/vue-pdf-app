@@ -4,9 +4,8 @@ const toolbarConfig: ToolbarConfig = {
   sidebar: {
     viewThumbnail: true,
     viewOutline: true,
-    viewAttachments: true,
+    viewAttachments: true
   },
-  findbar: true,
   secondaryToolbar: {
     secondaryPresentationMode: true,
     secondaryOpenFile: true,
@@ -25,13 +24,14 @@ const toolbarConfig: ToolbarConfig = {
     spreadNone: true,
     spreadOdd: true,
     spreadEven: true,
-    documentProperties: true,
+    documentProperties: true
   },
   toolbar: {
     toolbarViewerLeft: {
+      findbar: true,
       previous: true,
       next: true,
-      pageNumber: true,
+      pageNumber: true
     },
     toolbarViewerRight: {
       presentationMode: true,
@@ -39,16 +39,14 @@ const toolbarConfig: ToolbarConfig = {
       print: true,
       download: true,
       viewBookmark: true,
-      secondaryToolbarToggle: true,
     },
     toolbarViewerMiddle: {
       zoomOut: true,
       zoomIn: true,
-      scaleSelectContainer: true,
-    },
+      scaleSelectContainer: true
+    }
   },
-  viewerContextMenu: true,
-  errorWrapper: true,
+  errorWrapper: true
 };
 
 export default toolbarConfig;

@@ -6,10 +6,11 @@
 1. Added pdf viewer color customization via custom css properties.
 1. Added slots for toolbar and footer.
 1. Added events `pages-rendered` and `after-created`.
-1. Added theme toggle.
+1. Added light/dark theme with toggle.
 
 ## Other
 
+1. ⚠️ **<span style="background: #bd011b; color:black; border-radius: 2px; padding: 0 5px">breaking</span>** Changed `v-bind:config` prop. Deleted `config.viewerContextMenu` and `config.toolbar.toolbarViewerRight.secondaryToolbarToggle`. Visibility of **secondaryToolbarToggle** depends from `config.secondaryToolbar`. Moved prop `config.findbar` into `config.toolbar.toolbarViewerLeft.findbar`.
 1. ⚠️ **<span style="background: #bd011b; color:black; border-radius: 2px; padding: 0 5px">breaking</span>** Renamed `v-bind:config` **toolbar.toolbarViewerMiddle.scaleSelectContatiner** prop to `toolbar.toolbarViewerMiddle.scaleSelectContainer`.
 1. ⚠️ **<span style="background: #bd011b; color:black; border-radius: 2px; padding: 0 5px">breaking</span>** Renamed lib from _pdf-viewer_ to _vue-pdf-app_. Use `window["vue-pdf-app"]` instead of `window["pdf-viewer"]` for script tag.
 
