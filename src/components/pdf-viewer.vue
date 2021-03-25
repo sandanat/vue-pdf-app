@@ -155,7 +155,10 @@
           class="secondaryToolbar hidden doorHangerRight"
         >
           <div id="secondaryToolbarButtonContainer">
-            <slot v-bind="{ toggleTheme }" name="secondary-toolbar-prepend"></slot>
+            <slot
+              v-bind="{ toggleTheme }"
+              name="secondary-toolbar-prepend"
+            ></slot>
             <button
               v-show="showElem('secondaryToolbar.secondaryPresentationMode')"
               id="secondaryPresentationMode"
@@ -372,7 +375,10 @@
                 >Document Properties…</span
               >
             </button>
-            <slot v-bind="{ toggleTheme }" name="secondary-toolbar-append"></slot>
+            <slot
+              v-bind="{ toggleTheme }"
+              name="secondary-toolbar-append"
+            ></slot>
           </div>
         </div>
         <!-- secondaryToolbar -->
@@ -384,7 +390,10 @@
                 v-show="showElem('toolbar.toolbarViewerLeft')"
                 id="toolbarViewerLeft"
               >
-                <slot v-bind="{ toggleTheme }" name="toolbar-left-prepend"></slot>
+                <slot
+                  v-bind="{ toggleTheme }"
+                  name="toolbar-left-prepend"
+                ></slot>
                 <button
                   v-show="showElem('sidebar')"
                   id="sidebarToggle"
@@ -449,13 +458,19 @@
                   id="numPages"
                   class="toolbarLabel"
                 ></span>
-                <slot v-bind="{ toggleTheme }" name="toolbar-left-append"></slot>
+                <slot
+                  v-bind="{ toggleTheme }"
+                  name="toolbar-left-append"
+                ></slot>
               </div>
               <div
                 v-show="showElem('toolbar.toolbarViewerRight')"
                 id="toolbarViewerRight"
               >
-                <slot v-bind="{ toggleTheme }" name="toolbar-right-prepend"></slot>
+                <slot
+                  v-bind="{ toggleTheme }"
+                  name="toolbar-right-prepend"
+                ></slot>
                 <button
                   v-show="
                     showElem('toolbar.toolbarViewerRight.presentationMode')
@@ -532,13 +547,19 @@
                 >
                   <span data-l10n-id="tools_label">Tools</span>
                 </button>
-                <slot v-bind="{ toggleTheme }" name="toolbar-right-append"></slot>
+                <slot
+                  v-bind="{ toggleTheme }"
+                  name="toolbar-right-append"
+                ></slot>
               </div>
               <div
                 v-show="showElem('toolbar.toolbarViewerMiddle')"
                 id="toolbarViewerMiddle"
               >
-                <slot v-bind="{ toggleTheme }" name="toolbar-middle-prepend"></slot>
+                <slot
+                  v-bind="{ toggleTheme }"
+                  name="toolbar-middle-prepend"
+                ></slot>
                 <div class="splitToolbarButton">
                   <button
                     v-show="showElem('toolbar.toolbarViewerMiddle.zoomOut')"
@@ -681,7 +702,10 @@
                     </option>
                   </select>
                 </span>
-                <slot v-bind="{ toggleTheme }" name="toolbar-middle-append"></slot>
+                <slot
+                  v-bind="{ toggleTheme }"
+                  name="toolbar-middle-append"
+                ></slot>
               </div>
             </div>
             <div id="loadingBar">
@@ -927,7 +951,9 @@ window.print = (window as any).__nativePrint__ || pdfPrint;
 @Component
 export default class PdfViewer extends Vue {
   // can accept string URL
-  @Prop({ required: false, type: [String, ArrayBuffer] }) private pdf?: string | ArrayBuffer;
+  @Prop({ required: false, type: [String, ArrayBuffer] }) private pdf?:
+    | string
+    | ArrayBuffer;
 
   @Prop({ required: false, default: () => toolbarConfig })
   private config!: ToolbarConfig;
