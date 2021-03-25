@@ -3,12 +3,11 @@
     <vue-pdf-app pdf="sample.pdf" :config="config"></vue-pdf-app>
     <div>
       <h1>Toolbar configuration</h1>
+      <check-box v-model="config.errorWrapper">Error wrapper</check-box>
       <check-box :value="!!config.toolbar" @input="toggleToolbar"
         >Toolbar</check-box
       >
       <template v-if="!!config.toolbar">
-        <check-box v-model="config.findbar">Findbar</check-box>
-        <check-box v-model="config.errorWrapper">Error wrapper</check-box>
         <fieldset>
           <legend>Main toolbar</legend>
           <check-box
@@ -17,6 +16,9 @@
             >Left toolbar</check-box
           >
           <template v-if="!!config.toolbar.toolbarViewerLeft">
+            <check-box v-model="config.toolbar.toolbarViewerLeft.findbar"
+              >Findbar</check-box
+            >
             <check-box v-model="config.toolbar.toolbarViewerLeft.previous"
               >Previous page</check-box
             >
@@ -67,10 +69,6 @@
             >
             <check-box v-model="config.toolbar.toolbarViewerRight.viewBookmark"
               >View bookmark</check-box
-            >
-            <check-box
-              v-model="config.toolbar.toolbarViewerRight.secondaryToolbarToggle"
-              >Secondary toolbar toggle</check-box
             >
           </template>
         </fieldset>
@@ -188,6 +186,7 @@ const getSecondaryToolbar = () => ({
   documentProperties: true,
 });
 const getToolbarViewerLeft = () => ({
+  findbar: true,
   previous: true,
   next: true,
   pageNumber: true,
@@ -198,7 +197,6 @@ const getToolbarViewerRight = () => ({
   print: true,
   download: true,
   viewBookmark: true,
-  secondaryToolbarToggle: true,
 });
 const getToolbarViewerMiddle = () => ({
   zoomOut: true,
@@ -217,7 +215,6 @@ export default {
     return {
       config: {
         sidebar: getSidebar(),
-        findbar: true,
         secondaryToolbar: getSecondaryToolbar(),
         toolbar: getToolbar(),
         errorWrapper: true,

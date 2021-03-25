@@ -65,7 +65,7 @@
 
       <div id="mainContainer">
         <div
-          v-show="showElem('findbar')"
+          v-show="showElem('toolbar.toolbarViewerLeft.findbar')"
           class="findbar hidden doorHanger"
           id="findbar"
         >
@@ -218,7 +218,16 @@
               <span data-l10n-id="bookmark_label">Current View</span>
             </a>
 
-            <div class="horizontalToolbarSeparator visibleLargeView"></div>
+            <div
+              v-if="
+                showElem('secondaryToolbar.secondaryPresentationMode') ||
+                showElem('secondaryToolbar.secondaryOpenFile') ||
+                showElem('secondaryToolbar.secondaryPrint') ||
+                showElem('secondaryToolbar.secondaryDownload') ||
+                showElem('secondaryToolbar.secondaryViewBookmark')
+              "
+              class="horizontalToolbarSeparator visibleLargeView"
+            ></div>
 
             <button
               v-show="showElem('secondaryToolbar.firstPage')"
@@ -241,7 +250,13 @@
               <span data-l10n-id="last_page_label">Go to Last Page</span>
             </button>
 
-            <div class="horizontalToolbarSeparator"></div>
+            <div
+              v-if="
+                showElem('secondaryToolbar.lastPage') ||
+                showElem('secondaryToolbar.firstPage')
+              "
+              class="horizontalToolbarSeparator"
+            ></div>
 
             <button
               v-show="showElem('secondaryToolbar.pageRotateCw')"
@@ -266,7 +281,13 @@
               >
             </button>
 
-            <div class="horizontalToolbarSeparator"></div>
+            <div
+              v-if="
+                showElem('secondaryToolbar.pageRotateCcw') ||
+                showElem('secondaryToolbar.pageRotateCw')
+              "
+              class="horizontalToolbarSeparator"
+            ></div>
 
             <button
               v-show="showElem('secondaryToolbar.cursorSelectTool')"
@@ -291,7 +312,13 @@
               <span data-l10n-id="cursor_hand_tool_label">Hand Tool</span>
             </button>
 
-            <div class="horizontalToolbarSeparator"></div>
+            <div
+              v-if="
+                showElem('secondaryToolbar.cursorHandTool') ||
+                showElem('secondaryToolbar.cursorSelectTool')
+              "
+              class="horizontalToolbarSeparator"
+            ></div>
 
             <button
               v-show="showElem('secondaryToolbar.scrollVertical')"
@@ -328,7 +355,14 @@
               <span data-l10n-id="scroll_wrapped_label">Wrapped Scrolling</span>
             </button>
 
-            <div class="horizontalToolbarSeparator scrollModeButtons"></div>
+            <div
+              class="horizontalToolbarSeparator scrollModeButtons"
+              v-if="
+                showElem('secondaryToolbar.scrollWrapped') ||
+                showElem('secondaryToolbar.scrollHorizontal') ||
+                showElem('secondaryToolbar.scrollVertical')
+              "
+            ></div>
 
             <button
               v-show="showElem('secondaryToolbar.spreadNone')"
@@ -361,7 +395,14 @@
               <span data-l10n-id="spread_even_label">Even Spreads</span>
             </button>
 
-            <div class="horizontalToolbarSeparator spreadModeButtons"></div>
+            <div
+              v-if="
+                showElem('secondaryToolbar.spreadEven') ||
+                showElem('secondaryToolbar.spreadOdd') ||
+                showElem('secondaryToolbar.spreadNone')
+              "
+              class="horizontalToolbarSeparator spreadModeButtons"
+            ></div>
 
             <button
               v-show="showElem('secondaryToolbar.documentProperties')"
@@ -386,10 +427,7 @@
         <div v-show="showElem('toolbar')" class="toolbar">
           <div id="toolbarContainer">
             <div id="toolbarViewer">
-              <div
-                v-show="showElem('toolbar.toolbarViewerLeft')"
-                id="toolbarViewerLeft"
-              >
+              <div id="toolbarViewerLeft">
                 <slot
                   v-bind="{ toggleTheme }"
                   name="toolbar-left-prepend"
@@ -406,9 +444,12 @@
                     >Toggle Sidebar</span
                   >
                 </button>
-                <div class="toolbarButtonSpacer"></div>
+                <div
+                  v-if="showElem('sidebar')"
+                  class="toolbarButtonSpacer"
+                ></div>
                 <button
-                  v-show="showElem('findbar')"
+                  v-show="showElem('toolbar.toolbarViewerLeft.findbar')"
                   id="viewFind"
                   class="toolbarButton vue-pdf-app-icon view-find"
                   title="Find in Document"
@@ -428,7 +469,13 @@
                   >
                     <span data-l10n-id="previous_label">Previous</span>
                   </button>
-                  <div class="splitToolbarButtonSeparator"></div>
+                  <div
+                    v-if="
+                      showElem('toolbar.toolbarViewerLeft.next') &&
+                      showElem('toolbar.toolbarViewerLeft.previous')
+                    "
+                    class="splitToolbarButtonSeparator"
+                  ></div>
                   <button
                     v-show="showElem('toolbar.toolbarViewerLeft.next')"
                     class="toolbarButton pageDown vue-pdf-app-icon page-down"
@@ -463,10 +510,7 @@
                   name="toolbar-left-append"
                 ></slot>
               </div>
-              <div
-                v-show="showElem('toolbar.toolbarViewerRight')"
-                id="toolbarViewerRight"
-              >
+              <div id="toolbarViewerRight">
                 <slot
                   v-bind="{ toggleTheme }"
                   name="toolbar-right-prepend"
@@ -530,15 +574,13 @@
                 >
                   <span data-l10n-id="bookmark_label">Current View</span>
                 </a>
-
-                <div class="verticalToolbarSeparator hiddenSmallView"></div>
+                <div
+                  v-if="showElem('secondaryToolbar')"
+                  class="verticalToolbarSeparator hiddenSmallView"
+                ></div>
 
                 <button
-                  v-show="
-                    showElem(
-                      'toolbar.toolbarViewerRight.secondaryToolbarToggle'
-                    )
-                  "
+                  v-show="showElem('secondaryToolbar')"
                   id="secondaryToolbarToggle"
                   class="toolbarButton vue-pdf-app-icon secondary-toolbar-toggle"
                   title="Tools"
@@ -552,10 +594,7 @@
                   name="toolbar-right-append"
                 ></slot>
               </div>
-              <div
-                v-show="showElem('toolbar.toolbarViewerMiddle')"
-                id="toolbarViewerMiddle"
-              >
+              <div id="toolbarViewerMiddle">
                 <slot
                   v-bind="{ toggleTheme }"
                   name="toolbar-middle-prepend"
@@ -571,7 +610,13 @@
                   >
                     <span data-l10n-id="zoom_out_label">Zoom Out</span>
                   </button>
-                  <div class="splitToolbarButtonSeparator"></div>
+                  <div
+                    v-if="
+                      showElem('toolbar.toolbarViewerMiddle.zoomIn') &&
+                      showElem('toolbar.toolbarViewerMiddle.zoomOut')
+                    "
+                    class="splitToolbarButtonSeparator"
+                  ></div>
                   <button
                     v-show="showElem('toolbar.toolbarViewerMiddle.zoomIn')"
                     id="zoomIn"
@@ -717,7 +762,7 @@
         </div>
 
         <menu
-          v-show="showElem('viewerContextMenu')"
+          v-show="false"
           type="context"
           id="viewerContextMenu"
         >
@@ -743,7 +788,7 @@
           />
         </menu>
 
-        <div id="viewerContainer" tabindex="0">
+        <div id="viewerContainer" :class="[toolbarHidden]" tabindex="0">
           <div id="viewer" class="pdfViewer"></div>
         </div>
 
@@ -969,6 +1014,11 @@ export default class PdfViewer extends Vue {
     themeCacheKey
   ) as Theme | null;
 
+  private get toolbarHidden() {
+    if (this.config.toolbar === false) return "toolbar-hidden";
+    return "";
+  }
+
   private get localTheme(): Theme {
     if (this.theme) return this.theme;
 
@@ -1129,5 +1179,11 @@ html {
   html {
     content: "dark";
   }
+}
+</style>
+
+<style lang="scss" scoped>
+#viewerContainer.toolbar-hidden {
+  top: 0;
 }
 </style>

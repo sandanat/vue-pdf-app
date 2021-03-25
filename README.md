@@ -141,7 +141,6 @@ export default {
     viewOutline: true,
     viewAttachments: true,
   },
-  findbar: true,
   secondaryToolbar: {
     secondaryPresentationMode: true,
     secondaryOpenFile: true,
@@ -164,6 +163,7 @@ export default {
   },
   toolbar: {
     toolbarViewerLeft: {
+      findbar: true,
       previous: true,
       next: true,
       pageNumber: true,
@@ -174,7 +174,6 @@ export default {
       print: true,
       download: true,
       viewBookmark: true,
-      secondaryToolbarToggle: true,
     },
     toolbarViewerMiddle: {
       zoomOut: true,
@@ -182,7 +181,6 @@ export default {
       scaleSelectContainer: true,
     },
   },
-  viewerContextMenu: true,
   errorWrapper: true,
 };
 </pre>
