@@ -7,7 +7,7 @@
       :checked="value"
       :name="name"
       :id="cId"
-      @input="$emit('input', $event.target.checked)"
+      @change="$emit('input', $event.target.checked)"
       type="checkbox"
     />
     <div style="clear: both"></div>

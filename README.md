@@ -1,5 +1,9 @@
 VUEjs v2 PDF viewer based on Mozilla's PDFJS.
 
+[![](https://data.jsdelivr.com/v1/package/npm/vue-pdf-app/badge)](https://www.jsdelivr.com/package/npm/vue-pdf-app)
+
+[![npm version](https://badge.fury.io/js/vue-pdf-app.svg)](https://badge.fury.io/js/vue-pdf-app)
+
 100% PDFJS functionality:
 
 - zoom
@@ -28,9 +32,9 @@ UMD/Unpkg support:
 
 | File                   | Size                               | Gzipped    |
 | ---------------------- | ---------------------------------- | ---------- |
-| vue-pdf-app.umd.min.js | 1731.76 KiB                        | 476.97 KiB |
-| vue-pdf-app.umd.js     | 3097.46 KiB                        | 674.95KiB  |
-| vue-pdf-app.common.js  | 3096.98 KiB                        | 674.79 KiB |
+| vue-pdf-app.umd.min.js | 1742.89 KiB                        | 478.86 KiB |
+| vue-pdf-app.umd.js     | 3115.59 KiB                        | 677.87 KiB |
+| vue-pdf-app.common.js  | 3115.12 KiB                        | 677.71 KiB |
 | icons/main.css         | 15 - 40 KiB (depends from browser) |            |
 
 # Example
@@ -611,8 +615,12 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset="utf-8" />
     <title>Vue-pdf-app demo</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/vue-pdf-app@2.0.0/dist/icons/main.css"
+    />
     <script src="https://unpkg.com/vue"></script>
-    <script src="https://unpkg.com/vue-pdf-app"></script>
+    <script src="https://unpkg.com/vue-pdf-app@2.0.0"></script>
   </head>
 
   <body>
@@ -641,6 +649,7 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
 
 <script lang="ts">
 import "vue-pdf-app/dist/icons/main.css";
+import VuePdfApp from "vue-pdf-app";
 import { Component, Vue } from "vue-property-decorator";
 
 @Component({
