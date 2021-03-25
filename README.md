@@ -236,7 +236,7 @@ export default {
 export default {
   methods: {
     pagesRendered(pdfApp) {
-      pdfApp.pdfViewer.currentScaleValue = "page-height";
+      setTimeout(() => (pdfApp.pdfViewer.currentScaleValue = "page-height"));
     }
   }
 };

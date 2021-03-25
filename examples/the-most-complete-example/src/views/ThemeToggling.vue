@@ -1,18 +1,23 @@
 <template>
-  <vue-pdf-app pdf="sample.pdf" style="position: relative"
-  >
-    <template #footer="{ toggleTheme }">
-      <div class="footer">
-        <span>This is a footer</span>
-        <button
-          @click="toggleTheme"
-          class="vue-pdf-app-icon theme-toggle"
-          type="button"
-          title="Toggle theme"
-        ></button>
-      </div>
-    </template>
-  </vue-pdf-app>
+  <div style="height: 98%">
+    <span style="color: red"
+      >Theme toggle button is in the footer to the right</span
+    >
+    <br />
+    <vue-pdf-app pdf="sample.pdf" style="position: relative">
+      <template #footer="{ toggleTheme }">
+        <div class="footer">
+          <span>This is a footer</span>
+          <button
+            @click="toggleTheme"
+            class="vue-pdf-app-icon theme-toggle"
+            type="button"
+            title="Toggle theme"
+          ></button>
+        </div>
+      </template>
+    </vue-pdf-app>
+  </div>
 </template>
 
 <script>
