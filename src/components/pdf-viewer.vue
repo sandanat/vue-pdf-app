@@ -761,11 +761,7 @@
           </div>
         </div>
 
-        <menu
-          v-show="false"
-          type="context"
-          id="viewerContextMenu"
-        >
+        <menu v-show="false" type="context" id="viewerContextMenu">
           <menuitem
             id="contextFirstPage"
             label="First Page"
@@ -1006,6 +1002,9 @@ export default class PdfViewer extends Vue {
   @Prop({ required: false, type: String })
   private theme?: Theme;
 
+  @Prop({ required: false, type: Boolean, default: () => false })
+  private title!: boolean;
+
   private defaultLocale = JSON.stringify(locale);
 
   private isOpenHandlerBinded = false;
@@ -1039,6 +1038,7 @@ export default class PdfViewer extends Vue {
 
   private created() {
     window.print = pdfPrint;
+    pdfApp.PDFViewerApplication.isViewerEmbedded = !this.title;
     this.$emit("after-created", pdfApp.PDFViewerApplication);
   }
 

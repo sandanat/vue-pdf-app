@@ -7,6 +7,7 @@
 1. Added slots for toolbar and footer.
 1. Added events `pages-rendered` and `after-created`.
 1. Added light/dark theme with toggle.
+1. Added `title` prop.
 
 ## Other
 
