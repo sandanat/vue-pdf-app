@@ -1,6 +1,5 @@
 - [Can I use two pdf viewers on a page?](#can-i-use-two-pdf-viewers-on-a-page)
 - [Can I interract with Mozilla's pdfjs library outside the event handlers of pdf viewer?](#can-i-interract-with-mozilla's-pdfjs-library-outside-the-event-handlers-of-pdf-viewer)
-- [Can I disable browser tab title rename to pdf file name?](#can-i-disable-browser-tab-title-rename-to-pdf-file-name)
 - [Can I use pdf viewer in a dialog?](#can-i-use-pdf-viewer-in-a-dialog)
 - [Can I set a default page scale when a pdf document is opening?](#can-i-set-a-default-page-scale-when-a-pdf-document-is-opening)
 - [Can I programmatically jump to the certain page when a pdf document is opening?](#can-i-programmatically-jump-to-the-certain-page-when-a-pdf-document-is-opening)
@@ -26,22 +25,6 @@ export default {
       // this.pdfApp is non-reactive because it is not in data
       // for typescript use class { pdfApp?: unknown }
       this.pdfApp = pdfApp;
-    }
-  }
-};
-</script>
-```
-
-# Can I disable browser tab title rename to pdf file name?
-
-```vue
-<vue-pdf-app @after-created="afterCreatedHandler"></vue-pdf-app>
-
-<script>
-export default {
-  methods: {
-    afterCreatedHandler(pdfApp) {
-      pdfApp.isViewerEmbedded = true;
     }
   }
 };

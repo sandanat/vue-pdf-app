@@ -80,6 +80,18 @@ export default {
 <vue-pdf-app :pdf="ArrayBuffer" />
 ```
 
+## :title
+
+- Description: `true` renames document title to pdf file name
+- Type: boolean
+- Required: false
+- Default: false
+- Usage:
+
+```vue
+<vue-pdf-app :title="true" />
+```
+
 ## :theme.sync
 
 - Type: `"dark" | "light"`
@@ -94,9 +106,10 @@ export default {
 
 ## :config
 
-- Description: available by default. Specify `false` for buttons or whole group of buttons to disable them.
+- Description: toolbar configuration. Toolbar is available by default. Specify `false` for buttons or whole group of buttons to disable them.
 - Type: toolbar config (see below)
 - Required: `false`
+- Default: toolbar config
 - Usage:
 
 ```vue
@@ -193,24 +206,13 @@ export default {
 
 ## @after-created(PDFViewerApplication)
 
-- Description: emitted only once when Pdfjs library is binded to vue component. Can be used to set Pdfjs config before pdf document opening. For example, to prevent browser tab title changing to pdf document name.
+- Description: emitted only once when Pdfjs library is binded to vue component. Can be used to set Pdfjs config before pdf document opening.
 - Arguments:
   - PDFViewerApplication - [pdf application](https://github.com/mozilla/pdf.js/blob/master/web/app.js#L198)
 - Usage:
 
 ```vue
 <vue-pdf-app @after-created="afterCreated" />
-
-<script>
-export default {
-  methods: {
-    afterCreated(pdfApp) {
-      // to prevent browser tab title changing to pdf document name
-      pdfApp.isViewerEmbedded = true;
-    }
-  }
-};
-</script>
 ```
 
 ## @open(PDFViewerApplication)
@@ -249,19 +251,32 @@ export default {
 
 ## Slots
 
-| Slot name                 | Prop name   | Prop type | Prop description        |
-| ------------------------- | ----------- | --------- | ----------------------- |
-| toolbar-left-prepend      | toggleTheme | function  | toggle light/dark theme |
-| toolbar-left-append       | toggleTheme | function  | toggle light/dark theme |
-| toolbar-middle-prepend    | toggleTheme | function  | toggle light/dark theme |
-| toolbar-middle-append     | toggleTheme | function  | toggle light/dark theme |
-| toolbar-right-prepend     | toggleTheme | function  | toggle light/dark theme |
-| toolbar-right-append      | toggleTheme | function  | toggle light/dark theme |
-| toolbar-sidebar-prepend   | toggleTheme | function  | toggle light/dark theme |
-| toolbar-sidebar-append    | toggleTheme | function  | toggle light/dark theme |
-| secondary-toolbar-prepend | toggleTheme | function  | toggle light/dark theme |
-| secondary-toolbar-append  | toggleTheme | function  | toggle light/dark theme |
-| footer                    | toggleTheme | function  | toggle light/dark theme |
+<table>
+  <tr>
+    <th>Slot name</th>
+    <th>Slot props</th>
+    <th>Prop type</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td rowspan="2">toolbar-left-prepend
+      <hr> toolbar-left-append
+      <hr> toolbar-left-append
+      <hr> toolbar-middle-prepend
+      <hr> toolbar-middle-append
+      <hr> toolbar-right-prepend
+      <hr> toolbar-right-append
+      <hr> toolbar-sidebar-prepend
+      <hr> toolbar-sidebar-append
+      <hr> secondary-toolbar-prepend
+      <hr> secondary-toolbar-append
+      <hr> footer
+    </td>
+    <td>toggleTheme</td>
+    <td>function()</td>
+    <td>Toggle theme</td>
+  </tr>
+</table>
 
 ```vue
 <vue-pdf-app>

@@ -36,8 +36,6 @@ export default {
   },
   methods: {
     afterCreated(pdfApp) {
-      // for not changing document.title
-      pdfApp.isViewerEmbedded = true;
       window._pdfApp = pdfApp;
       console.log("===***=== After created");
     },
