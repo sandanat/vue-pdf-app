@@ -259,7 +259,7 @@ export default {
     <th>Description</th>
   </tr>
   <tr>
-    <td rowspan="2">toolbar-left-prepend
+    <td>toolbar-left-prepend
       <hr> toolbar-left-append
       <hr> toolbar-left-append
       <hr> toolbar-middle-prepend
