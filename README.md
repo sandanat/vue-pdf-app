@@ -1,3 +1,34 @@
+- sidebar
+- viewThumbnail
+- viewOutline
+- viewAttachments
+- secondaryToolbar
+- firstPage
+- lastPage
+- pageRotateCw
+- pageRotateCcw
+- cursorSelectTool
+- cursorHandTool
+- scrollVertical
+- scrollHorizontal
+- scrollWrapped
+- spreadNone
+- spreadOdd
+- spreadEven
+- documentProperties
+- findbar
+- previous
+- ✅ next
+- pageNumber
+- ✅ presentationMode
+- ✅ openFile
+- ✅ print
+- ✅ download
+- ✅ viewBookmark
+- ✅ zoomOut
+- ✅ zoomIn
+- ✅ scaleSelectContainer "auto" | "page-actual" | "page-fit" | "page-width" | string ("0.2", "4")
+
 VUEjs v2 PDF viewer based on Mozilla's PDFJS.
 
 [![](https://data.jsdelivr.com/v1/package/npm/vue-pdf-app/badge)](https://www.jsdelivr.com/package/npm/vue-pdf-app)
@@ -260,7 +291,6 @@ export default {
   </tr>
   <tr>
     <td>toolbar-left-prepend
-      <hr> toolbar-left-append
       <hr> toolbar-left-append
       <hr> toolbar-middle-prepend
       <hr> toolbar-middle-append

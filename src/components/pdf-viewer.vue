@@ -958,6 +958,10 @@ if (AppOptions) {
 
 const themeCacheKey = "vue-pdf-app-theme";
 const errorHandler = console.error.bind(console);
+const dispatch = (eventName: string, value?: unknown) => {
+  const eventBus = pdfApp.PDFViewerApplication.eventBus;
+  eventBus?.dispatch(eventName, { source: eventBus, value });
+};
 
 // pdf_print_service reassigns window.print.
 // Assign original window.print on component destroy.
@@ -1011,6 +1015,16 @@ export default class PdfViewer extends Vue {
   private get slotProps() {
     return {
       toggleTheme: this.toggleTheme,
+      zoomOut: this.zoomOut,
+      zoomIn: this.zoomIn,
+      changeScale: this.changeScale,
+      fullscreen: this.fullscreen,
+      openFile: this.openFile,
+      print: this.print,
+      download: this.download,
+      bookmark: this.bookmark,
+      nextPage: this.nextPage,
+      isNextPageDisabled: this.isNextPageDisabled,
     };
   }
 
@@ -1138,6 +1152,57 @@ export default class PdfViewer extends Vue {
     this.cacheTheme = newTheme;
     window.localStorage.setItem(themeCacheKey, newTheme);
   }
+
+  private zoomOut() {
+    dispatch("zoomout");
+  }
+
+  private zoomIn() {
+    dispatch("zoomin");
+  }
+
+  private changeScale(
+    value: "auto" | "page-actual" | "page-fit" | "page-width" | string
+  ) {
+    dispatch("scalechanged", value);
+  }
+
+  private fullscreen() {
+    dispatch("presentationmode");
+  }
+
+  private openFile() {
+    dispatch("openfile");
+  }
+
+  private print() {
+    dispatch("print");
+  }
+
+  private download() {
+    dispatch("download");
+  }
+
+  private bookmark() {
+    const bookmark = document.getElementById("viewBookmark");
+    bookmark?.click();
+  }
+
+  private nextPage() {
+    dispatch("nextpage");
+  }
+
+// this does not work
+  private isNextPageDisabled() {
+    /* eslint-disable */
+    debugger
+    if (!pdfApp.PDFViewerApplication.pdfViewer) return false;
+
+    return (
+      pdfApp.PDFViewerApplication.page >= pdfApp.PDFViewerApplication.pagesCount
+    );
+  }
+  // TODO make disabled bindings for next/ previous buttons
 
   @Watch("pdf")
   handler() {

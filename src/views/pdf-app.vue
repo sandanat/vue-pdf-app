@@ -7,9 +7,13 @@
     @pages-rendered="pagesRendered"
     style="position: relative"
   >
-    <template #footer>
+    <template #footer="{ nextPage: handler, isNextPageDisabled }">
       <div class="footer">
         <span>Footer</span>
+        <input v-model="scale" type="text" />
+        <button @click="handler" :disabled="isNextPageDisabled()" type="button">
+          Click
+        </button>
       </div>
     </template>
   </pdf-viewer>
@@ -25,12 +29,13 @@ export default {
   data() {
     return {
       config: {
-        toolbar: {
-          toolbarViewerLeft: {
-            pageNumber: false,
-          },
-        },
+        // toolbar: {
+        //   toolbarViewerLeft: {
+        //     pageNumber: false,
+        //   },
+        // },
       },
+      scale: "1",
       pdf: "/sample.pdf",
     };
   },
