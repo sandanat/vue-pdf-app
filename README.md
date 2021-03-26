@@ -621,7 +621,7 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
 
 # Examples
 
-## script tag (unpkg)
+## Script tag (unpkg)
 
 ```html
 <!DOCTYPE html>
@@ -653,7 +653,7 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
 </html>
 ```
 
-## typescript
+## Typescript
 
 ```vue
 <template>
