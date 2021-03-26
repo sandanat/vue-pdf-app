@@ -1,0 +1,131 @@
+/* Copyright 2014 Mozilla Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+.pdf-app .pdfViewer .canvasWrapper {
+  overflow: hidden;
+}
+
+.pdf-app .pdfViewer .page {
+  direction: ltr;
+  width: 816px;
+  height: 1056px;
+  margin: 1px auto -8px auto;
+  position: relative;
+  overflow: visible;
+  border: 9px solid transparent;
+  background-clip: content-box;
+  border-image: url(../assets/images/shadow.png) 9 9 repeat;
+  background-color: rgba(255, 255, 255, 1);
+}
+
+.pdf-app .pdfViewer.removePageBorders .page {
+  margin: 0px auto 10px auto;
+  border: none;
+}
+
+.pdf-app .pdfViewer.singlePageView {
+  display: inline-block;
+}
+
+.pdf-app .pdfViewer.singlePageView .page {
+  margin: 0;
+  border: none;
+}
+
+.pdf-app .pdfViewer.scrollHorizontal,
+.pdf-app .pdfViewer.scrollWrapped,
+.pdf-app .spread {
+  margin-left: 3.5px;
+  margin-right: 3.5px;
+  text-align: center;
+}
+
+.pdf-app .pdfViewer.scrollHorizontal,
+.pdf-app .spread {
+  white-space: nowrap;
+}
+
+.pdf-app .pdfViewer.removePageBorders,
+.pdf-app .pdfViewer.scrollHorizontal .spread,
+.pdf-app .pdfViewer.scrollWrapped .spread {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.pdf-app .spread .page,
+.pdf-app .pdfViewer.scrollHorizontal .page,
+.pdf-app .pdfViewer.scrollWrapped .page,
+.pdf-app .pdfViewer.scrollHorizontal .spread,
+.pdf-app .pdfViewer.scrollWrapped .spread {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.pdf-app .spread .page,
+.pdf-app .pdfViewer.scrollHorizontal .page,
+.pdf-app .pdfViewer.scrollWrapped .page {
+  margin-left: -3.5px;
+  margin-right: -3.5px;
+}
+
+.pdf-app .pdfViewer.removePageBorders .spread .page,
+.pdf-app .pdfViewer.removePageBorders.scrollHorizontal .page,
+.pdf-app .pdfViewer.removePageBorders.scrollWrapped .page {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.pdf-app .pdfViewer .page canvas {
+  margin: 0;
+  display: block;
+}
+
+.pdf-app .pdfViewer .page canvas[hidden] {
+  display: none;
+}
+
+.pdf-app .pdfViewer .page .loadingIcon {
+  position: absolute;
+  display: block;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: url(../assets/images/loading-icon.svg) center no-repeat;
+}
+
+.pdf-app .pdfPresentationMode .pdfViewer {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.pdf-app .pdfPresentationMode .pdfViewer .page,
+.pdf-app .pdfPresentationMode .pdfViewer .spread {
+  display: block;
+}
+
+.pdf-app .pdfPresentationMode .pdfViewer .page,
+.pdf-app .pdfPresentationMode .pdfViewer.removePageBorders .page {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pdf-app .pdfPresentationMode:-ms-fullscreen .pdfViewer .page {
+  margin-bottom: 100% !important;
+}
+
+.pdf-app .pdfPresentationMode:fullscreen .pdfViewer .page {
+  margin-bottom: 100%;
+  border: 0;
+}

@@ -1,16 +1,17 @@
 <template>
-  <div id="pdf" class="pdf-app" style="overflow: hidden">
+  <div id="vuePdfApp" :class="[localTheme]" class="pdf-app">
     <script type="application/l10n">
       {{ defaultLocale }}
     </script>
     <div id="outerContainer">
       <div v-show="showElem('sidebar')" id="sidebarContainer">
         <div id="toolbarSidebar">
+          <slot v-bind="{ toggleTheme }" name="toolbar-sidebar-prepend"></slot>
           <div class="splitToolbarButton toggled">
             <button
               v-show="showElem('sidebar.viewThumbnail')"
               id="viewThumbnail"
-              class="toolbarButton toggled"
+              class="toolbarButton toggled vue-pdf-app-icon view-thumbnail"
               title="Show Thumbnails"
               tabindex="2"
               data-l10n-id="thumbs"
@@ -20,7 +21,7 @@
             <button
               v-show="showElem('sidebar.viewOutline')"
               id="viewOutline"
-              class="toolbarButton"
+              class="toolbarButton vue-pdf-app-icon view-outline"
               title="Show Document Outline (double-click to expand/collapse all items)"
               tabindex="3"
               data-l10n-id="document_outline"
@@ -32,7 +33,7 @@
             <button
               v-show="showElem('sidebar.viewAttachments')"
               id="viewAttachments"
-              class="toolbarButton"
+              class="toolbarButton vue-pdf-app-icon view-attachments"
               title="Show Attachments"
               tabindex="4"
               data-l10n-id="attachments"
@@ -40,6 +41,7 @@
               <span data-l10n-id="attachments_label">Attachments</span>
             </button>
           </div>
+          <slot v-bind="{ toggleTheme }" name="toolbar-sidebar-append"></slot>
         </div>
         <div v-show="showElem('sidebar')" id="sidebarContent">
           <div
@@ -63,7 +65,7 @@
 
       <div id="mainContainer">
         <div
-          v-show="showElem('findbar')"
+          v-show="showElem('toolbar.toolbarViewerLeft.findbar')"
           class="findbar hidden doorHanger"
           id="findbar"
         >
@@ -79,7 +81,7 @@
             <div class="splitToolbarButton">
               <button
                 id="findPrevious"
-                class="toolbarButton findPrevious"
+                class="toolbarButton findPrevious vue-pdf-app-icon find-previous"
                 title="Find the previous occurrence of the phrase"
                 tabindex="92"
                 data-l10n-id="find_previous"
@@ -89,7 +91,7 @@
               <div class="splitToolbarButtonSeparator"></div>
               <button
                 id="findNext"
-                class="toolbarButton findNext"
+                class="toolbarButton findNext vue-pdf-app-icon find-next"
                 title="Find the next occurrence of the phrase"
                 tabindex="93"
                 data-l10n-id="find_next"
@@ -153,10 +155,14 @@
           class="secondaryToolbar hidden doorHangerRight"
         >
           <div id="secondaryToolbarButtonContainer">
+            <slot
+              v-bind="{ toggleTheme }"
+              name="secondary-toolbar-prepend"
+            ></slot>
             <button
               v-show="showElem('secondaryToolbar.secondaryPresentationMode')"
               id="secondaryPresentationMode"
-              class="secondaryToolbarButton presentationMode visibleLargeView"
+              class="secondaryToolbarButton presentationMode visibleLargeView vue-pdf-app-icon presentation-mode"
               title="Switch to Presentation Mode"
               tabindex="51"
               data-l10n-id="presentation_mode"
@@ -168,8 +174,9 @@
 
             <button
               v-show="showElem('secondaryToolbar.secondaryOpenFile')"
+              @click.once="bindOpenHandler"
               id="secondaryOpenFile"
-              class="secondaryToolbarButton openFile visibleLargeView"
+              class="secondaryToolbarButton openFile visibleLargeView vue-pdf-app-icon open-file"
               title="Open File"
               tabindex="52"
               data-l10n-id="open_file"
@@ -180,7 +187,7 @@
             <button
               v-show="showElem('secondaryToolbar.secondaryPrint')"
               id="secondaryPrint"
-              class="secondaryToolbarButton print visibleMediumView"
+              class="secondaryToolbarButton print visibleMediumView vue-pdf-app-icon print-button"
               title="Print"
               tabindex="53"
               data-l10n-id="print"
@@ -191,7 +198,7 @@
             <button
               v-show="showElem('secondaryToolbar.secondaryDownload')"
               id="secondaryDownload"
-              class="secondaryToolbarButton download visibleMediumView"
+              class="secondaryToolbarButton download visibleMediumView vue-pdf-app-icon download-button"
               title="Download"
               tabindex="54"
               data-l10n-id="download"
@@ -203,7 +210,7 @@
               v-show="showElem('secondaryToolbar.secondaryViewBookmark')"
               href="#"
               id="secondaryViewBookmark"
-              class="secondaryToolbarButton bookmark visibleSmallView"
+              class="secondaryToolbarButton bookmark visibleSmallView vue-pdf-app-icon bookmark-button"
               title="Current view (copy or open in new window)"
               tabindex="55"
               data-l10n-id="bookmark"
@@ -211,12 +218,21 @@
               <span data-l10n-id="bookmark_label">Current View</span>
             </a>
 
-            <div class="horizontalToolbarSeparator visibleLargeView"></div>
+            <div
+              v-if="
+                showElem('secondaryToolbar.secondaryPresentationMode') ||
+                showElem('secondaryToolbar.secondaryOpenFile') ||
+                showElem('secondaryToolbar.secondaryPrint') ||
+                showElem('secondaryToolbar.secondaryDownload') ||
+                showElem('secondaryToolbar.secondaryViewBookmark')
+              "
+              class="horizontalToolbarSeparator visibleLargeView"
+            ></div>
 
             <button
               v-show="showElem('secondaryToolbar.firstPage')"
               id="firstPage"
-              class="secondaryToolbarButton firstPage"
+              class="secondaryToolbarButton firstPage vue-pdf-app-icon first-page"
               title="Go to First Page"
               tabindex="56"
               data-l10n-id="first_page"
@@ -226,7 +242,7 @@
             <button
               v-show="showElem('secondaryToolbar.lastPage')"
               id="lastPage"
-              class="secondaryToolbarButton lastPage"
+              class="secondaryToolbarButton lastPage vue-pdf-app-icon last-page"
               title="Go to Last Page"
               tabindex="57"
               data-l10n-id="last_page"
@@ -234,12 +250,18 @@
               <span data-l10n-id="last_page_label">Go to Last Page</span>
             </button>
 
-            <div class="horizontalToolbarSeparator"></div>
+            <div
+              v-if="
+                showElem('secondaryToolbar.lastPage') ||
+                showElem('secondaryToolbar.firstPage')
+              "
+              class="horizontalToolbarSeparator"
+            ></div>
 
             <button
               v-show="showElem('secondaryToolbar.pageRotateCw')"
               id="pageRotateCw"
-              class="secondaryToolbarButton rotateCw"
+              class="secondaryToolbarButton rotateCw vue-pdf-app-icon rotate-clockwise"
               title="Rotate Clockwise"
               tabindex="58"
               data-l10n-id="page_rotate_cw"
@@ -249,7 +271,7 @@
             <button
               v-show="showElem('secondaryToolbar.pageRotateCcw')"
               id="pageRotateCcw"
-              class="secondaryToolbarButton rotateCcw"
+              class="secondaryToolbarButton rotateCcw vue-pdf-app-icon rotate-counter-clockwise"
               title="Rotate Counterclockwise"
               tabindex="59"
               data-l10n-id="page_rotate_ccw"
@@ -259,12 +281,18 @@
               >
             </button>
 
-            <div class="horizontalToolbarSeparator"></div>
+            <div
+              v-if="
+                showElem('secondaryToolbar.pageRotateCcw') ||
+                showElem('secondaryToolbar.pageRotateCw')
+              "
+              class="horizontalToolbarSeparator"
+            ></div>
 
             <button
               v-show="showElem('secondaryToolbar.cursorSelectTool')"
               id="cursorSelectTool"
-              class="secondaryToolbarButton selectTool toggled"
+              class="secondaryToolbarButton selectTool toggled vue-pdf-app-icon select-tool"
               title="Enable Text Selection Tool"
               tabindex="60"
               data-l10n-id="cursor_text_select_tool"
@@ -276,7 +304,7 @@
             <button
               v-show="showElem('secondaryToolbar.cursorHandTool')"
               id="cursorHandTool"
-              class="secondaryToolbarButton handTool"
+              class="secondaryToolbarButton handTool vue-pdf-app-icon hand-tool"
               title="Enable Hand Tool"
               tabindex="61"
               data-l10n-id="cursor_hand_tool"
@@ -284,12 +312,18 @@
               <span data-l10n-id="cursor_hand_tool_label">Hand Tool</span>
             </button>
 
-            <div class="horizontalToolbarSeparator"></div>
+            <div
+              v-if="
+                showElem('secondaryToolbar.cursorHandTool') ||
+                showElem('secondaryToolbar.cursorSelectTool')
+              "
+              class="horizontalToolbarSeparator"
+            ></div>
 
             <button
               v-show="showElem('secondaryToolbar.scrollVertical')"
               id="scrollVertical"
-              class="secondaryToolbarButton scrollModeButtons scrollVertical toggled"
+              class="secondaryToolbarButton scrollModeButtons scrollVertical toggled vue-pdf-app-icon scroll-vertical"
               title="Use Vertical Scrolling"
               tabindex="62"
               data-l10n-id="scroll_vertical"
@@ -301,7 +335,7 @@
             <button
               v-show="showElem('secondaryToolbar.scrollHorizontal')"
               id="scrollHorizontal"
-              class="secondaryToolbarButton scrollModeButtons scrollHorizontal"
+              class="secondaryToolbarButton scrollModeButtons scrollHorizontal vue-pdf-app-icon scroll-horizontal"
               title="Use Horizontal Scrolling"
               tabindex="63"
               data-l10n-id="scroll_horizontal"
@@ -313,7 +347,7 @@
             <button
               v-show="showElem('secondaryToolbar.scrollWrapped')"
               id="scrollWrapped"
-              class="secondaryToolbarButton scrollModeButtons scrollWrapped"
+              class="secondaryToolbarButton scrollModeButtons scrollWrapped vue-pdf-app-icon scroll-wrapped"
               title="Use Wrapped Scrolling"
               tabindex="64"
               data-l10n-id="scroll_wrapped"
@@ -321,12 +355,19 @@
               <span data-l10n-id="scroll_wrapped_label">Wrapped Scrolling</span>
             </button>
 
-            <div class="horizontalToolbarSeparator scrollModeButtons"></div>
+            <div
+              class="horizontalToolbarSeparator scrollModeButtons"
+              v-if="
+                showElem('secondaryToolbar.scrollWrapped') ||
+                showElem('secondaryToolbar.scrollHorizontal') ||
+                showElem('secondaryToolbar.scrollVertical')
+              "
+            ></div>
 
             <button
               v-show="showElem('secondaryToolbar.spreadNone')"
               id="spreadNone"
-              class="secondaryToolbarButton spreadModeButtons spreadNone toggled"
+              class="secondaryToolbarButton spreadModeButtons spreadNone toggled vue-pdf-app-icon spread-none"
               title="Do not join page spreads"
               tabindex="65"
               data-l10n-id="spread_none"
@@ -336,7 +377,7 @@
             <button
               v-show="showElem('secondaryToolbar.spreadOdd')"
               id="spreadOdd"
-              class="secondaryToolbarButton spreadModeButtons spreadOdd"
+              class="secondaryToolbarButton spreadModeButtons vue-pdf-app-icon spread-odd"
               title="Join page spreads starting with odd-numbered pages"
               tabindex="66"
               data-l10n-id="spread_odd"
@@ -346,7 +387,7 @@
             <button
               v-show="showElem('secondaryToolbar.spreadEven')"
               id="spreadEven"
-              class="secondaryToolbarButton spreadModeButtons spreadEven"
+              class="secondaryToolbarButton spreadModeButtons spreadEven vue-pdf-app-icon spread-even"
               title="Join page spreads starting with even-numbered pages"
               tabindex="67"
               data-l10n-id="spread_even"
@@ -354,12 +395,19 @@
               <span data-l10n-id="spread_even_label">Even Spreads</span>
             </button>
 
-            <div class="horizontalToolbarSeparator spreadModeButtons"></div>
+            <div
+              v-if="
+                showElem('secondaryToolbar.spreadEven') ||
+                showElem('secondaryToolbar.spreadOdd') ||
+                showElem('secondaryToolbar.spreadNone')
+              "
+              class="horizontalToolbarSeparator spreadModeButtons"
+            ></div>
 
             <button
               v-show="showElem('secondaryToolbar.documentProperties')"
               id="documentProperties"
-              class="secondaryToolbarButton documentProperties"
+              class="secondaryToolbarButton documentProperties vue-pdf-app-icon document-properties"
               title="Document Properties…"
               tabindex="68"
               data-l10n-id="document_properties"
@@ -368,6 +416,10 @@
                 >Document Properties…</span
               >
             </button>
+            <slot
+              v-bind="{ toggleTheme }"
+              name="secondary-toolbar-append"
+            ></slot>
           </div>
         </div>
         <!-- secondaryToolbar -->
@@ -375,14 +427,15 @@
         <div v-show="showElem('toolbar')" class="toolbar">
           <div id="toolbarContainer">
             <div id="toolbarViewer">
-              <div
-                v-show="showElem('toolbar.toolbarViewerLeft')"
-                id="toolbarViewerLeft"
-              >
+              <div id="toolbarViewerLeft">
+                <slot
+                  v-bind="{ toggleTheme }"
+                  name="toolbar-left-prepend"
+                ></slot>
                 <button
                   v-show="showElem('sidebar')"
                   id="sidebarToggle"
-                  class="toolbarButton"
+                  class="toolbarButton vue-pdf-app-icon sidebar-toggle"
                   title="Toggle Sidebar"
                   tabindex="11"
                   data-l10n-id="toggle_sidebar"
@@ -391,11 +444,14 @@
                     >Toggle Sidebar</span
                   >
                 </button>
-                <div class="toolbarButtonSpacer"></div>
+                <div
+                  v-if="showElem('sidebar')"
+                  class="toolbarButtonSpacer"
+                ></div>
                 <button
-                  v-show="showElem('findbar')"
+                  v-show="showElem('toolbar.toolbarViewerLeft.findbar')"
                   id="viewFind"
-                  class="toolbarButton"
+                  class="toolbarButton vue-pdf-app-icon view-find"
                   title="Find in Document"
                   tabindex="12"
                   data-l10n-id="findbar"
@@ -405,7 +461,7 @@
                 <div class="splitToolbarButton hiddenSmallView">
                   <button
                     v-show="showElem('toolbar.toolbarViewerLeft.previous')"
-                    class="toolbarButton pageUp"
+                    class="toolbarButton pageUp vue-pdf-app-icon page-up"
                     title="Previous Page"
                     id="previous"
                     tabindex="13"
@@ -413,10 +469,16 @@
                   >
                     <span data-l10n-id="previous_label">Previous</span>
                   </button>
-                  <div class="splitToolbarButtonSeparator"></div>
+                  <div
+                    v-if="
+                      showElem('toolbar.toolbarViewerLeft.next') &&
+                      showElem('toolbar.toolbarViewerLeft.previous')
+                    "
+                    class="splitToolbarButtonSeparator"
+                  ></div>
                   <button
                     v-show="showElem('toolbar.toolbarViewerLeft.next')"
-                    class="toolbarButton pageDown"
+                    class="toolbarButton pageDown vue-pdf-app-icon page-down"
                     title="Next Page"
                     id="next"
                     tabindex="14"
@@ -443,17 +505,22 @@
                   id="numPages"
                   class="toolbarLabel"
                 ></span>
+                <slot
+                  v-bind="{ toggleTheme }"
+                  name="toolbar-left-append"
+                ></slot>
               </div>
-              <div
-                v-show="showElem('toolbar.toolbarViewerRight')"
-                id="toolbarViewerRight"
-              >
+              <div id="toolbarViewerRight">
+                <slot
+                  v-bind="{ toggleTheme }"
+                  name="toolbar-right-prepend"
+                ></slot>
                 <button
                   v-show="
                     showElem('toolbar.toolbarViewerRight.presentationMode')
                   "
                   id="presentationMode"
-                  class="toolbarButton presentationMode hiddenLargeView"
+                  class="toolbarButton presentationMode hiddenLargeView vue-pdf-app-icon presentation-mode"
                   title="Switch to Presentation Mode"
                   tabindex="31"
                   data-l10n-id="presentation_mode"
@@ -465,8 +532,9 @@
 
                 <button
                   v-show="showElem('toolbar.toolbarViewerRight.openFile')"
+                  @click.once="bindOpenHandler"
                   id="openFile"
-                  class="toolbarButton openFile hiddenLargeView"
+                  class="toolbarButton openFile hiddenLargeView vue-pdf-app-icon open-file"
                   title="Open File"
                   tabindex="32"
                   data-l10n-id="open_file"
@@ -477,7 +545,7 @@
                 <button
                   v-show="showElem('toolbar.toolbarViewerRight.print')"
                   id="print"
-                  class="toolbarButton print hiddenMediumView"
+                  class="toolbarButton print hiddenMediumView vue-pdf-app-icon print-button"
                   title="Print"
                   tabindex="33"
                   data-l10n-id="print"
@@ -488,7 +556,7 @@
                 <button
                   v-show="showElem('toolbar.toolbarViewerRight.download')"
                   id="download"
-                  class="toolbarButton download hiddenMediumView"
+                  class="toolbarButton download hiddenMediumView vue-pdf-app-icon download-button"
                   title="Download"
                   tabindex="34"
                   data-l10n-id="download"
@@ -499,51 +567,60 @@
                   v-show="showElem('toolbar.toolbarViewerRight.viewBookmark')"
                   href="#"
                   id="viewBookmark"
-                  class="toolbarButton bookmark hiddenSmallView"
+                  class="toolbarButton bookmark hiddenSmallView vue-pdf-app-icon bookmark-button"
                   title="Current view (copy or open in new window)"
                   tabindex="35"
                   data-l10n-id="bookmark"
                 >
                   <span data-l10n-id="bookmark_label">Current View</span>
                 </a>
-
-                <div class="verticalToolbarSeparator hiddenSmallView"></div>
+                <div
+                  v-if="showElem('secondaryToolbar')"
+                  class="verticalToolbarSeparator hiddenSmallView"
+                ></div>
 
                 <button
-                  v-show="
-                    showElem(
-                      'toolbar.toolbarViewerRight.secondaryToolbarToggle'
-                    )
-                  "
+                  v-show="showElem('secondaryToolbar')"
                   id="secondaryToolbarToggle"
-                  class="toolbarButton"
+                  class="toolbarButton vue-pdf-app-icon secondary-toolbar-toggle"
                   title="Tools"
                   tabindex="36"
                   data-l10n-id="tools"
                 >
                   <span data-l10n-id="tools_label">Tools</span>
                 </button>
+                <slot
+                  v-bind="{ toggleTheme }"
+                  name="toolbar-right-append"
+                ></slot>
               </div>
-              <div
-                v-show="showElem('toolbar.toolbarViewerMiddle')"
-                id="toolbarViewerMiddle"
-              >
+              <div id="toolbarViewerMiddle">
+                <slot
+                  v-bind="{ toggleTheme }"
+                  name="toolbar-middle-prepend"
+                ></slot>
                 <div class="splitToolbarButton">
                   <button
                     v-show="showElem('toolbar.toolbarViewerMiddle.zoomOut')"
                     id="zoomOut"
-                    class="toolbarButton zoomOut"
+                    class="toolbarButton zoomOut vue-pdf-app-icon zoom-out"
                     title="Zoom Out"
                     tabindex="21"
                     data-l10n-id="zoom_out"
                   >
                     <span data-l10n-id="zoom_out_label">Zoom Out</span>
                   </button>
-                  <div class="splitToolbarButtonSeparator"></div>
+                  <div
+                    v-if="
+                      showElem('toolbar.toolbarViewerMiddle.zoomIn') &&
+                      showElem('toolbar.toolbarViewerMiddle.zoomOut')
+                    "
+                    class="splitToolbarButtonSeparator"
+                  ></div>
                   <button
                     v-show="showElem('toolbar.toolbarViewerMiddle.zoomIn')"
                     id="zoomIn"
-                    class="toolbarButton zoomIn"
+                    class="toolbarButton zoomIn vue-pdf-app-icon zoom-in"
                     title="Zoom In"
                     tabindex="22"
                     data-l10n-id="zoom_in"
@@ -553,12 +630,10 @@
                 </div>
                 <span
                   v-show="
-                    showElem(
-                      'toolbar.toolbarViewerMiddle.scaleSelectContatiner'
-                    )
+                    showElem('toolbar.toolbarViewerMiddle.scaleSelectContainer')
                   "
                   id="scaleSelectContainer"
-                  class="dropdownToolbarButton"
+                  class="dropdownToolbarButton vue-pdf-app-icon dropdown-toolbar-button"
                 >
                   <select
                     id="scaleSelect"
@@ -672,6 +747,10 @@
                     </option>
                   </select>
                 </span>
+                <slot
+                  v-bind="{ toggleTheme }"
+                  name="toolbar-middle-append"
+                ></slot>
               </div>
             </div>
             <div id="loadingBar">
@@ -682,11 +761,7 @@
           </div>
         </div>
 
-        <menu
-          v-show="showElem('viewerContextMenu')"
-          type="context"
-          id="viewerContextMenu"
-        >
+        <menu v-show="false" type="context" id="viewerContextMenu">
           <menuitem
             id="contextFirstPage"
             label="First Page"
@@ -709,7 +784,7 @@
           />
         </menu>
 
-        <div id="viewerContainer" tabindex="0">
+        <div id="viewerContainer" :class="[toolbarHidden]" tabindex="0">
           <div id="viewer" class="pdfViewer"></div>
         </div>
 
@@ -879,6 +954,7 @@
       <!-- overlayContainer -->
     </div>
     <!-- outerContainer -->
+    <slot v-bind="{ toggleTheme }" name="footer"></slot>
   </div>
 </template>
 
@@ -892,8 +968,8 @@ import { AppOptions } from "@/pdfjs-dist/lib/web/app_options";
 import "@/pdfjs-dist/lib/web/genericcom";
 import "@/pdfjs-dist/lib/web/pdf_print_service";
 import "@/pdfjs-dist/build/pdf.worker.entry";
-import "@/css/index.css";
-import { ToolbarConfig } from "@/types";
+import "@/sass/index.scss";
+import { ToolbarConfig, Theme } from "@/types";
 import getAppConfig from "@/utils/get-pdf-config";
 import toolbarConfig from "@/utils/toolbar-config";
 import { PDF_FILE_INPUT_ID } from "@/utils/constants";
@@ -904,6 +980,7 @@ if (AppOptions) {
   AppOptions.set("defaultUrl", null);
 }
 
+const themeCacheKey = "vue-pdf-app-theme";
 const errorHandler = console.error.bind(console);
 
 // pdf_print_service reassigns window.print.
@@ -915,12 +992,45 @@ window.print = (window as any).__nativePrint__ || pdfPrint;
 @Component
 export default class PdfViewer extends Vue {
   // can accept string URL
-  @Prop({ required: false }) private pdf!: string | ArrayBuffer;
+  @Prop({ required: false, type: [String, ArrayBuffer] }) private pdf?:
+    | string
+    | ArrayBuffer;
 
   @Prop({ required: false, default: () => toolbarConfig })
   private config!: ToolbarConfig;
 
+  @Prop({ required: false, type: String })
+  private theme?: Theme;
+
+  @Prop({ required: false, type: Boolean, default: () => false })
+  private title!: boolean;
+
   private defaultLocale = JSON.stringify(locale);
+
+  private isOpenHandlerBinded = false;
+
+  private cacheTheme = window.localStorage.getItem(
+    themeCacheKey
+  ) as Theme | null;
+
+  private get toolbarHidden() {
+    if (this.config.toolbar === false) return "toolbar-hidden";
+    return "";
+  }
+
+  private get localTheme(): Theme {
+    if (this.theme) return this.theme;
+
+    if (this.cacheTheme) return this.cacheTheme;
+
+    const prefersTheme = window
+      .getComputedStyle(document.documentElement)
+      .getPropertyValue("content")
+      .replace(/"/g, "") as Theme;
+    if (["light", "dark"].includes(prefersTheme)) return prefersTheme;
+
+    return "dark";
+  }
 
   private beforeDestroy() {
     this.destroyPdf();
@@ -928,6 +1038,8 @@ export default class PdfViewer extends Vue {
 
   private created() {
     window.print = pdfPrint;
+    pdfApp.PDFViewerApplication.isViewerEmbedded = !this.title;
+    this.$emit("after-created", pdfApp.PDFViewerApplication);
   }
 
   private mounted() {
@@ -957,6 +1069,24 @@ export default class PdfViewer extends Vue {
     return !(getToolbarConfigValue(this.config, path) === false);
   }
 
+  private bindOpenHandler() {
+    if (this.isOpenHandlerBinded) return;
+
+    const fileInput = document.getElementById(PDF_FILE_INPUT_ID);
+    const fileInputHandler = async () => {
+      // @ts-ignore
+      await pdfApp.PDFViewerApplication.pdfLoadingTask?.promise;
+      this.openDocument();
+    };
+
+    fileInput?.addEventListener("change", fileInputHandler);
+    this.$once("hook:beforeDestroy", () => {
+      fileInput?.removeEventListener("change", fileInputHandler);
+    });
+
+    this.isOpenHandlerBinded = true;
+  }
+
   private open() {
     this.clearCacheTimeout();
     if (!pdfApp.PDFViewerApplication) return;
@@ -965,8 +1095,21 @@ export default class PdfViewer extends Vue {
       pdfApp.PDFViewerApplication.close();
     } else {
       pdfApp.PDFViewerApplication.open(this.pdf)
-        .then(() => this.$emit("open", pdfApp.PDFViewerApplication))
+        .then(this.openDocument.bind(this))
         .catch(errorHandler);
+    }
+  }
+
+  private async openDocument() {
+    this.$emit("open", pdfApp.PDFViewerApplication);
+
+    // @ts-ignore
+    if (pdfApp.PDFViewerApplication?.pdfViewer?.pagesPromise) {
+      // @ts-ignore
+      await pdfApp.PDFViewerApplication.pdfViewer.pagesPromise.catch(
+        errorHandler
+      );
+      this.$emit("pages-rendered", pdfApp.PDFViewerApplication);
     }
   }
 
@@ -1007,6 +1150,13 @@ export default class PdfViewer extends Vue {
     window.print = (window as any).__nativePrint__ || window.print;
   }
 
+  private toggleTheme() {
+    const newTheme = this.localTheme === "dark" ? "light" : "dark";
+    this.$emit("update:theme", newTheme);
+    this.cacheTheme = newTheme;
+    window.localStorage.setItem(themeCacheKey, newTheme);
+  }
+
   @Watch("pdf")
   handler() {
     this.open();
@@ -1015,7 +1165,25 @@ export default class PdfViewer extends Vue {
 </script>
 
 <style>
-.pdf-app {
-  height: 100%;
+html {
+  content: "";
+}
+
+@media (prefers-color-scheme: light) {
+  html {
+    content: "light";
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    content: "dark";
+  }
+}
+</style>
+
+<style lang="scss" scoped>
+#viewerContainer.toolbar-hidden {
+  top: 0;
 }
 </style>

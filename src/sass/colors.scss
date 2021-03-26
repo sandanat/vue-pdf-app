@@ -1,0 +1,556 @@
+@import "@/sass/variables.scss";
+
+.pdf-app.dark {
+  --pdf-app-background-color: #{$pdf-app-background-color};
+  --pdf-sidebar-content-color: #{$pdf-sidebar-content-color};
+  --pdf-toolbar-sidebar-color: #{$pdf-toolbar-sidebar-color};
+  --pdf-toolbar-color: #{$pdf-toolbar-color};
+  --pdf-loading-bar-color: #{$pdf-loading-bar-color};
+  --pdf-loading-bar-secondary-color: #{$pdf-loading-bar-secondary-color};
+  --pdf-find-results-count-color: #{$pdf-find-results-count-color};
+  --pdf-find-results-count-font-color: #{$pdf-find-results-count-font-color};
+  --pdf-find-message-font-color: #{$pdf-find-message-font-color};
+  --pdf-not-found-color: #{$pdf-not-found-color};
+  --pdf-split-toolbar-button-separator-color: #{$pdf-split-toolbar-button-separator-color};
+  --pdf-toolbar-font-color: #{$pdf-toolbar-font-color};
+  --pdf-button-hover-font-color: #{$pdf-button-hover-font-color};
+  --pdf-button-toggled-color: #{$pdf-button-toggled-color};
+  --pdf-horizontal-toolbar-separator-color: #{$pdf-horizontal-toolbar-separator-color};
+  --pdf-input-color: #{$pdf-input-color};
+  --pdf-input-font-color: #{$pdf-input-font-color};
+  --pdf-find-input-placeholder-font-color: #{$pdf-find-input-placeholder-font-color};
+  --pdf-thumbnail-selection-ring-color: #{$pdf-thumbnail-selection-ring-color};
+  --pdf-thumbnail-selection-ring-selected-color: #{$pdf-thumbnail-selection-ring-selected-color};
+  --pdf-error-wrapper-color: #{$pdf-error-wrapper-color};
+  --pdf-error-more-info-color: #{$pdf-error-more-info-color};
+  --pdf-error-more-info-font-color: #{$pdf-error-more-info-font-color};
+  --pdf-overlay-container-color: #{$pdf-overlay-container-color};
+  --pdf-overlay-container-dialog-color: #{$pdf-overlay-container-dialog-color};
+  --pdf-overlay-container-dialog-font-color: #{$pdf-overlay-container-dialog-font-color};
+  --pdf-overlay-container-dialog-separator-color: #{$pdf-overlay-container-dialog-separator-color};
+  --pdf-dialog-button-font-color: #{$pdf-dialog-button-font-color};
+  --pdf-dialog-button-color: #{$pdf-dialog-button-color};
+}
+
+.pdf-app.light {
+  --pdf-app-background-color: #{$pdf-app-background-color-light};
+  --pdf-sidebar-content-color: #{$pdf-sidebar-content-color-light};
+  --pdf-toolbar-sidebar-color: #{$pdf-toolbar-sidebar-color-light};
+  --pdf-toolbar-color: #{$pdf-toolbar-color-light};
+  --pdf-loading-bar-color: #{$pdf-loading-bar-color-light};
+  --pdf-loading-bar-secondary-color: #{$pdf-loading-bar-secondary-color-light};
+  --pdf-find-results-count-color: #{$pdf-find-results-count-color-light};
+  --pdf-find-results-count-font-color: #{$pdf-find-results-count-font-color-light};
+  --pdf-find-message-font-color: #{$pdf-find-message-font-color-light};
+  --pdf-not-found-color: #{$pdf-not-found-color-light};
+  --pdf-split-toolbar-button-separator-color: #{$pdf-split-toolbar-button-separator-color-light};
+  --pdf-toolbar-font-color: #{$pdf-toolbar-font-color-light};
+  --pdf-button-hover-font-color: #{$pdf-button-hover-font-color-light};
+  --pdf-button-toggled-color: #{$pdf-button-toggled-color-light};
+  --pdf-horizontal-toolbar-separator-color: #{$pdf-horizontal-toolbar-separator-color-light};
+  --pdf-input-color: #{$pdf-input-color-light};
+  --pdf-input-font-color: #{$pdf-input-font-color-light};
+  --pdf-find-input-placeholder-font-color: #{$pdf-find-input-placeholder-font-color-light};
+  --pdf-thumbnail-selection-ring-color: #{$pdf-thumbnail-selection-ring-color-light};
+  --pdf-thumbnail-selection-ring-selected-color: #{$pdf-thumbnail-selection-ring-selected-color-light};
+  --pdf-error-wrapper-color: #{$pdf-error-wrapper-color-light};
+  --pdf-error-more-info-color: #{$pdf-error-more-info-color-light};
+  --pdf-error-more-info-font-color: #{$pdf-error-more-info-font-color-light};
+  --pdf-overlay-container-color: #{$pdf-overlay-container-color-light};
+  --pdf-overlay-container-dialog-color: #{$pdf-overlay-container-dialog-color-light};
+  --pdf-overlay-container-dialog-font-color: #{$pdf-overlay-container-dialog-font-color-light};
+  --pdf-overlay-container-dialog-separator-color: #{$pdf-overlay-container-dialog-separator-color-light};
+  --pdf-dialog-button-font-color: #{$pdf-dialog-button-font-color-light};
+  --pdf-dialog-button-color: #{$pdf-dialog-button-color-light};
+}
+
+/****** fallback for IE11 ******/
+.pdf-app {
+  background-color: $pdf-app-background-color;
+}
+
+.pdf-app #sidebarContent {
+  background-color: $pdf-sidebar-content-color;
+}
+
+.pdf-app #toolbarSidebar {
+  background-color: $pdf-toolbar-sidebar-color;
+}
+
+.pdf-app #toolbarContainer,
+.pdf-app .findbar,
+.pdf-app .secondaryToolbar {
+  background-color: $pdf-toolbar-color;
+}
+
+.pdf-app #loadingBar .progress {
+  background-color: $pdf-loading-bar-color;
+}
+
+.pdf-app #loadingBar .progress.indeterminate .glimmer {
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0,
+    $pdf-loading-bar-secondary-color 5px,
+    $pdf-loading-bar-secondary-color 45px,
+    transparent 55px,
+    transparent 95px,
+    transparent 100px
+  );
+}
+
+.pdf-app #findInput::placeholder {
+  color: $pdf-find-input-placeholder-font-color;
+}
+
+.pdf-app .doorHanger:after,
+.pdf-app .doorHangerRight:after {
+  border-bottom-color: $pdf-toolbar-color;
+}
+
+.pdf-app #findResultsCount {
+  background-color: $pdf-find-results-count-color;
+  color: $pdf-find-results-count-font-color;
+}
+
+.pdf-app #findMsg {
+  color: $pdf-find-message-font-color;
+}
+
+.pdf-app #findInput.notFound {
+  background-color: $pdf-not-found-color;
+}
+
+.pdf-app .splitToolbarButtonSeparator {
+  background-color: $pdf-split-toolbar-button-separator-color;
+}
+
+.pdf-app .toolbarButton,
+.pdf-app .dropdownToolbarButton,
+.pdf-app .secondaryToolbarButton,
+.pdf-app .overlayButton {
+  color: $pdf-toolbar-font-color;
+}
+
+.vue-pdf-app-icon {
+  color: $pdf-toolbar-font-color;
+}
+
+.pdf-app .dialog .overlayButton {
+  background-color: $pdf-dialog-button-color;
+  color: $pdf-dialog-button-font-color;
+}
+
+.pdf-app .toolbarButton:hover,
+.pdf-app .toolbarButton:focus,
+.pdf-app .dropdownToolbarButton:hover,
+.pdf-app .overlayButton,
+.pdf-app .secondaryToolbarButton:hover,
+.vue-pdf-app-icon:hover,
+.pdf-app .secondaryToolbarButton:focus {
+  color: $pdf-button-hover-font-color;
+}
+
+.pdf-app .dropdownToolbarButton > select {
+  color: $pdf-toolbar-font-color;
+  background: $pdf-toolbar-color;
+}
+
+.pdf-app .dropdownToolbarButton > select > option {
+  background: $pdf-toolbar-color;
+}
+
+.pdf-app .verticalToolbarSeparator {
+  background-color: $pdf-split-toolbar-button-separator-color;
+}
+
+.pdf-app .horizontalToolbarSeparator {
+  background-color: $pdf-horizontal-toolbar-separator-color;
+}
+
+.pdf-app .toolbarField {
+  background-color: $pdf-input-color;
+  color: $pdf-input-font-color;
+}
+
+.pdf-app .toolbarLabel {
+  color: $pdf-toolbar-font-color;
+}
+
+.pdf-app a:focus > .thumbnail > .thumbnailSelectionRing,
+.pdf-app .thumbnail:hover > .thumbnailSelectionRing {
+  background-color: $pdf-thumbnail-selection-ring-color;
+}
+
+.pdf-app .thumbnail.selected > .thumbnailSelectionRing {
+  background-color: $pdf-thumbnail-selection-ring-selected-color;
+}
+
+.pdf-app .outlineItem > a,
+.pdf-app .attachmentsItem > button {
+  color: $pdf-toolbar-font-color;
+}
+
+.pdf-app .outlineItemToggler:hover,
+.pdf-app .outlineItemToggler:hover + a,
+.pdf-app .outlineItemToggler:hover ~ .outlineItems,
+.pdf-app .outlineItem > a:hover,
+.pdf-app .attachmentsItem > button:hover {
+  background-color: $pdf-button-toggled-color;
+}
+
+.pdf-app #errorWrapper {
+  background-color: $pdf-error-wrapper-color;
+}
+
+.pdf-app #errorMoreInfo {
+  background-color: $pdf-error-more-info-color;
+  color: $pdf-error-more-info-font-color;
+}
+
+.pdf-app #overlayContainer {
+  background-color: $pdf-overlay-container-color;
+}
+
+.pdf-app #overlayContainer > .container > .dialog {
+  background-color: $pdf-overlay-container-dialog-color;
+  color: $pdf-overlay-container-dialog-font-color;
+}
+
+.pdf-app .dialog .separator {
+  background-color: $pdf-overlay-container-dialog-separator-color;
+}
+
+.pdf-app .toolbarButton.toggled,
+.pdf-app .splitToolbarButton.toggled > .toolbarButton.toggled,
+.pdf-app .secondaryToolbarButton.toggled {
+  background-color: $pdf-button-toggled-color;
+}
+
+/****** light theme for IE11 ******/
+.pdf-app.light {
+  background-color: $pdf-app-background-color-light;
+}
+
+.pdf-app.light #sidebarContent {
+  background-color: $pdf-sidebar-content-color-light;
+}
+
+.pdf-app.light #toolbarSidebar {
+  background-color: $pdf-toolbar-sidebar-color-light;
+}
+
+.pdf-app.light #toolbarContainer,
+.pdf-app.light .findbar,
+.pdf-app.light .secondaryToolbar {
+  background-color: $pdf-toolbar-color-light;
+}
+
+.pdf-app.light #loadingBar .progress {
+  background-color: $pdf-loading-bar-color-light;
+}
+
+.pdf-app.light #loadingBar .progress.indeterminate .glimmer {
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0,
+    $pdf-loading-bar-secondary-color-light 5px,
+    $pdf-loading-bar-secondary-color-light 45px,
+    transparent 55px,
+    transparent 95px,
+    transparent 100px
+  );
+}
+
+.pdf-app.light #findInput::placeholder {
+  color: $pdf-find-input-placeholder-font-color-light;
+}
+
+.pdf-app.light .doorHanger:after,
+.pdf-app.light .doorHangerRight:after {
+  border-bottom-color: $pdf-toolbar-color-light;
+}
+
+.pdf-app.light #findResultsCount {
+  background-color: $pdf-find-results-count-color-light;
+  color: $pdf-find-results-count-font-color-light;
+}
+
+.pdf-app.light #findMsg {
+  color: $pdf-find-message-font-color-light;
+}
+
+.pdf-app.light #findInput.notFound {
+  background-color: $pdf-not-found-color-light;
+}
+
+.pdf-app.light .splitToolbarButtonSeparator {
+  background-color: $pdf-split-toolbar-button-separator-color-light;
+}
+
+.pdf-app.light .toolbarButton,
+.pdf-app.light .dropdownToolbarButton,
+.pdf-app.light .secondaryToolbarButton,
+.pdf-app.light .overlayButton {
+  color: $pdf-toolbar-font-color-light;
+}
+
+.light .vue-pdf-app-icon {
+  color: $pdf-toolbar-font-color-light;
+}
+
+.pdf-app.light .dialog .overlayButton {
+  background-color: $pdf-dialog-button-color-light;
+  color: $pdf-dialog-button-font-color-light;
+}
+
+.pdf-app.light .toolbarButton:hover,
+.pdf-app.light .toolbarButton:focus,
+.pdf-app.light .dropdownToolbarButton:hover,
+.pdf-app.light .overlayButton,
+.pdf-app.light .secondaryToolbarButton:hover,
+.light .vue-pdf-app-icon:hover,
+.pdf-app.light .secondaryToolbarButton:focus {
+  color: $pdf-button-hover-font-color-light;
+}
+
+.pdf-app.light .dropdownToolbarButton > select {
+  color: $pdf-toolbar-font-color-light;
+  background: $pdf-toolbar-color-light;
+}
+
+.pdf-app.light .dropdownToolbarButton > select > option {
+  background: $pdf-toolbar-color-light;
+}
+
+.pdf-app.light .verticalToolbarSeparator {
+  background-color: $pdf-split-toolbar-button-separator-color-light;
+}
+
+.pdf-app.light .horizontalToolbarSeparator {
+  background-color: $pdf-horizontal-toolbar-separator-color-light;
+}
+
+.pdf-app.light .toolbarField {
+  background-color: $pdf-input-color-light;
+  color: $pdf-input-font-color-light;
+}
+
+.pdf-app.light .toolbarLabel {
+  color: $pdf-toolbar-font-color-light;
+}
+
+.pdf-app.light a:focus > .thumbnail > .thumbnailSelectionRing,
+.pdf-app.light .thumbnail:hover > .thumbnailSelectionRing {
+  background-color: $pdf-thumbnail-selection-ring-color-light;
+}
+
+.pdf-app.light .thumbnail.selected > .thumbnailSelectionRing {
+  background-color: $pdf-thumbnail-selection-ring-selected-color-light;
+}
+
+.pdf-app.light .outlineItem > a,
+.pdf-app.light .attachmentsItem > button {
+  color: $pdf-toolbar-font-color-light;
+}
+
+.pdf-app.light .outlineItemToggler:hover,
+.pdf-app.light .outlineItemToggler:hover + a,
+.pdf-app.light .outlineItemToggler:hover ~ .outlineItems,
+.pdf-app.light .outlineItem > a:hover,
+.pdf-app.light .attachmentsItem > button:hover {
+  background-color: $pdf-button-toggled-color-light;
+}
+
+.pdf-app.light #errorWrapper {
+  background-color: $pdf-error-wrapper-color-light;
+}
+
+.pdf-app.light #errorMoreInfo {
+  background-color: $pdf-error-more-info-color-light;
+  color: $pdf-error-more-info-font-color-light;
+}
+
+.pdf-app.light #overlayContainer {
+  background-color: $pdf-overlay-container-color-light;
+}
+
+.pdf-app.light #overlayContainer > .container > .dialog {
+  background-color: $pdf-overlay-container-dialog-color-light;
+  color: $pdf-overlay-container-dialog-font-color-light;
+}
+
+.pdf-app.light .dialog .separator {
+  background-color: $pdf-overlay-container-dialog-separator-color-light;
+}
+
+.pdf-app.light .toolbarButton.toggled,
+.pdf-app.light .splitToolbarButton.toggled > .toolbarButton.toggled,
+.pdf-app.light .secondaryToolbarButton.toggled {
+  background-color: $pdf-button-toggled-color-light;
+}
+/****** end fallback for IE11 ******/
+
+// [class] selector is to make specifity equal to .pdf-app.light
+// otherwise color customization for light theme doesn't work
+.pdf-app[class] {
+  background-color: var(--pdf-app-background-color);
+}
+
+.pdf-app[class] #sidebarContent {
+  background-color: var(--pdf-sidebar-content-color);
+}
+
+.pdf-app[class] #toolbarSidebar {
+  background-color: var(--pdf-toolbar-sidebar-color);
+}
+
+.pdf-app[class] #toolbarContainer,
+.pdf-app[class] .findbar,
+.pdf-app[class] .secondaryToolbar {
+  background-color: var(--pdf-toolbar-color);
+}
+
+.pdf-app[class] #loadingBar .progress {
+  background-color: var(--pdf-loading-bar-color);
+}
+
+.pdf-app[class] #loadingBar .progress.indeterminate .glimmer {
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0,
+    var(--pdf-loading-bar-secondary-color) 5px,
+    var(--pdf-loading-bar-secondary-color) 45px,
+    transparent 55px,
+    transparent 95px,
+    transparent 100px
+  );
+}
+
+.pdf-app[class] #findInput::placeholder {
+  color: var(--pdf-find-input-placeholder-font-color);
+}
+
+.pdf-app[class] .doorHanger:after,
+.pdf-app[class] .doorHangerRight:after {
+  border-bottom-color: var(--pdf-toolbar-color);
+}
+
+.pdf-app[class] #findResultsCount {
+  background-color: var(--pdf-find-results-count-color);
+  color: var(--pdf-find-results-count-font-color);
+}
+
+.pdf-app[class] #findMsg {
+  color: var(--pdf-find-message-font-color);
+}
+
+.pdf-app[class] #findInput.notFound {
+  background-color: var(--pdf-not-found-color);
+}
+
+.pdf-app[class] .splitToolbarButtonSeparator {
+  background-color: var(--pdf-split-toolbar-button-separator-color);
+}
+
+.pdf-app[class] .toolbarButton,
+.pdf-app[class] .dropdownToolbarButton,
+.pdf-app[class] .secondaryToolbarButton,
+.pdf-app[class] .overlayButton {
+  color: var(--pdf-toolbar-font-color);
+}
+
+.vue-pdf-app-icon[class] {
+  color: var(--pdf-toolbar-font-color);
+}
+
+.pdf-app[class] .dialog .overlayButton {
+  background-color: var(--pdf-dialog-button-color);
+  color: var(--pdf-dialog-button-font-color);
+}
+
+.pdf-app[class] .toolbarButton:hover,
+.pdf-app[class] .toolbarButton:focus,
+.pdf-app[class] .dropdownToolbarButton:hover,
+.pdf-app[class] .overlayButton,
+.pdf-app[class] .secondaryToolbarButton:hover,
+.vue-pdf-app-icon:hover[class],
+.pdf-app[class] .secondaryToolbarButton:focus {
+  color: var(--pdf-button-hover-font-color);
+}
+
+.pdf-app[class] .dropdownToolbarButton > select {
+  color: var(--pdf-toolbar-font-color);
+  background: var(--pdf-toolbar-color);
+}
+
+.pdf-app[class] .dropdownToolbarButton > select > option {
+  background: var(--pdf-toolbar-color);
+}
+
+.pdf-app[class] .verticalToolbarSeparator {
+  background-color: var(--pdf-split-toolbar-button-separator-color);
+}
+
+.pdf-app[class] .horizontalToolbarSeparator {
+  background-color: var(--pdf-horizontal-toolbar-separator-color);
+}
+
+.pdf-app[class] .toolbarField {
+  background-color: var(--pdf-input-color);
+  color: var(--pdf-input-font-color);
+}
+
+.pdf-app[class] .toolbarLabel {
+  color: var(--pdf-toolbar-font-color);
+}
+
+.pdf-app[class] a:focus > .thumbnail > .thumbnailSelectionRing,
+.pdf-app[class] .thumbnail:hover > .thumbnailSelectionRing {
+  background-color: var(--pdf-thumbnail-selection-ring-color);
+}
+
+.pdf-app[class] .thumbnail.selected > .thumbnailSelectionRing {
+  background-color: var(--pdf-thumbnail-selection-ring-selected-color);
+}
+
+.pdf-app[class] .outlineItem > a,
+.pdf-app[class] .attachmentsItem > button {
+  color: var(--pdf-toolbar-font-color);
+}
+
+.pdf-app[class] .outlineItemToggler:hover,
+.pdf-app[class] .outlineItemToggler:hover + a,
+.pdf-app[class] .outlineItemToggler:hover ~ .outlineItems,
+.pdf-app[class] .outlineItem > a:hover,
+.pdf-app[class] .attachmentsItem > button:hover {
+  background-color: var(--pdf-button-toggled-color);
+}
+
+.pdf-app[class] #errorWrapper {
+  background-color: var(--pdf-error-wrapper-color);
+}
+
+.pdf-app[class] #errorMoreInfo {
+  background-color: var(--pdf-error-more-info-color);
+  color: var(--pdf-error-more-info-font-color);
+}
+
+.pdf-app[class] #overlayContainer {
+  background-color: var(--pdf-overlay-container-color);
+}
+
+.pdf-app[class] #overlayContainer > .container > .dialog {
+  background-color: var(--pdf-overlay-container-dialog-color);
+  color: var(--pdf-overlay-container-dialog-font-color);
+}
+
+.pdf-app[class] .dialog .separator {
+  background-color: var(--pdf-overlay-container-dialog-separator-color);
+}
+
+.pdf-app[class] .toolbarButton.toggled,
+.pdf-app[class] .splitToolbarButton.toggled > .toolbarButton.toggled,
+.pdf-app[class] .secondaryToolbarButton.toggled {
+  background-color: var(--pdf-button-toggled-color);
+}
