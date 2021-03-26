@@ -1,16 +1,17 @@
 <template>
   <div id="app">
-    <pdf-app pdf="/sample.pdf"></pdf-app>
+    <vue-pdf-app pdf="/sample.pdf"></vue-pdf-app>
   </div>
 </template>
 
 <script lang="ts">
-import PdfApp from "vue-pdf-app";
-import { Component, Vue } from 'vue-property-decorator';
+import "vue-pdf-app/dist/icons/main.css";
+import VuePdfApp from "vue-pdf-app";
+import { Component, Vue } from "vue-property-decorator";
 
 @Component({
   components: {
-    PdfApp
+    VuePdfApp,
   },
 })
 export default class App extends Vue {}
@@ -21,7 +22,8 @@ export default class App extends Vue {}
   height: 100%;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
 }

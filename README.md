@@ -636,16 +636,23 @@ See [localization file examples](https://github.com/mozilla/pdf.js/tree/master/l
     />
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/vue-pdf-app@2.0.0"></script>
+    <style>
+      body,
+      html {
+        padding: 0;
+        margin: 0;
+      }
+    </style>
   </head>
 
   <body>
-    <div id="app" style="height: 100%;">
+    <div id="app" style="height: 100vh;">
       <vue-pdf-app pdf="/sample.pdf"></vue-pdf-app>
     </div>
     <script>
       new Vue({
         components: {
-          PdfApp: window["vue-pdf-app"]
+          VuePdfApp: window["vue-pdf-app"]
         }
       }).$mount("#app");
     </script>

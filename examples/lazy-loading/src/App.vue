@@ -1,19 +1,20 @@
 <template>
   <div id="app">
-    <pdf-viewer pdf="/sample.pdf"></pdf-viewer>
+    <vue-pdf-app pdf="/sample.pdf"></vue-pdf-app>
   </div>
 </template>
 
 <script>
+import "vue-pdf-app/dist/icons/main.css";
 import Loader from "./components/Loader.vue";
 
 export default {
   name: "App",
   components: {
-    "pdf-viewer": () => ({
+    "vue-pdf-app": () => ({
       component: new Promise((res) => {
         return setTimeout(
-          () => res(import(/* webpackChunkName: "pdf-viewer" */ "vue-pdf-app")),
+          () => res(import(/* webpackChunkName: "vue-pdf-app" */ "vue-pdf-app")),
           4000
         );
       }),
@@ -33,7 +34,8 @@ export default {
   margin-top: 30px;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
 }

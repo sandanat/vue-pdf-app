@@ -2,29 +2,32 @@
 <html lang="en">
 
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta charset="utf-8">
-  <title>pdf-viewer demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <title>Vue-pdf-app demo</title>
+  <link rel="stylesheet"
+    href="https://unpkg.com/vue-pdf-app@2.0.0/dist/icons/main.css" />
   <script src="https://unpkg.com/vue"></script>
-  <script src="https://unpkg.com/vue-pdf-app"></script>
+  <script src="https://unpkg.com/vue-pdf-app@2.0.0"></script>
   <style>
-    html, body {
-      height: 100%;
+    body,
+    html {
+      padding: 0;
       margin: 0;
     }
   </style>
 </head>
 
 <body>
-  <div id="app" style="height: 100%;">
-    <pdf-app pdf="/sample.pdf"></pdf-app>
+  <div id="app" style="height: 100vh;">
+    <vue-pdf-app pdf="/sample.pdf"></vue-pdf-app>
   </div>
   <script>
     new Vue({
       components: {
-        PdfApp: window["vue-pdf-app"]
+        VuePdfApp: window["vue-pdf-app"]
       }
-    }).$mount('#app')
+    }).$mount("#app");
   </script>
 </body>
 

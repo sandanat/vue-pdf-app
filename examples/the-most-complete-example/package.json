@@ -12,7 +12,7 @@
     "core-js": "^3.6.5",
     "uuid": "^8.3.2",
     "vue": "^2.6.11",
-    "vue-pdf-app": "^1.0.2",
+    "vue-pdf-app": "^2.0.0",
     "vue-router": "^3.2.0"
   },
   "devDependencies": {
