@@ -2,7 +2,7 @@
   <pdf-viewer
     :pdf="pdf"
     :config="config"
-    downloadFileName="test"
+    fileName="Custom fileName"
     @after-created="afterCreated"
     @open="open"
     @pages-rendered="pagesRendered"
