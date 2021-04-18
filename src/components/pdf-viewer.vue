@@ -991,22 +991,21 @@ window.print = (window as any).__nativePrint__ || pdfPrint;
 
 @Component
 export default class PdfViewer extends Vue {
-  // can accept string URL
-  @Prop({ required: false, type: [String, ArrayBuffer] }) private pdf?:
-    | string
-    | ArrayBuffer;
-
   @Prop({ required: false, default: () => toolbarConfig })
-  private config!: ToolbarConfig;
-
-  @Prop({ required: false, type: String })
-  private theme?: Theme;
+  readonly config!: ToolbarConfig;
 
   @Prop({ required: false, type: Boolean, default: () => false })
-  private title!: boolean;
+  readonly title!: boolean;
+
+  // can accept string URL
+  @Prop({ required: false, type: [String, ArrayBuffer] })
+  readonly pdf?: string | ArrayBuffer;
 
   @Prop({ required: false, type: String })
-  private fileName?: string; 
+  readonly theme?: Theme;
+
+  @Prop({ required: false, type: String })
+  readonly fileName?: string;
 
   private defaultLocale = JSON.stringify(locale);
 
@@ -1102,7 +1101,8 @@ export default class PdfViewer extends Vue {
           return pdfApp.PDFViewerApplication.pdfDocument.getMetadata();
         })
         .then((fileMetadata: any) => {
-          pdfApp.PDFViewerApplication.contentDispositionFilename = this.fileName || fileMetadata.contentDispositionFilename
+          pdfApp.PDFViewerApplication.contentDispositionFilename =
+            this.fileName || fileMetadata.contentDispositionFilename;
         })
         .then(() => {
           return this.openDocument();
