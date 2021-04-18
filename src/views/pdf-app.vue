@@ -2,10 +2,10 @@
   <pdf-viewer
     :pdf="pdf"
     :config="config"
-    fileName="Custom fileName"
     @after-created="afterCreated"
     @open="open"
     @pages-rendered="pagesRendered"
+    file-name="Custom fileName"
     style="position: relative"
   >
     <template #footer>
