@@ -1,3 +1,9 @@
+# v2.1.0
+
+## Features
+
+1. Added prop `fileName`
+
 # v2.0.0
 
 ## Features

@@ -204,6 +204,17 @@ export default {
 </code>
 </details>
 
+## :fileName
+
+- Description: when pdf is passed like an array buffer default download file name is `document.pdf`. Set this prop to override it.
+- Type: string
+- Required: `false`
+- Usage:
+
+```vue
+<vue-pdf-app :pdf="ArrayBuffer" file-name="file name" />
+```
+
 ## @after-created(PDFViewerApplication)
 
 - Description: emitted only once when Pdfjs library is binded to vue component. Can be used to set Pdfjs config before pdf document opening.
