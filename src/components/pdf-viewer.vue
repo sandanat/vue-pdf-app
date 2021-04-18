@@ -1005,6 +1005,9 @@ export default class PdfViewer extends Vue {
   @Prop({ required: false, type: Boolean, default: () => false })
   private title!: boolean;
 
+  @Prop({ required: false, type: String })
+  private fileName?: string; 
+
   private defaultLocale = JSON.stringify(locale);
 
   private isOpenHandlerBinded = false;
@@ -1095,7 +1098,15 @@ export default class PdfViewer extends Vue {
       pdfApp.PDFViewerApplication.close();
     } else {
       pdfApp.PDFViewerApplication.open(this.pdf)
-        .then(this.openDocument.bind(this))
+        .then(() => {
+          return pdfApp.PDFViewerApplication.pdfDocument.getMetadata();
+        })
+        .then((fileMetadata: any) => {
+          pdfApp.PDFViewerApplication.contentDispositionFilename = this.fileName || fileMetadata.contentDispositionFilename
+        })
+        .then(() => {
+          return this.openDocument();
+        })
         .catch(errorHandler);
     }
   }
