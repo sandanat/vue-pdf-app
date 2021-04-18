@@ -1098,15 +1098,13 @@ export default class PdfViewer extends Vue {
     } else {
       pdfApp.PDFViewerApplication.open(this.pdf)
         .then(() => {
-          return pdfApp.PDFViewerApplication.pdfDocument.getMetadata();
+          return pdfApp.PDFViewerApplication.pdfDocument?.getMetadata();
         })
-        .then((fileMetadata: any) => {
+        .then((fileMetadata: { contentDispositionFilename: null | string }) => {
           pdfApp.PDFViewerApplication.contentDispositionFilename =
             this.fileName || fileMetadata.contentDispositionFilename;
         })
-        .then(() => {
-          return this.openDocument();
-        })
+        .then(this.openDocument.bind(this))
         .catch(errorHandler);
     }
   }
