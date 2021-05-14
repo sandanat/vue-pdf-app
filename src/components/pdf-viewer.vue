@@ -759,10 +759,13 @@
             data-l10n-id="page_rotate_ccw"
           />
         </menu>
-
+        <slot v-bind="slotProps" name="viewer-header"></slot>
+        <slot v-bind="slotProps" name="viewer-prepend"></slot>
         <div id="viewerContainer" :class="[toolbarHidden]" tabindex="0">
           <div id="viewer" class="pdfViewer"></div>
         </div>
+        <slot v-bind="slotProps" name="viewer-append"></slot>
+        <slot v-bind="slotProps" name="viewer-footer"></slot>
 
         <div v-show="showElem('errorWrapper')" id="errorWrapper" hidden="true">
           <div id="errorMessageLeft">
@@ -945,12 +948,11 @@ import "@/pdfjs-dist/lib/web/genericcom";
 import "@/pdfjs-dist/lib/web/pdf_print_service";
 import "@/pdfjs-dist/build/pdf.worker.entry";
 import "@/sass/index.scss";
-import { ToolbarConfig, Theme } from "@/types";
-import getAppConfig from "@/utils/get-pdf-config";
-import toolbarConfig from "@/utils/toolbar-config";
+import { ToolbarConfig, Theme, ToolbarConfigIds } from "@/types";
+import getAppConfig from "@/utils/pdf-config";
 import { PDF_FILE_INPUT_ID } from "@/utils/constants";
 import locale from "@/utils/locale";
-import getToolbarConfigValue from "@/utils/get-toolbar-config-value";
+import { getToolbarConfigValue, toolbarConfig } from "@/utils/toolbar-config";
 
 if (AppOptions) {
   AppOptions.set("defaultUrl", null);
@@ -958,10 +960,6 @@ if (AppOptions) {
 
 const themeCacheKey = "vue-pdf-app-theme";
 const errorHandler = console.error.bind(console);
-const dispatch = (eventName: string, value?: unknown) => {
-  const eventBus = pdfApp.PDFViewerApplication.eventBus;
-  eventBus?.dispatch(eventName, { source: eventBus, value });
-};
 
 // pdf_print_service reassigns window.print.
 // Assign original window.print on component destroy.
@@ -984,6 +982,9 @@ export default class PdfViewer extends Vue {
 
   @Prop({ required: false, type: Boolean, default: () => false })
   private title!: boolean;
+
+  @Prop({ required: false, type: Object })
+  private configIds?: ToolbarConfigIds;
 
   private defaultLocale = JSON.stringify(locale);
 
@@ -1015,16 +1016,6 @@ export default class PdfViewer extends Vue {
   private get slotProps() {
     return {
       toggleTheme: this.toggleTheme,
-      zoomOut: this.zoomOut,
-      zoomIn: this.zoomIn,
-      changeScale: this.changeScale,
-      fullscreen: this.fullscreen,
-      openFile: this.openFile,
-      print: this.print,
-      download: this.download,
-      bookmark: this.bookmark,
-      nextPage: this.nextPage,
-      isNextPageDisabled: this.isNextPageDisabled,
     };
   }
 
@@ -1040,7 +1031,7 @@ export default class PdfViewer extends Vue {
 
   private mounted() {
     this.addPrintContainer();
-    const config = getAppConfig();
+    const config = getAppConfig(this.configIds);
 
     if (pdfApp.PDFViewerApplication) {
       pdfApp.PDFViewerApplication.run(config);
@@ -1152,57 +1143,6 @@ export default class PdfViewer extends Vue {
     this.cacheTheme = newTheme;
     window.localStorage.setItem(themeCacheKey, newTheme);
   }
-
-  private zoomOut() {
-    dispatch("zoomout");
-  }
-
-  private zoomIn() {
-    dispatch("zoomin");
-  }
-
-  private changeScale(
-    value: "auto" | "page-actual" | "page-fit" | "page-width" | string
-  ) {
-    dispatch("scalechanged", value);
-  }
-
-  private fullscreen() {
-    dispatch("presentationmode");
-  }
-
-  private openFile() {
-    dispatch("openfile");
-  }
-
-  private print() {
-    dispatch("print");
-  }
-
-  private download() {
-    dispatch("download");
-  }
-
-  private bookmark() {
-    const bookmark = document.getElementById("viewBookmark");
-    bookmark?.click();
-  }
-
-  private nextPage() {
-    dispatch("nextpage");
-  }
-
-// this does not work
-  private isNextPageDisabled() {
-    /* eslint-disable */
-    debugger
-    if (!pdfApp.PDFViewerApplication.pdfViewer) return false;
-
-    return (
-      pdfApp.PDFViewerApplication.page >= pdfApp.PDFViewerApplication.pagesCount
-    );
-  }
-  // TODO make disabled bindings for next/ previous buttons
 
   @Watch("pdf")
   handler() {

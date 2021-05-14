@@ -7,13 +7,9 @@
     @pages-rendered="pagesRendered"
     style="position: relative"
   >
-    <template #footer="{ nextPage: handler, isNextPageDisabled }">
+    <template #footer>
       <div class="footer">
         <span>Footer</span>
-        <input v-model="scale" type="text" />
-        <button @click="handler" :disabled="isNextPageDisabled()" type="button">
-          Click
-        </button>
       </div>
     </template>
   </pdf-viewer>

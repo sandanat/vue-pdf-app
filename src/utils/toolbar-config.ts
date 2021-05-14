@@ -1,6 +1,6 @@
-import { ToolbarConfig } from "@/types";
+import { ToolbarConfValue, ToolbarConfig } from "@/types";
 
-const toolbarConfig: ToolbarConfig = {
+export const toolbarConfig: ToolbarConfig = {
   sidebar: {
     viewThumbnail: true,
     viewOutline: true,
@@ -38,7 +38,7 @@ const toolbarConfig: ToolbarConfig = {
       openFile: true,
       print: true,
       download: true,
-      viewBookmark: true,
+      viewBookmark: true
     },
     toolbarViewerMiddle: {
       zoomOut: true,
@@ -49,4 +49,17 @@ const toolbarConfig: ToolbarConfig = {
   errorWrapper: true
 };
 
-export default toolbarConfig;
+export const getToolbarConfigValue = (
+  config: ToolbarConfig,
+  path: string
+): ToolbarConfValue => {
+  const props = path.split(".");
+  let currValue = config[props[0]];
+
+  for (let i = 1; i < props.length; i++) {
+    if (typeof currValue === "object") {
+      currValue = currValue[props[i]];
+    } else break;
+  }
+  return currValue;
+};
