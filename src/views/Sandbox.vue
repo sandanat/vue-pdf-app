@@ -8,17 +8,19 @@
     style="position: relative"
   >
     <template #viewer-header>
-      <div class="sergeev-header"></div>
+      <div class="viewer-header"></div>
     </template>
     <template #viewer-prepend>
-      <div class="sergeev-prepend"></div>
+      <div class="viewer-prepend">
+        <button :id="idConfig.zoomIn" type="button">Zoom in</button>
+      </div>
     </template>
     <template #viewer-append>
-      <div class="sergeev-append"></div>
-      <div class="sergeev-append"></div>
+      <div class="viewer-append"></div>
+      <div class="viewer-append"></div>
     </template>
     <template #viewer-footer>
-      <div class="sergeev-footer"></div>
+      <div class="viewer-footer"></div>
     </template>
     <template #footer>
       <button @click="togglePdf" type="button">Toggle pdf</button>
@@ -27,60 +29,60 @@
       <div class="footer">
         <span>Footer</span>
         <input v-model="scale" type="text" />
-        <input :id="configIds.pageNumber" type="number" />
-        <span :id="configIds.numPages" type="button">numPages</span>
-        <button :id="configIds.firstPage" type="button">firstPage</button>
-        <button :id="configIds.lastPage" type="button">lastPage</button>
-        <button :id="configIds.pageRotateCw" type="button">pageRotateCw</button>
-        <button :id="configIds.pageRotateCcw" type="button">
+        <input :id="idConfig.pageNumber" type="number" />
+        <span :id="idConfig.numPages" type="button">numPages</span>
+        <button :id="idConfig.firstPage" type="button">firstPage</button>
+        <button :id="idConfig.lastPage" type="button">lastPage</button>
+        <button :id="idConfig.pageRotateCw" type="button">pageRotateCw</button>
+        <button :id="idConfig.pageRotateCcw" type="button">
           pageRotateCcw
         </button>
-        <button :id="configIds.cursorSelectTool" type="button">
+        <button :id="idConfig.cursorSelectTool" type="button">
           cursorSelectTool
         </button>
-        <button :id="configIds.cursorHandTool" type="button">
+        <button :id="idConfig.cursorHandTool" type="button">
           cursorHandTool
         </button>
-        <button :id="configIds.scrollVertical" type="button">
+        <button :id="idConfig.scrollVertical" type="button">
           scrollVertical
         </button>
-        <button :id="configIds.scrollHorizontal" type="button">
+        <button :id="idConfig.scrollHorizontal" type="button">
           scrollHorizontal
         </button>
-        <button :id="configIds.scrollWrapped" type="button">
+        <button :id="idConfig.scrollWrapped" type="button">
           scrollWrapped
         </button>
-        <button :id="configIds.spreadNone" type="button">spreadNone</button>
-        <button :id="configIds.spreadOdd" type="button">spreadOdd</button>
-        <button :id="configIds.spreadEven" type="button">spreadEven</button>
-        <button :id="configIds.documentProperties" type="button">
+        <button :id="idConfig.spreadNone" type="button">spreadNone</button>
+        <button :id="idConfig.spreadOdd" type="button">spreadOdd</button>
+        <button :id="idConfig.spreadEven" type="button">spreadEven</button>
+        <button :id="idConfig.documentProperties" type="button">
           documentProperties
         </button>
-        <button :id="configIds.previousPage" type="button">previousPage</button>
-        <button :id="configIds.nextPage" type="button">nextPage</button>
-        <button :id="configIds.zoomOut" type="button">zoomOut</button>
-        <button :id="configIds.zoomIn" type="button">zoomIn</button>
-        <button :id="configIds.scaleSelect" type="button">scaleSelect</button>
-        <button :id="configIds.presentationMode" type="button">
+        <button :id="idConfig.previousPage" type="button">previousPage</button>
+        <button :id="idConfig.nextPage" type="button">nextPage</button>
+        <button :id="idConfig.zoomOut" type="button">zoomOut</button>
+        <button :id="idConfig.zoomIn" type="button">zoomIn</button>
+        <button :id="idConfig.scaleSelect" type="button">scaleSelect</button>
+        <button :id="idConfig.presentationMode" type="button">
           presentationMode
         </button>
-        <button :id="configIds.openFile" type="button">openFile</button>
-        <button :id="configIds.print" type="button">print</button>
-        <button :id="configIds.download" type="button">download</button>
-        <button :id="configIds.sidebarToggleButton" type="button">
+        <button :id="idConfig.openFile" type="button">openFile</button>
+        <button :id="idConfig.print" type="button">print</button>
+        <button :id="idConfig.download" type="button">download</button>
+        <button :id="idConfig.sidebarToggleButton" type="button">
           sidebarToggleButton
         </button>
-        <a :id="configIds.viewBookmark" href="#">viewBookmark</a>
-        <button :id="configIds.findbar" type="button">findbar</button>
-<button :id="configIds.findbarToggleButton" type="button">findbarToggleButton</button>
-<button :id="configIds.findbarFindField" type="button">findbarFindField</button>
-<button :id="configIds.findbarHighlightAllCheckbox" type="button">findbarHighlightAllCheckbox</button>
-<button :id="configIds.findbarCaseSensitiveCheckbox" type="button">findbarCaseSensitiveCheckbox</button>
-<button :id="configIds.findbarEntireWordCheckbox" type="button">findbarEntireWordCheckbox</button>
-<button :id="configIds.findbarFindMessage" type="button">findbarFindMessage</button>
-<button :id="configIds.findbarFindResultsCount" type="button">findbarFindResultsCount</button>
-<button :id="configIds.findbarFindPreviousButton" type="button">findbarFindPreviousButton</button>
-<button :id="configIds.findbarFindNextButton" type="button">findbarFindNextButton</button>
+        <a :id="idConfig.viewBookmark" href="#">viewBookmark</a>
+        <button :id="idConfig.findbar" type="button">findbar</button>
+<button :id="idConfig.findbarToggleButton" type="button">findbarToggleButton</button>
+<button :id="idConfig.findbarFindField" type="button">findbarFindField</button>
+<button :id="idConfig.findbarHighlightAllCheckbox" type="button">findbarHighlightAllCheckbox</button>
+<button :id="idConfig.findbarCaseSensitiveCheckbox" type="button">findbarCaseSensitiveCheckbox</button>
+<button :id="idConfig.findbarEntireWordCheckbox" type="button">findbarEntireWordCheckbox</button>
+<button :id="idConfig.findbarFindMessage" type="button">findbarFindMessage</button>
+<button :id="idConfig.findbarFindResultsCount" type="button">findbarFindResultsCount</button>
+<button :id="idConfig.findbarFindPreviousButton" type="button">findbarFindPreviousButton</button>
+<button :id="idConfig.findbarFindNextButton" type="button">findbarFindNextButton</button>
       </div>
     </template> -->
   </pdf-viewer>
@@ -102,7 +104,7 @@ export default {
         //   },
         // },
       },
-      configIds: {
+      idConfig: {
         // firstPage: "vuePdfAppFirstPage",
         // lastPage: "vuePdfAppLastPage",
         // pageRotateCw: "vuePdfAppPageRotateCw",
@@ -112,16 +114,16 @@ export default {
         // scrollVertical: "vuePdfAppScrollVertical",
         // scrollHorizontal: "vuePdfAppScrollHorizontal",
         // scrollWrapped: "vuePdfAppScrollWrapped",
-        spreadNone: "vuePdfAppSpreadNone",
-        spreadOdd: "vuePdfAppSpreadOdd",
-        spreadEven: "vuePdfAppSpreadEven",
+        // spreadNone: "vuePdfAppSpreadNone",
+        // spreadOdd: "vuePdfAppSpreadOdd",
+        // spreadEven: "vuePdfAppSpreadEven",
         // documentProperties: "vuePdfAppDocumentProperties",
         // previousPage: "vuePdfAppPreviousPage",
         // nextPage: "vuePdfAppNextPage",
         // pageNumber: "vuePdfAppPageNumber",
         // numPages: "vuePdfAppNumPages",
         // zoomOut: "vuePdfAppZoomOut",
-        // zoomIn: "vuePdfAppZoomIn",
+        zoomIn: "vuePdfAppZoomIn",
         // scaleSelect: "vuePdfAppScaleSelect",
         // presentationMode: "vuePdfAppPresentationMode",
         // openFile: "vuePdfAppOpenFile",

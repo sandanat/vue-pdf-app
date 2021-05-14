@@ -1,32 +1,30 @@
-import { ToolbarConfigIds } from "@/types";
+import { ToolbarIdConfig } from "@/types";
 import { PDF_FILE_INPUT_ID } from "@/utils/constants";
 
 const getEl = document.getElementById.bind(document);
 
-export default (configIds: ToolbarConfigIds = {}) => ({
+export default (idConfig: ToolbarIdConfig = {}) => ({
   appContainer: getEl("pdf"),
   mainContainer: getEl("viewerContainer"),
   viewerContainer: getEl("viewer"),
   eventBus: null,
   toolbar: {
     container: getEl("toolbarViewer"),
-    numPages: getEl(configIds.numPages || "numPages"),
-    pageNumber: getEl(configIds.pageNumber || "pageNumber"),
+    numPages: getEl("numPages"),
+    pageNumber: getEl("pageNumber"),
     scaleSelectContainer: getEl("scaleSelectContainer"),
-    scaleSelect: getEl(configIds.scaleSelect || "scaleSelect"),
+    scaleSelect: getEl("scaleSelect"),
     customScaleOption: getEl("customScaleOption"),
-    previous: getEl(configIds.previousPage || "previous"),
-    next: getEl(configIds.nextPage || "next"),
-    zoomIn: getEl(configIds.zoomIn || "zoomIn"),
-    zoomOut: getEl(configIds.zoomOut || "zoomOut"),
+    previous: getEl("previous"),
+    next: getEl("next"),
+    zoomIn: getEl(idConfig.zoomIn || "zoomIn"),
+    zoomOut: getEl("zoomOut"),
     viewFind: getEl("viewFind"),
-    openFile: getEl(configIds.openFile || "openFile"),
-    print: getEl(configIds.print || "print"),
-    presentationModeButton: getEl(
-      configIds.presentationMode || "presentationMode"
-    ),
-    download: getEl(configIds.download || "download"),
-    viewBookmark: getEl(configIds.viewBookmark || "viewBookmark")
+    openFile: getEl("openFile"),
+    print: getEl("print"),
+    presentationModeButton: getEl("presentationMode"),
+    download: getEl("download"),
+    viewBookmark: getEl("viewBookmark")
   },
   secondaryToolbar: {
     toolbar: getEl("secondaryToolbar"),
@@ -37,25 +35,19 @@ export default (configIds: ToolbarConfigIds = {}) => ({
     printButton: getEl("secondaryPrint"),
     downloadButton: getEl("secondaryDownload"),
     viewBookmarkButton: getEl("secondaryViewBookmark"),
-    firstPageButton: getEl(configIds.firstPage || "firstPage"),
-    lastPageButton: getEl(configIds.lastPage || "lastPage"),
-    pageRotateCwButton: getEl(configIds.pageRotateCw || "pageRotateCw"),
-    pageRotateCcwButton: getEl(configIds.pageRotateCcw || "pageRotateCcw"),
-    cursorSelectToolButton: getEl(
-      configIds.cursorSelectTool || "cursorSelectTool"
-    ),
-    cursorHandToolButton: getEl(configIds.cursorHandTool || "cursorHandTool"),
-    scrollVerticalButton: getEl(configIds.scrollVertical || "scrollVertical"),
-    scrollHorizontalButton: getEl(
-      configIds.scrollHorizontal || "scrollHorizontal"
-    ),
-    scrollWrappedButton: getEl(configIds.scrollWrapped || "scrollWrapped"),
-    spreadNoneButton: getEl(configIds.spreadNone || "spreadNone"),
-    spreadOddButton: getEl(configIds.spreadOdd || "spreadOdd"),
-    spreadEvenButton: getEl(configIds.spreadEven || "spreadEven"),
-    documentPropertiesButton: getEl(
-      configIds.documentProperties || "documentProperties"
-    )
+    firstPageButton: getEl("firstPage"),
+    lastPageButton: getEl("lastPage"),
+    pageRotateCwButton: getEl("pageRotateCw"),
+    pageRotateCcwButton: getEl("pageRotateCcw"),
+    cursorSelectToolButton: getEl("cursorSelectTool"),
+    cursorHandToolButton: getEl("cursorHandTool"),
+    scrollVerticalButton: getEl("scrollVertical"),
+    scrollHorizontalButton: getEl("scrollHorizontal"),
+    scrollWrappedButton: getEl("scrollWrapped"),
+    spreadNoneButton: getEl("spreadNone"),
+    spreadOddButton: getEl("spreadOdd"),
+    spreadEvenButton: getEl("spreadEven"),
+    documentPropertiesButton: getEl("documentProperties")
   },
   fullscreen: {
     contextFirstPage: getEl("contextFirstPage"),

@@ -6,7 +6,7 @@ export interface ToolbarConfig {
 
 export type Theme = "dark" | "light";
 
-export interface ToolbarConfigIds {
+export interface ToolbarIdConfig {
   // sidebarToggleButton?: string;
   // viewThumbnail?: string;
   // viewOutline?: string;
@@ -20,16 +20,16 @@ export interface ToolbarConfigIds {
   // scrollVertical?: string;
   // scrollHorizontal?: string;
   // scrollWrapped?: string;
-  spreadNone?: string;
-  spreadOdd?: string;
-  spreadEven?: string;
+  // spreadNone?: string;
+  // spreadOdd?: string;
+  // spreadEven?: string;
   // documentProperties?: string;
   // previousPage?: string;
   // nextPage?: string;
   // pageNumber?: string;
   // numPages?: string;
   // zoomOut?: string;
-  // zoomIn?: string;
+  zoomIn?: string;
   // scaleSelect?: string;
   // presentationMode?: string;
   // openFile?: string;

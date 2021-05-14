@@ -948,7 +948,7 @@ import "@/pdfjs-dist/lib/web/genericcom";
 import "@/pdfjs-dist/lib/web/pdf_print_service";
 import "@/pdfjs-dist/build/pdf.worker.entry";
 import "@/sass/index.scss";
-import { ToolbarConfig, Theme, ToolbarConfigIds } from "@/types";
+import { ToolbarConfig, Theme, ToolbarIdConfig } from "@/types";
 import getAppConfig from "@/utils/pdf-config";
 import { PDF_FILE_INPUT_ID } from "@/utils/constants";
 import locale from "@/utils/locale";
@@ -984,7 +984,7 @@ export default class PdfViewer extends Vue {
   private title!: boolean;
 
   @Prop({ required: false, type: Object })
-  private configIds?: ToolbarConfigIds;
+  private idConfig?: ToolbarIdConfig;
 
   private defaultLocale = JSON.stringify(locale);
 
@@ -1031,7 +1031,7 @@ export default class PdfViewer extends Vue {
 
   private mounted() {
     this.addPrintContainer();
-    const config = getAppConfig(this.configIds);
+    const config = getAppConfig(this.idConfig);
 
     if (pdfApp.PDFViewerApplication) {
       pdfApp.PDFViewerApplication.run(config);
