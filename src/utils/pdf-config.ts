@@ -18,7 +18,7 @@ export default (idConfig: ToolbarIdConfig = {}) => ({
     previous: getEl("previous"),
     next: getEl("next"),
     zoomIn: getEl(idConfig.zoomIn || "zoomIn"),
-    zoomOut: getEl("zoomOut"),
+    zoomOut: getEl(idConfig.zoomOut || "zoomOut"),
     viewFind: getEl("viewFind"),
     openFile: getEl("openFile"),
     print: getEl("print"),

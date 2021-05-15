@@ -580,7 +580,9 @@
                 <slot v-bind="slotProps" name="toolbar-middle-prepend"></slot>
                 <div class="splitToolbarButton">
                   <button
-                    v-show="showElem('toolbar.toolbarViewerMiddle.zoomOut')"
+                    v-show="
+                      showElem('toolbar.toolbarViewerMiddle.zoomOut', 'zoomOut')
+                    "
                     id="zoomOut"
                     class="toolbarButton zoomOut vue-pdf-app-icon zoom-out"
                     title="Zoom Out"
@@ -591,13 +593,18 @@
                   </button>
                   <div
                     v-if="
-                      showElem('toolbar.toolbarViewerMiddle.zoomIn') &&
-                      showElem('toolbar.toolbarViewerMiddle.zoomOut')
+                      showElem(
+                        'toolbar.toolbarViewerMiddle.zoomIn',
+                        'zoomIn'
+                      ) &&
+                      showElem('toolbar.toolbarViewerMiddle.zoomOut', 'zoomOut')
                     "
                     class="splitToolbarButtonSeparator"
                   ></div>
                   <button
-                    v-show="showElem('toolbar.toolbarViewerMiddle.zoomIn', 'zoomIn')"
+                    v-show="
+                      showElem('toolbar.toolbarViewerMiddle.zoomIn', 'zoomIn')
+                    "
                     id="zoomIn"
                     class="toolbarButton zoomIn vue-pdf-app-icon zoom-in"
                     title="Zoom In"

@@ -28,7 +28,7 @@ export interface ToolbarIdConfig {
   // nextPage?: string;
   // pageNumber?: string;
   // numPages?: string;
-  // zoomOut?: string;
+  zoomOut?: string;
   zoomIn?: string;
   // scaleSelect?: string;
   // presentationMode?: string;

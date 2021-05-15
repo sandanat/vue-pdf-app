@@ -273,6 +273,7 @@ export default {
 <pre>
 {
   zoomIn?: string; // &lt;button&gt; tag is recommended
+  zoomOut?: string; // &lt;button&gt; tag is recommended
 }
 </pre>
 </code>

@@ -16,7 +16,7 @@
       </template>
       <template #viewer-prepend>
         <div class="viewer-prepend">
-          <!-- <button :id="idConfig.zoomIn" type="button">Zoom in</button> -->
+          <button :id="idConfig.zoomOut" type="button">Zoom out</button>
         </div>
       </template>
       <template #viewer-append>
@@ -66,7 +66,7 @@ export default {
         // nextPage: "vuePdfAppNextPage",
         // pageNumber: "vuePdfAppPageNumber",
         // numPages: "vuePdfAppNumPages",
-        // zoomOut: "vuePdfAppZoomOut",
+        zoomOut: "vuePdfAppZoomOut",
         zoomIn: "vuePdfAppZoomIn",
         // scaleSelect: "vuePdfAppScaleSelect",
         // presentationMode: "vuePdfAppPresentationMode",
