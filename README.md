@@ -235,6 +235,49 @@ export default {
 </code>
 </details>
 
+## :id-config
+
+- Description: If default toolbar UI doesn't suite you it is possible to build custom toolbar. The prop contains elements ID to which to bind functionality. If element ID is specified in this prop appropriate button will be hidden in a default toolbar. May not work with UI framework components. So it is better to use native HTML element specified as recommended in ID config specification below. Four slots are specially designed to build custom toolbar (are situated near a pdf page): `viewer-header, viewer-prepend, viewer-append, viewer-footer` (refer slots API). It is also possible to use other slots or elements outside vue-pdf-app.
+- Type: ID config (see below)
+- Required: `false`
+- Usage:
+
+```vue
+<template>
+  <div>
+    <button :id="idConfig.zoomOut" type="button">Zoom out</button>
+    <vue-pdf-app :id-config="idConfig">
+      <template #viewer-prepend>
+        <div class="viewer-prepend">
+          <button :id="idConfig.zoomIn" type="button">Zoom in</button>
+        </div>
+      </template>
+    </vue-pdf-app>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      idConfig: { zoomIn: "zoomInId", zoomOut: "zoomOutId" }
+    };
+  }
+};
+</script>
+```
+
+<details>
+<summary>ID config specification</summary>
+<code>
+<pre>
+{
+  zoomIn?: string; // &lt;button&gt; tag is recommended
+}
+</pre>
+</code>
+</details>
+
 ## @after-created(PDFViewerApplication)
 
 - Description: emitted only once when Pdfjs library is binded to vue component. Can be used to set Pdfjs config before pdf document opening.
@@ -305,6 +348,22 @@ export default {
     <td>toggleTheme</td>
     <td>function()</td>
     <td>Toggle theme</td>
+  </tr>
+  <tr>
+    <td>viewer-header
+      <hr> viewer-prepend
+    </td>
+    <td>toggleTheme</td>
+    <td>function()</td>
+    <td>Two slots before `viewerContainer` div. Can be used to build custom toolbar.</td>
+  </tr>
+  <tr>
+    <td>viewer-append
+      <hr> viewer-footer
+    </td>
+    <td>toggleTheme</td>
+    <td>function()</td>
+    <td>Two slots after `viewerContainer` div. Can be used to build custom toolbar.</td>
   </tr>
 </table>
 

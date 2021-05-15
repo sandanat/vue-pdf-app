@@ -597,7 +597,7 @@
                     class="splitToolbarButtonSeparator"
                   ></div>
                   <button
-                    v-show="showElem('toolbar.toolbarViewerMiddle.zoomIn')"
+                    v-show="showElem('toolbar.toolbarViewerMiddle.zoomIn', 'zoomIn')"
                     id="zoomIn"
                     class="toolbarButton zoomIn vue-pdf-app-icon zoom-in"
                     title="Zoom In"
@@ -1052,8 +1052,15 @@ export default class PdfViewer extends Vue {
     return `{ "scale": ${value} }`;
   }
 
-  private showElem(path: string): boolean {
-    return !(getToolbarConfigValue(this.config, path) === false);
+  private showElem(
+    defaultToolbarPath: string,
+    customToolbarElem?: keyof ToolbarIdConfig
+  ): boolean {
+    if (customToolbarElem && this.idConfig) {
+      return !this.idConfig[customToolbarElem];
+    }
+
+    return !(getToolbarConfigValue(this.config, defaultToolbarPath) === false);
   }
 
   private bindOpenHandler() {
