@@ -451,7 +451,12 @@
                 </button>
                 <div class="splitToolbarButton hiddenSmallView">
                   <button
-                    v-show="showElem('toolbar.toolbarViewerLeft.previous')"
+                    v-show="
+                      showElem(
+                        'toolbar.toolbarViewerLeft.previous',
+                        'previousPage'
+                      )
+                    "
                     class="toolbarButton pageUp vue-pdf-app-icon page-up"
                     title="Previous Page"
                     id="previous"
@@ -462,13 +467,18 @@
                   </button>
                   <div
                     v-if="
-                      showElem('toolbar.toolbarViewerLeft.next') &&
-                      showElem('toolbar.toolbarViewerLeft.previous')
+                      showElem('toolbar.toolbarViewerLeft.next', 'nextPage') &&
+                      showElem(
+                        'toolbar.toolbarViewerLeft.previous',
+                        'previousPage'
+                      )
                     "
                     class="splitToolbarButtonSeparator"
                   ></div>
                   <button
-                    v-show="showElem('toolbar.toolbarViewerLeft.next')"
+                    v-show="
+                      showElem('toolbar.toolbarViewerLeft.next', 'nextPage')
+                    "
                     class="toolbarButton pageDown vue-pdf-app-icon page-down"
                     title="Next Page"
                     id="next"
@@ -479,7 +489,12 @@
                   </button>
                 </div>
                 <input
-                  v-show="showElem('toolbar.toolbarViewerLeft.pageNumber')"
+                  v-show="
+                    showElem(
+                      'toolbar.toolbarViewerLeft.pageNumber',
+                      'pageNumber'
+                    )
+                  "
                   type="number"
                   id="pageNumber"
                   class="toolbarField pageNumber"
@@ -492,7 +507,9 @@
                   autocomplete="off"
                 />
                 <span
-                  v-show="showElem('toolbar.toolbarViewerLeft.pageNumber')"
+                  v-show="
+                    showElem('toolbar.toolbarViewerLeft.pageNumber', 'numPages')
+                  "
                   id="numPages"
                   class="toolbarLabel"
                 ></span>
@@ -616,7 +633,10 @@
                 </div>
                 <span
                   v-show="
-                    showElem('toolbar.toolbarViewerMiddle.scaleSelectContainer')
+                    showElem(
+                      'toolbar.toolbarViewerMiddle.scaleSelectContainer',
+                      'scaleSelect'
+                    )
                   "
                   id="scaleSelectContainer"
                   class="dropdownToolbarButton vue-pdf-app-icon dropdown-toolbar-button"

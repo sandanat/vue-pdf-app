@@ -1,34 +1,3 @@
-- sidebar
-- viewThumbnail
-- viewOutline
-- viewAttachments
-- secondaryToolbar
-- firstPage
-- lastPage
-- pageRotateCw
-- pageRotateCcw
-- cursorSelectTool
-- cursorHandTool
-- scrollVertical
-- scrollHorizontal
-- scrollWrapped
-- spreadNone
-- spreadOdd
-- spreadEven
-- documentProperties
-- findbar
-- previous
-- ✅ next
-- pageNumber
-- ✅ presentationMode
-- ✅ openFile
-- ✅ print
-- ✅ download
-- ✅ viewBookmark
-- ✅ zoomOut
-- ✅ zoomIn
-- ✅ scaleSelectContainer "auto" | "page-actual" | "page-fit" | "page-width" | string ("0.2", "4")
-
 VUEjs v2 PDF viewer based on Mozilla's PDFJS.
 
 [![](https://data.jsdelivr.com/v1/package/npm/vue-pdf-app/badge)](https://www.jsdelivr.com/package/npm/vue-pdf-app)
@@ -272,6 +241,11 @@ export default {
 <code>
 <pre>
 {
+  nextPage?: string; // &lt;button&gt; is recommended
+  numPages?: string; // total pages qty. &lt;span&gt; is recommended
+  pageNumber?: string; // input for page number. &lt;input type="number"&gt; is recommended
+  previousPage?: string; // &lt;button&gt; is recommended
+  scaleSelect?: string; // &lt;select&gt; is recommended
   zoomIn?: string; // &lt;button&gt; tag is recommended
   zoomOut?: string; // &lt;button&gt; tag is recommended
 }
