@@ -10,7 +10,7 @@ export interface ToolbarIdConfig {
   // cursorHandTool?: string;
   // cursorSelectTool?: string;
   // documentProperties?: string;
-  // download?: string;
+  download?: string;
   // findbar?: string;
   // findbarCaseSensitiveCheckbox?: string;
   // findbarEntireWordCheckbox?: string;
@@ -25,13 +25,13 @@ export interface ToolbarIdConfig {
   // lastPage?: string;
   nextPage?: string;
   numPages?: string;
-  // openFile?: string;
+  openFile?: string;
   pageNumber?: string;
   // pageRotateCcw?: string;
   // pageRotateCw?: string;
-  // presentationMode?: string;
+  presentationMode?: string;
   previousPage?: string;
-  // print?: string;
+  print?: string;
   scaleSelect?: string;
   // scrollHorizontal?: string;
   // scrollVertical?: string;
@@ -41,7 +41,7 @@ export interface ToolbarIdConfig {
   // spreadNone?: string;
   // spreadOdd?: string;
   // viewAttachments?: string;
-  // viewBookmark?: string;
+  viewBookmark?: string;
   // viewOutline?: string;
   // viewThumbnail?: string;
   zoomIn?: string;

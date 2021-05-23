@@ -20,11 +20,13 @@ export default (idConfig: ToolbarIdConfig = {}) => ({
     zoomIn: getEl(idConfig.zoomIn || "zoomIn"),
     zoomOut: getEl(idConfig.zoomOut || "zoomOut"),
     viewFind: getEl("viewFind"),
-    openFile: getEl("openFile"),
-    print: getEl("print"),
-    presentationModeButton: getEl("presentationMode"),
-    download: getEl("download"),
-    viewBookmark: getEl("viewBookmark")
+    openFile: getEl(idConfig.openFile || "openFile"),
+    print: getEl(idConfig.print || "print"),
+    presentationModeButton: getEl(
+      idConfig.presentationMode || "presentationMode"
+    ),
+    download: getEl(idConfig.download || "download"),
+    viewBookmark: getEl(idConfig.viewBookmark || "viewBookmark")
   },
   secondaryToolbar: {
     toolbar: getEl("secondaryToolbar"),

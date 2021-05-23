@@ -519,7 +519,10 @@
                 <slot v-bind="slotProps" name="toolbar-right-prepend"></slot>
                 <button
                   v-show="
-                    showElem('toolbar.toolbarViewerRight.presentationMode')
+                    showElem(
+                      'toolbar.toolbarViewerRight.presentationMode',
+                      'presentationMode'
+                    )
                   "
                   id="presentationMode"
                   class="toolbarButton presentationMode hiddenLargeView vue-pdf-app-icon presentation-mode"
@@ -533,7 +536,9 @@
                 </button>
 
                 <button
-                  v-show="showElem('toolbar.toolbarViewerRight.openFile')"
+                  v-show="
+                    showElem('toolbar.toolbarViewerRight.openFile', 'openFile')
+                  "
                   @click.once="bindOpenHandler"
                   id="openFile"
                   class="toolbarButton openFile hiddenLargeView vue-pdf-app-icon open-file"
@@ -545,7 +550,7 @@
                 </button>
 
                 <button
-                  v-show="showElem('toolbar.toolbarViewerRight.print')"
+                  v-show="showElem('toolbar.toolbarViewerRight.print', 'print')"
                   id="print"
                   class="toolbarButton print hiddenMediumView vue-pdf-app-icon print-button"
                   title="Print"
@@ -556,7 +561,9 @@
                 </button>
 
                 <button
-                  v-show="showElem('toolbar.toolbarViewerRight.download')"
+                  v-show="
+                    showElem('toolbar.toolbarViewerRight.download', 'download')
+                  "
                   id="download"
                   class="toolbarButton download hiddenMediumView vue-pdf-app-icon download-button"
                   title="Download"
@@ -566,7 +573,12 @@
                   <span data-l10n-id="download_label">Download</span>
                 </button>
                 <a
-                  v-show="showElem('toolbar.toolbarViewerRight.viewBookmark')"
+                  v-show="
+                    showElem(
+                      'toolbar.toolbarViewerRight.viewBookmark',
+                      'viewBookmark'
+                    )
+                  "
                   href="#"
                   id="viewBookmark"
                   class="toolbarButton bookmark hiddenSmallView vue-pdf-app-icon bookmark-button"

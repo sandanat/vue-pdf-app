@@ -241,11 +241,15 @@ export default {
 <code>
 <pre>
 {
+  download?: string; // &lt;button&gt; is recommended
   nextPage?: string; // &lt;button&gt; is recommended
   numPages?: string; // total pages qty. &lt;span&gt; is recommended
+  openFile?: string; // &lt;button&gt; is recommended
   pageNumber?: string; // input for page number. &lt;input type="number"&gt; is recommended
+  presentationMode?: string; // &lt;button&gt; is recommended
   previousPage?: string; // &lt;button&gt; is recommended
-  scaleSelect?: string; // &lt;select&gt; is recommended
+  print?: string; // &lt;button&gt; is recommended
+  viewBookmark?: string; // &lt;a&gt; tag is recommended
   zoomIn?: string; // &lt;button&gt; tag is recommended
   zoomOut?: string; // &lt;button&gt; tag is recommended
 }
