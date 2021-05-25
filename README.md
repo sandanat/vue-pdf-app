@@ -241,21 +241,38 @@ export default {
 <code>
 <pre>
 {
-  download?: string; // &lt;button&gt; is recommended
-  nextPage?: string; // &lt;button&gt; is recommended
-  numPages?: string; // total pages qty. &lt;span&gt; is recommended
-  openFile?: string; // &lt;button&gt; is recommended
-  pageNumber?: string; // input for page number. &lt;input type="number"&gt; is recommended
-  presentationMode?: string; // &lt;button&gt; is recommended
-  previousPage?: string; // &lt;button&gt; is recommended
-  print?: string; // &lt;button&gt; is recommended
-  viewBookmark?: string; // &lt;a&gt; tag is recommended
-  zoomIn?: string; // &lt;button&gt; tag is recommended
-  zoomOut?: string; // &lt;button&gt; tag is recommended
+
+cursorHandTool?: string; // &lt;button&gt; is recommended
+cursorSelectTool?: string; // &lt;button&gt; is recommended
+documentProperties?: string; // &lt;button&gt; is recommended
+download?: string; // &lt;button&gt; is recommended
+firstPage?: string; // &lt;button&gt; is recommended
+lastPage?: string; // &lt;button&gt; is recommended
+nextPage?: string; // &lt;button&gt; is recommended
+numPages?: string; // total pages qty. &lt;span&gt; is recommended
+openFile?: string; // &lt;button&gt; is recommended
+pageNumber?: string; // input for page number. &lt;input type="number"&gt; is recommended
+pageRotateCcw?: string; // &lt;button&gt; is recommended
+pageRotateCw?: string; // &lt;button&gt; is recommended
+presentationMode?: string; // &lt;button&gt; is recommended
+previousPage?: string; // &lt;button&gt; is recommended
+print?: string; // &lt;button&gt; is recommended
+scrollHorizontal?: string; // &lt;button&gt; is recommended
+scrollVertical?: string; // &lt;button&gt; is recommended
+scrollWrapped?: string; // &lt;button&gt; is recommended
+spreadEven?: string; // &lt;button&gt; is recommended
+spreadNone?: string; // &lt;button&gt; is recommended
+spreadOdd?: string; // &lt;button&gt; is recommended
+viewBookmark?: string; // &lt;a&gt; tag is recommended
+zoomIn?: string; // &lt;button&gt; tag is recommended
+zoomOut?: string; // &lt;button&gt; tag is recommended
 }
+
 </pre>
 </code>
 </details>
+
+> ℹ️ Note that elements must be in HTML document by the time vue-pdf-app is mounting (use `v-for` instead of `v-if` directive if necessary). Otherwise an error occurs.
 
 ## @after-created(PDFViewerApplication)
 

@@ -34,6 +34,10 @@
     >
       <template #viewer-header>
         <div class="viewer-header">
+          <button :id="idConfig.sidebarToggle" class="action-btn" type="button">
+            Toggle sidebar
+          </button>
+          <span class="divider"></span>
           <button :id="idConfig.openFile" class="action-btn" type="button">
             Open file
           </button>
@@ -53,19 +57,90 @@
       </template>
       <template #viewer-prepend>
         <div class="viewer-prepend">
+          <button :id="idConfig.firstPage" class="action-btn" type="button">
+            First page
+          </button>
           <button :id="idConfig.previousPage" class="action-btn" type="button">
             Previous page
           </button>
           <button :id="idConfig.nextPage" class="action-btn" type="button">
             Next page
           </button>
-          <button :id="idConfig.download" class="action-btn" type="button">
-            Download
+          <button :id="idConfig.lastPage" class="action-btn" type="button">
+            Last page
           </button>
         </div>
       </template>
       <template #viewer-append>
-        <div class="viewer-append"></div>
+        <div class="viewer-append">
+          <button :id="idConfig.download" class="action-btn" type="button">
+            Download
+          </button>
+          <span class="divider"></span>
+          <button
+            :id="idConfig.cursorHandTool"
+            class="action-btn"
+            type="button"
+          >
+            Hand tool
+          </button>
+          <span class="divider"></span>
+          <button
+            :id="idConfig.cursorSelectTool"
+            class="action-btn"
+            type="button"
+          >
+            Select tool
+          </button>
+          <span class="divider"></span>
+          <button
+            :id="idConfig.documentProperties"
+            class="action-btn"
+            type="button"
+          >
+            Document properties
+          </button>
+          <span class="divider"></span>
+          <button :id="idConfig.pageRotateCcw" class="action-btn" type="button">
+            Rotate counterclockwise
+          </button>
+          <span class="divider"></span>
+          <button :id="idConfig.pageRotateCw" class="action-btn" type="button">
+            Rotate clockwise
+          </button>
+          <span class="divider"></span>
+          <button
+            :id="idConfig.scrollHorizontal"
+            class="action-btn"
+            type="button"
+          >
+            Scroll horizontal
+          </button>
+          <span class="divider"></span>
+          <button
+            :id="idConfig.scrollVertical"
+            class="action-btn"
+            type="button"
+          >
+            Scroll vertical
+          </button>
+          <span class="divider"></span>
+          <button :id="idConfig.scrollWrapped" class="action-btn" type="button">
+            Scroll wrapped
+          </button>
+          <span class="divider"></span>
+          <button :id="idConfig.spreadEven" class="action-btn" type="button">
+            Spread even
+          </button>
+          <span class="divider"></span>
+          <button :id="idConfig.spreadNone" class="action-btn" type="button">
+            Spread none
+          </button>
+          <span class="divider"></span>
+          <button :id="idConfig.spreadOdd" class="action-btn" type="button">
+            Spread odd
+          </button>
+        </div>
       </template>
       <template #viewer-footer>
         <div class="viewer-footer"></div>
@@ -87,6 +162,7 @@ export default {
   data() {
     return {
       config: {
+        toolbar: false,
         // toolbar: {
         //   toolbarViewerMiddle: {
         //     zoomIn: true,
@@ -94,9 +170,9 @@ export default {
         // },
       },
       idConfig: {
-        // cursorHandTool: "vuePdfAppCursorHandTool",
-        // cursorSelectTool: "vuePdfAppCursorSelectTool",
-        // documentProperties: "vuePdfAppDocumentProperties",
+        cursorHandTool: "vuePdfAppCursorHandTool",
+        cursorSelectTool: "vuePdfAppCursorSelectTool",
+        documentProperties: "vuePdfAppDocumentProperties",
         download: "vuePdfAppDownload",
         // findbar: "vuePdfAppFindbar",
         // findbarCaseSensitiveCheckbox: "vuePdfAppFindbarCaseSensitiveCheckbox",
@@ -108,25 +184,25 @@ export default {
         // findbarFindResultsCount: "vuePdfAppFindbarFindResultsCount",
         // findbarHighlightAllCheckbox: "vuePdfAppFindbarHighlightAllCheckbox",
         // findbarToggleButton: "vuePdfAppFindbarToggleButton",
-        // firstPage: "vuePdfAppFirstPage",
-        // lastPage: "vuePdfAppLastPage",
+        firstPage: "vuePdfAppFirstPage",
+        lastPage: "vuePdfAppLastPage",
         nextPage: "vuePdfAppNextPage",
         numPages: "vuePdfAppNumPages",
         openFile: "vuePdfAppOpenFile",
         pageNumber: "vuePdfAppPageNumber",
-        // pageRotateCcw: "vuePdfAppPageRotateCcw",
-        // pageRotateCw: "vuePdfAppPageRotateCw",
+        pageRotateCcw: "vuePdfAppPageRotateCcw",
+        pageRotateCw: "vuePdfAppPageRotateCw",
         presentationMode: "vuePdfAppPresentationMode",
         previousPage: "vuePdfAppPreviousPage",
         print: "vuePdfAppPrint",
         // scaleSelect: "vuePdfAppScaleSelect",
-        // scrollHorizontal: "vuePdfAppScrollHorizontal",
-        // scrollVertical: "vuePdfAppScrollVertical",
-        // scrollWrapped: "vuePdfAppScrollWrapped",
-        // sidebarToggleButton: "vuePdfAppSidebarToggleButton",
-        // spreadEven: "vuePdfAppSpreadEven",
-        // spreadNone: "vuePdfAppSpreadNone",
-        // spreadOdd: "vuePdfAppSpreadOdd",
+        scrollHorizontal: "vuePdfAppScrollHorizontal",
+        scrollVertical: "vuePdfAppScrollVertical",
+        scrollWrapped: "vuePdfAppScrollWrapped",
+        sidebarToggle: "vuePdfAppSidebarToggle",
+        spreadEven: "vuePdfAppSpreadEven",
+        spreadNone: "vuePdfAppSpreadNone",
+        spreadOdd: "vuePdfAppSpreadOdd",
         viewBookmark: "vuePdfAppViewBookmark",
         zoomIn: "vuePdfAppZoomIn",
         zoomOut: "vuePdfAppZoomOut",
@@ -181,6 +257,13 @@ $footer-height: 50px;
   bottom: 0;
   top: 40px;
   width: 80px;
+}
+
+.viewer-append {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
 }
 
 .action-btn {

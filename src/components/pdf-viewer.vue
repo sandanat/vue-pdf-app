@@ -227,7 +227,7 @@
             ></div>
 
             <button
-              v-show="showElem('secondaryToolbar.firstPage')"
+              v-show="showElem('secondaryToolbar.firstPage', 'firstPage')"
               id="firstPage"
               class="secondaryToolbarButton firstPage vue-pdf-app-icon first-page"
               title="Go to First Page"
@@ -237,7 +237,7 @@
               <span data-l10n-id="first_page_label">Go to First Page</span>
             </button>
             <button
-              v-show="showElem('secondaryToolbar.lastPage')"
+              v-show="showElem('secondaryToolbar.lastPage', 'lastPage')"
               id="lastPage"
               class="secondaryToolbarButton lastPage vue-pdf-app-icon last-page"
               title="Go to Last Page"
@@ -249,14 +249,14 @@
 
             <div
               v-if="
-                showElem('secondaryToolbar.lastPage') ||
-                showElem('secondaryToolbar.firstPage')
+                showElem('secondaryToolbar.lastPage', 'lastPage') ||
+                showElem('secondaryToolbar.firstPage', 'firstPage')
               "
               class="horizontalToolbarSeparator"
             ></div>
 
             <button
-              v-show="showElem('secondaryToolbar.pageRotateCw')"
+              v-show="showElem('secondaryToolbar.pageRotateCw', 'pageRotateCw')"
               id="pageRotateCw"
               class="secondaryToolbarButton rotateCw vue-pdf-app-icon rotate-clockwise"
               title="Rotate Clockwise"
@@ -266,7 +266,9 @@
               <span data-l10n-id="page_rotate_cw_label">Rotate Clockwise</span>
             </button>
             <button
-              v-show="showElem('secondaryToolbar.pageRotateCcw')"
+              v-show="
+                showElem('secondaryToolbar.pageRotateCcw', 'pageRotateCcw')
+              "
               id="pageRotateCcw"
               class="secondaryToolbarButton rotateCcw vue-pdf-app-icon rotate-counter-clockwise"
               title="Rotate Counterclockwise"
@@ -280,14 +282,19 @@
 
             <div
               v-if="
-                showElem('secondaryToolbar.pageRotateCcw') ||
-                showElem('secondaryToolbar.pageRotateCw')
+                showElem('secondaryToolbar.pageRotateCcw', 'pageRotateCcw') ||
+                showElem('secondaryToolbar.pageRotateCw', 'pageRotateCw')
               "
               class="horizontalToolbarSeparator"
             ></div>
 
             <button
-              v-show="showElem('secondaryToolbar.cursorSelectTool')"
+              v-show="
+                showElem(
+                  'secondaryToolbar.cursorSelectTool',
+                  'cursorSelectTool'
+                )
+              "
               id="cursorSelectTool"
               class="secondaryToolbarButton selectTool toggled vue-pdf-app-icon select-tool"
               title="Enable Text Selection Tool"
@@ -299,7 +306,9 @@
               >
             </button>
             <button
-              v-show="showElem('secondaryToolbar.cursorHandTool')"
+              v-show="
+                showElem('secondaryToolbar.cursorHandTool', 'cursorHandTool')
+              "
               id="cursorHandTool"
               class="secondaryToolbarButton handTool vue-pdf-app-icon hand-tool"
               title="Enable Hand Tool"
@@ -311,14 +320,19 @@
 
             <div
               v-if="
-                showElem('secondaryToolbar.cursorHandTool') ||
-                showElem('secondaryToolbar.cursorSelectTool')
+                showElem('secondaryToolbar.cursorHandTool', 'cursorHandTool') ||
+                showElem(
+                  'secondaryToolbar.cursorSelectTool',
+                  'cursorSelectTool'
+                )
               "
               class="horizontalToolbarSeparator"
             ></div>
 
             <button
-              v-show="showElem('secondaryToolbar.scrollVertical')"
+              v-show="
+                showElem('secondaryToolbar.scrollVertical', 'scrollVertical')
+              "
               id="scrollVertical"
               class="secondaryToolbarButton scrollModeButtons scrollVertical toggled vue-pdf-app-icon scroll-vertical"
               title="Use Vertical Scrolling"
@@ -330,7 +344,12 @@
               >
             </button>
             <button
-              v-show="showElem('secondaryToolbar.scrollHorizontal')"
+              v-show="
+                showElem(
+                  'secondaryToolbar.scrollHorizontal',
+                  'scrollHorizontal'
+                )
+              "
               id="scrollHorizontal"
               class="secondaryToolbarButton scrollModeButtons scrollHorizontal vue-pdf-app-icon scroll-horizontal"
               title="Use Horizontal Scrolling"
@@ -342,7 +361,9 @@
               >
             </button>
             <button
-              v-show="showElem('secondaryToolbar.scrollWrapped')"
+              v-show="
+                showElem('secondaryToolbar.scrollWrapped', 'scrollWrapped')
+              "
               id="scrollWrapped"
               class="secondaryToolbarButton scrollModeButtons scrollWrapped vue-pdf-app-icon scroll-wrapped"
               title="Use Wrapped Scrolling"
@@ -355,14 +376,17 @@
             <div
               class="horizontalToolbarSeparator scrollModeButtons"
               v-if="
-                showElem('secondaryToolbar.scrollWrapped') ||
-                showElem('secondaryToolbar.scrollHorizontal') ||
-                showElem('secondaryToolbar.scrollVertical')
+                showElem('secondaryToolbar.scrollWrapped', 'scrollWrapped') ||
+                showElem(
+                  'secondaryToolbar.scrollHorizontal',
+                  'scrollHorizontal'
+                ) ||
+                showElem('secondaryToolbar.scrollVertical', 'scrollVertical')
               "
             ></div>
 
             <button
-              v-show="showElem('secondaryToolbar.spreadNone')"
+              v-show="showElem('secondaryToolbar.spreadNone', 'spreadNone')"
               id="spreadNone"
               class="secondaryToolbarButton spreadModeButtons spreadNone toggled vue-pdf-app-icon spread-none"
               title="Do not join page spreads"
@@ -372,7 +396,7 @@
               <span data-l10n-id="spread_none_label">No Spreads</span>
             </button>
             <button
-              v-show="showElem('secondaryToolbar.spreadOdd')"
+              v-show="showElem('secondaryToolbar.spreadOdd', 'spreadOdd')"
               id="spreadOdd"
               class="secondaryToolbarButton spreadModeButtons vue-pdf-app-icon spread-odd"
               title="Join page spreads starting with odd-numbered pages"
@@ -382,7 +406,7 @@
               <span data-l10n-id="spread_odd_label">Odd Spreads</span>
             </button>
             <button
-              v-show="showElem('secondaryToolbar.spreadEven')"
+              v-show="showElem('secondaryToolbar.spreadEven', 'spreadEven')"
               id="spreadEven"
               class="secondaryToolbarButton spreadModeButtons spreadEven vue-pdf-app-icon spread-even"
               title="Join page spreads starting with even-numbered pages"
@@ -394,15 +418,20 @@
 
             <div
               v-if="
-                showElem('secondaryToolbar.spreadEven') ||
-                showElem('secondaryToolbar.spreadOdd') ||
-                showElem('secondaryToolbar.spreadNone')
+                showElem('secondaryToolbar.spreadEven', 'spreadEven') ||
+                showElem('secondaryToolbar.spreadOdd', 'spreadOdd') ||
+                showElem('secondaryToolbar.spreadNone', 'spreadNone')
               "
               class="horizontalToolbarSeparator spreadModeButtons"
             ></div>
 
             <button
-              v-show="showElem('secondaryToolbar.documentProperties')"
+              v-show="
+                showElem(
+                  'secondaryToolbar.documentProperties',
+                  'documentProperties'
+                )
+              "
               id="documentProperties"
               class="secondaryToolbarButton documentProperties vue-pdf-app-icon document-properties"
               title="Document Properties…"
@@ -424,7 +453,7 @@
               <div id="toolbarViewerLeft">
                 <slot v-bind="slotProps" name="toolbar-left-prepend"></slot>
                 <button
-                  v-show="showElem('sidebar')"
+                  v-show="showElem('sidebar', 'sidebarToggle')"
                   id="sidebarToggle"
                   class="toolbarButton vue-pdf-app-icon sidebar-toggle"
                   title="Toggle Sidebar"
@@ -645,10 +674,7 @@
                 </div>
                 <span
                   v-show="
-                    showElem(
-                      'toolbar.toolbarViewerMiddle.scaleSelectContainer',
-                      'scaleSelect'
-                    )
+                    showElem('toolbar.toolbarViewerMiddle.scaleSelectContainer')
                   "
                   id="scaleSelectContainer"
                   class="dropdownToolbarButton vue-pdf-app-icon dropdown-toolbar-button"

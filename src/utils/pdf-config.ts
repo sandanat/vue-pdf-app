@@ -13,7 +13,7 @@ export default (idConfig: ToolbarIdConfig = {}) => ({
     numPages: getEl(idConfig.numPages || "numPages"),
     pageNumber: getEl(idConfig.pageNumber || "pageNumber"),
     scaleSelectContainer: getEl("scaleSelectContainer"),
-    scaleSelect: getEl(idConfig.scaleSelect || "scaleSelect"),
+    scaleSelect: getEl("scaleSelect"),
     customScaleOption: getEl("customScaleOption"),
     previous: getEl(idConfig.previousPage || "previous"),
     next: getEl(idConfig.nextPage || "next"),
@@ -37,19 +37,25 @@ export default (idConfig: ToolbarIdConfig = {}) => ({
     printButton: getEl("secondaryPrint"),
     downloadButton: getEl("secondaryDownload"),
     viewBookmarkButton: getEl("secondaryViewBookmark"),
-    firstPageButton: getEl("firstPage"),
-    lastPageButton: getEl("lastPage"),
-    pageRotateCwButton: getEl("pageRotateCw"),
-    pageRotateCcwButton: getEl("pageRotateCcw"),
-    cursorSelectToolButton: getEl("cursorSelectTool"),
-    cursorHandToolButton: getEl("cursorHandTool"),
-    scrollVerticalButton: getEl("scrollVertical"),
-    scrollHorizontalButton: getEl("scrollHorizontal"),
-    scrollWrappedButton: getEl("scrollWrapped"),
-    spreadNoneButton: getEl("spreadNone"),
-    spreadOddButton: getEl("spreadOdd"),
-    spreadEvenButton: getEl("spreadEven"),
-    documentPropertiesButton: getEl("documentProperties")
+    firstPageButton: getEl(idConfig.firstPage || "firstPage"),
+    lastPageButton: getEl(idConfig.lastPage || "lastPage"),
+    pageRotateCwButton: getEl(idConfig.pageRotateCw || "pageRotateCw"),
+    pageRotateCcwButton: getEl(idConfig.pageRotateCcw || "pageRotateCcw"),
+    cursorSelectToolButton: getEl(
+      idConfig.cursorSelectTool || "cursorSelectTool"
+    ),
+    cursorHandToolButton: getEl(idConfig.cursorHandTool || "cursorHandTool"),
+    scrollVerticalButton: getEl(idConfig.scrollVertical || "scrollVertical"),
+    scrollHorizontalButton: getEl(
+      idConfig.scrollHorizontal || "scrollHorizontal"
+    ),
+    scrollWrappedButton: getEl(idConfig.scrollWrapped || "scrollWrapped"),
+    spreadNoneButton: getEl(idConfig.spreadNone || "spreadNone"),
+    spreadOddButton: getEl(idConfig.spreadOdd || "spreadOdd"),
+    spreadEvenButton: getEl(idConfig.spreadEven || "spreadEven"),
+    documentPropertiesButton: getEl(
+      idConfig.documentProperties || "documentProperties"
+    )
   },
   fullscreen: {
     contextFirstPage: getEl("contextFirstPage"),
@@ -61,7 +67,7 @@ export default (idConfig: ToolbarIdConfig = {}) => ({
     // Divs (and sidebar button)
     outerContainer: getEl("outerContainer"),
     viewerContainer: getEl("viewerContainer"),
-    toggleButton: getEl("sidebarToggle"),
+    toggleButton: getEl(idConfig.sidebarToggle || "sidebarToggle"),
     // Buttons
     thumbnailButton: getEl("viewThumbnail"),
     outlineButton: getEl("viewOutline"),
