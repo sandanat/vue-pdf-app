@@ -69,9 +69,9 @@ export default (idConfig: ToolbarIdConfig = {}) => ({
     viewerContainer: getEl("viewerContainer"),
     toggleButton: getEl(idConfig.sidebarToggle || "sidebarToggle"),
     // Buttons
-    thumbnailButton: getEl("viewThumbnail"),
-    outlineButton: getEl("viewOutline"),
-    attachmentsButton: getEl("viewAttachments"),
+    thumbnailButton: getEl(idConfig.viewThumbnail || "viewThumbnail"),
+    outlineButton: getEl(idConfig.viewOutline || "viewOutline"),
+    attachmentsButton: getEl(idConfig.viewAttachments || "viewAttachments"),
     // Views
     thumbnailView: getEl("thumbnailView"),
     outlineView: getEl("outlineView"),

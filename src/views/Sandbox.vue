@@ -25,7 +25,6 @@
 
     <pdf-viewer
       :pdf="pdf"
-      :config="config"
       :id-config="idConfig"
       @after-created="afterCreated"
       @open="open"
@@ -73,6 +72,23 @@
       </template>
       <template #viewer-append>
         <div class="viewer-append">
+          <button :id="idConfig.viewThumbnail" class="action-btn" type="button">
+            Thumbnail view
+          </button>
+          <button :id="idConfig.viewOutline" class="action-btn" type="button">
+            Outline view
+          </button>
+          <button
+            :id="idConfig.viewAttachments"
+            class="action-btn"
+            type="button"
+          >
+            Attachments view
+          </button>
+        </div>
+      </template>
+      <template #viewer-footer>
+        <div class="viewer-footer">
           <button :id="idConfig.download" class="action-btn" type="button">
             Download
           </button>
@@ -142,9 +158,6 @@
           </button>
         </div>
       </template>
-      <template #viewer-footer>
-        <div class="viewer-footer"></div>
-      </template>
       <template #footer>
         <button @click="togglePdf" type="button">Toggle pdf</button>
       </template>
@@ -161,14 +174,6 @@ export default {
   },
   data() {
     return {
-      config: {
-        toolbar: false,
-        // toolbar: {
-        //   toolbarViewerMiddle: {
-        //     zoomIn: true,
-        //   },
-        // },
-      },
       idConfig: {
         cursorHandTool: "vuePdfAppCursorHandTool",
         cursorSelectTool: "vuePdfAppCursorSelectTool",
@@ -203,7 +208,10 @@ export default {
         spreadEven: "vuePdfAppSpreadEven",
         spreadNone: "vuePdfAppSpreadNone",
         spreadOdd: "vuePdfAppSpreadOdd",
+        viewAttachments: "vuePdfAppViewAttachments",
         viewBookmark: "vuePdfAppViewBookmark",
+        viewOutline: "vuePdfAppViewOutline",
+        viewThumbnail: "vuePdfAppViewThumbnail",
         zoomIn: "vuePdfAppZoomIn",
         zoomOut: "vuePdfAppZoomOut",
       },
@@ -260,6 +268,12 @@ $footer-height: 50px;
 }
 
 .viewer-append {
+  position: relative;
+  width: 300px;
+  top: 300px;
+}
+
+.viewer-footer {
   position: absolute;
   bottom: 0;
   right: 0;

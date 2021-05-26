@@ -4,12 +4,16 @@
       {{ defaultLocale }}
     </script>
     <div id="outerContainer">
-      <div v-show="showElem('sidebar')" id="sidebarContainer">
-        <div id="toolbarSidebar">
+      <div
+        v-show="showElem('sidebar')"
+        :class="{ 'zero-top': !config.toolbar }"
+        id="sidebarContainer"
+      >
+        <div v-show="!hideSidebarToolbar" id="toolbarSidebar">
           <slot v-bind="slotProps" name="toolbar-sidebar-prepend"></slot>
           <div class="splitToolbarButton toggled">
             <button
-              v-show="showElem('sidebar.viewThumbnail')"
+              v-show="showElem('sidebar.viewThumbnail', 'viewThumbnail')"
               id="viewThumbnail"
               class="toolbarButton toggled vue-pdf-app-icon view-thumbnail"
               title="Show Thumbnails"
@@ -19,7 +23,7 @@
               <span data-l10n-id="thumbs_label">Thumbnails</span>
             </button>
             <button
-              v-show="showElem('sidebar.viewOutline')"
+              v-show="showElem('sidebar.viewOutline', 'viewOutline')"
               id="viewOutline"
               class="toolbarButton vue-pdf-app-icon view-outline"
               title="Show Document Outline (double-click to expand/collapse all items)"
@@ -31,7 +35,7 @@
               >
             </button>
             <button
-              v-show="showElem('sidebar.viewAttachments')"
+              v-show="showElem('sidebar.viewAttachments', 'viewAttachments')"
               id="viewAttachments"
               class="toolbarButton vue-pdf-app-icon view-attachments"
               title="Show Attachments"
@@ -43,7 +47,11 @@
           </div>
           <slot v-bind="slotProps" name="toolbar-sidebar-append"></slot>
         </div>
-        <div v-show="showElem('sidebar')" id="sidebarContent">
+        <div
+          v-show="showElem('sidebar')"
+          :class="{ 'zero-top': hideSidebarToolbar }"
+          id="sidebarContent"
+        >
           <div
             v-show="showElem('sidebar.viewThumbnail')"
             id="thumbnailView"
@@ -1059,6 +1067,15 @@ export default class PdfViewer extends Vue {
     themeCacheKey
   ) as Theme | null;
 
+  private get hideSidebarToolbar() {
+    const isCustomToolbar =
+      this.idConfig?.viewAttachments &&
+      this.idConfig?.viewOutline &&
+      this.idConfig?.viewThumbnail;
+
+    return isCustomToolbar || !this.config.sidebar;
+  }
+
   private get toolbarHidden() {
     if (this.config.toolbar === false) return "toolbar-hidden";
     return "";
@@ -1244,5 +1261,9 @@ html {
 <style lang="scss" scoped>
 #viewerContainer.toolbar-hidden {
   top: 0;
+}
+
+.zero-top {
+  top: 0 !important;
 }
 </style>

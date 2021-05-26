@@ -40,10 +40,10 @@ export interface ToolbarIdConfig {
   spreadEven?: string;
   spreadNone?: string;
   spreadOdd?: string;
-  // viewAttachments?: string;
+  viewAttachments?: string;
   viewBookmark?: string;
-  // viewOutline?: string;
-  // viewThumbnail?: string;
+  viewOutline?: string;
+  viewThumbnail?: string;
   zoomIn?: string;
   zoomOut?: string;
 }

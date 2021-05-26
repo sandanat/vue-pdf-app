@@ -260,10 +260,14 @@ print?: string; // &lt;button&gt; is recommended
 scrollHorizontal?: string; // &lt;button&gt; is recommended
 scrollVertical?: string; // &lt;button&gt; is recommended
 scrollWrapped?: string; // &lt;button&gt; is recommended
+sidebarToggle?: string; // &lt;button&gt; is recommended
 spreadEven?: string; // &lt;button&gt; is recommended
 spreadNone?: string; // &lt;button&gt; is recommended
 spreadOdd?: string; // &lt;button&gt; is recommended
+viewAttachments?: string; // &lt;button&gt; is recommended
 viewBookmark?: string; // &lt;a&gt; tag is recommended
+viewOutline?: string; // &lt;button&gt; tag is recommended
+viewThumbnail?: string; // &lt;button&gt; tag is recommended
 zoomIn?: string; // &lt;button&gt; tag is recommended
 zoomOut?: string; // &lt;button&gt; tag is recommended
 }
