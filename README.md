@@ -276,7 +276,7 @@ zoomOut?: string; // &lt;button&gt; tag is recommended
 </code>
 </details>
 
-> ℹ️ Note that elements must be in HTML document by the time vue-pdf-app is mounting (use `v-for` instead of `v-if` directive if necessary). Otherwise an error occurs.
+> ℹ️ Note that elements must be in HTML document by the time vue-pdf-app is mounting (use `v-show` instead of `v-if` directive if necessary). Otherwise an error occurs.
 
 ## @after-created(PDFViewerApplication)
 

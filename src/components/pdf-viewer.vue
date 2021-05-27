@@ -6,10 +6,10 @@
     <div id="outerContainer">
       <div
         v-show="showElem('sidebar')"
-        :class="{ 'zero-top': !config.toolbar }"
+        :class="[isToolbarHidden]"
         id="sidebarContainer"
       >
-        <div v-show="!hideSidebarToolbar" id="toolbarSidebar">
+        <div v-show="!isSidebarToolbarHidden" id="toolbarSidebar">
           <slot v-bind="slotProps" name="toolbar-sidebar-prepend"></slot>
           <div class="splitToolbarButton toggled">
             <button
@@ -49,7 +49,7 @@
         </div>
         <div
           v-show="showElem('sidebar')"
-          :class="{ 'zero-top': hideSidebarToolbar }"
+          :class="{ 'zero-top': isSidebarToolbarHidden }"
           id="sidebarContent"
         >
           <div
@@ -834,7 +834,7 @@
         </menu>
         <slot v-bind="slotProps" name="viewer-header"></slot>
         <slot v-bind="slotProps" name="viewer-prepend"></slot>
-        <div id="viewerContainer" :class="[toolbarHidden]" tabindex="0">
+        <div id="viewerContainer" :class="[isToolbarHidden]" tabindex="0">
           <div id="viewer" class="pdfViewer"></div>
         </div>
         <slot v-bind="slotProps" name="viewer-append"></slot>
@@ -1063,11 +1063,13 @@ export default class PdfViewer extends Vue {
 
   private isOpenHandlerBinded = false;
 
+  private isSidebarHidden = true;
+
   private cacheTheme = window.localStorage.getItem(
     themeCacheKey
   ) as Theme | null;
 
-  private get hideSidebarToolbar() {
+  private get isSidebarToolbarHidden() {
     const isCustomToolbar =
       this.idConfig?.viewAttachments &&
       this.idConfig?.viewOutline &&
@@ -1076,8 +1078,8 @@ export default class PdfViewer extends Vue {
     return isCustomToolbar || !this.config.sidebar;
   }
 
-  private get toolbarHidden() {
-    if (this.config.toolbar === false) return "toolbar-hidden";
+  private get isToolbarHidden() {
+    if (this.config.toolbar === false) return "zero-top";
     return "";
   }
 
@@ -1098,6 +1100,7 @@ export default class PdfViewer extends Vue {
   private get slotProps() {
     return {
       toggleTheme: this.toggleTheme,
+      isSidebarHidden: this.isSidebarHidden
     };
   }
 
@@ -1119,8 +1122,20 @@ export default class PdfViewer extends Vue {
       pdfApp.PDFViewerApplication.run(config);
       pdfApp.PDFViewerApplication.initializedPromise
         .then(this.open.bind(this))
+        .then(this.bindSidebarToggleEvents.bind(this))
         .catch(errorHandler);
     }
+  }
+
+  private bindSidebarToggleEvents() {
+    const config = getAppConfig(this.idConfig);
+    const toggleButton = config.sidebar.toggleButton;
+    const handler = this.checkSidebarVisibility.bind(this)
+    
+    toggleButton?.addEventListener("click", handler);
+    this.$once("hook:beforeDestroy", () => {
+      toggleButton?.removeEventListener("click", handler);
+    });
   }
 
   private clearCacheTimeout() {
@@ -1185,8 +1200,15 @@ export default class PdfViewer extends Vue {
       await pdfApp.PDFViewerApplication.pdfViewer.pagesPromise.catch(
         errorHandler
       );
+
+      this.checkSidebarVisibility();
       this.$emit("pages-rendered", pdfApp.PDFViewerApplication);
     }
+  }
+
+  private checkSidebarVisibility() {
+    const sidebar = pdfApp.PDFViewerApplication?.pdfSidebar;
+    this.isSidebarHidden = !(sidebar && sidebar.isOpen);
   }
 
   private addPrintContainer() {
@@ -1259,11 +1281,9 @@ html {
 </style>
 
 <style lang="scss" scoped>
-#viewerContainer.toolbar-hidden {
+#sidebarContent.zero-top,
+#sidebarContainer.zero-top,
+#viewerContainer.zero-top {
   top: 0;
-}
-
-.zero-top {
-  top: 0 !important;
 }
 </style>

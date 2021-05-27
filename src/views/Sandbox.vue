@@ -1,5 +1,8 @@
 <template>
   <div style="height: 100%">
+    <!-- todo delete this -->
+        <button @click="togglePdf" type="button">Toggle pdf</button>
+
     <div class="action-bar">
       <a :id="idConfig.viewBookmark">Current view</a>
       <span class="divider"></span>
@@ -54,7 +57,7 @@
           </button>
         </div>
       </template>
-      <template #viewer-prepend>
+      <template #viewer-prepend="{ isSidebarHidden }">
         <div class="viewer-prepend">
           <button :id="idConfig.firstPage" class="action-btn" type="button">
             First page
@@ -68,23 +71,27 @@
           <button :id="idConfig.lastPage" class="action-btn" type="button">
             Last page
           </button>
-        </div>
-      </template>
-      <template #viewer-append>
-        <div class="viewer-append">
-          <button :id="idConfig.viewThumbnail" class="action-btn" type="button">
-            Thumbnail view
-          </button>
-          <button :id="idConfig.viewOutline" class="action-btn" type="button">
-            Outline view
-          </button>
-          <button
-            :id="idConfig.viewAttachments"
-            class="action-btn"
-            type="button"
-          >
-            Attachments view
-          </button>
+          <!-- don't use v-if here -->
+          <!-- otherwise got an error -->
+          <div v-show="!isSidebarHidden">
+            <button
+              :id="idConfig.viewThumbnail"
+              class="action-btn"
+              type="button"
+            >
+              Thumbnail view
+            </button>
+            <button :id="idConfig.viewOutline" class="action-btn" type="button">
+              Outline view
+            </button>
+            <button
+              :id="idConfig.viewAttachments"
+              class="action-btn"
+              type="button"
+            >
+              Attachments view
+            </button>
+          </div>
         </div>
       </template>
       <template #viewer-footer>
@@ -158,9 +165,6 @@
           </button>
         </div>
       </template>
-      <template #footer>
-        <button @click="togglePdf" type="button">Toggle pdf</button>
-      </template>
     </pdf-viewer>
   </div>
 </template>
@@ -215,7 +219,6 @@ export default {
         zoomIn: "vuePdfAppZoomIn",
         zoomOut: "vuePdfAppZoomOut",
       },
-      scale: "1",
       pdf: "sample.pdf",
     };
   },
@@ -238,21 +241,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$footer-height: 50px;
-
-.footer {
-  background: red;
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: $footer-height;
-}
-
-::v-deep #outerContainer {
-  height: calc(100% - #{$footer-height}) !important;
-}
-
 .viewer-header {
   position: relative;
   z-index: 9999;
@@ -265,12 +253,6 @@ $footer-height: 50px;
   bottom: 0;
   top: 40px;
   width: 80px;
-}
-
-.viewer-append {
-  position: relative;
-  width: 300px;
-  top: 300px;
 }
 
 .viewer-footer {
