@@ -325,47 +325,39 @@ export default {
 
 ## Slots
 
-<table>
-  <tr>
-    <th>Slot name</th>
-    <th>Slot props</th>
-    <th>Prop type</th>
-    <th>Description</th>
-  </tr>
-  <tr>
-    <td>toolbar-left-prepend
-      <hr> toolbar-left-append
-      <hr> toolbar-middle-prepend
-      <hr> toolbar-middle-append
-      <hr> toolbar-right-prepend
-      <hr> toolbar-right-append
-      <hr> toolbar-sidebar-prepend
-      <hr> toolbar-sidebar-append
-      <hr> secondary-toolbar-prepend
-      <hr> secondary-toolbar-append
-      <hr> footer
-    </td>
-    <td>toggleTheme</td>
-    <td>function()</td>
-    <td>Toggle theme</td>
-  </tr>
-  <tr>
-    <td>viewer-header
-      <hr> viewer-prepend
-    </td>
-    <td>toggleTheme</td>
-    <td>function()</td>
-    <td>Two slots before `viewerContainer` div. Can be used to build custom toolbar.</td>
-  </tr>
-  <tr>
-    <td>viewer-append
-      <hr> viewer-footer
-    </td>
-    <td>toggleTheme</td>
-    <td>function()</td>
-    <td>Two slots after `viewerContainer` div. Can be used to build custom toolbar.</td>
-  </tr>
-</table>
+### Slot names
+
+- toolbar-left-prepend
+- toolbar-left-append
+- toolbar-middle-prepend
+- toolbar-middle-append
+- toolbar-right-prepend
+- toolbar-right-append
+- toolbar-sidebar-prepend
+- toolbar-sidebar-append
+- secondary-toolbar-prepend
+- secondary-toolbar-append
+- footer
+- viewer-header: slot before `viewer-prepend` slot. Can be used to build custom toolbar.
+- viewer-prepend: slot before `viewerContainer` div. Can be used to build custom toolbar.
+- viewer-append: slot after `viewerContainer` div. Can be used to build custom toolbar.
+- viewer-footer: slot after `viewer-append` slot. Can be used to build custom toolbar.
+
+### Slot props
+
+Each slot has props:
+
+1. toggleTheme
+
+   Type: (): void.
+
+   Description: toggle theme handler
+
+1. isSidebarHidden
+
+   Type: boolean
+
+   Description: state of a sidebar (visible or hidden). Can be used to manage visibility of custom Attachments, Outline and Thumbnail buttons
 
 ```vue
 <vue-pdf-app>
