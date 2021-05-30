@@ -1,7 +1,7 @@
 <template>
-  <div style="height: 100%">
+  <div style="height: 90%">
     <!-- todo delete this -->
-        <button @click="togglePdf" type="button">Toggle pdf</button>
+    <button @click="togglePdf" type="button">Toggle pdf</button>
 
     <div class="action-bar">
       <a :id="idConfig.viewBookmark">Current view</a>
@@ -34,8 +34,37 @@
       @pages-rendered="pagesRendered"
       style="position: relative"
     >
-      <template #viewer-header>
+      <template #viewer-header="{ isFindbarHidden }">
         <div class="viewer-header">
+          <div v-show="!isFindbarHidden" :id="idConfig.findbar">
+            <input :id="idConfig.findInput" type="text" />
+            <span class="divider"></span>
+            <input :id="idConfig.findHighlightAll" type="checkbox" />
+            <label :for="idConfig.findHighlightAll">Highlight all</label>
+            <span class="divider"></span>
+            <input :id="idConfig.findMatchCase" type="checkbox" />
+            <label :for="idConfig.findMatchCase">Match case</label>
+            <span class="divider"></span>
+            <input :id="idConfig.findEntireWord" type="checkbox" />
+            <label :for="idConfig.findEntireWord">Entire word</label>
+            <span class="divider"></span>
+            <span :id="idConfig.findMessage"></span>
+            <span class="divider"></span>
+            <span :id="idConfig.findResultsCount"></span>
+            <span class="divider"></span>
+            <button :id="idConfig.findPrevious" class="action-btn">
+              Find previous
+            </button>
+            <span class="divider"></span>
+            <button :id="idConfig.findNext" class="action-btn">
+              Find next
+            </button>
+          </div>
+          <span class="divider"></span>
+          <button :id="idConfig.toggleFindbar" class="action-btn" type="button">
+            Toggle findbar
+          </button>
+          <span class="divider"></span>
           <button :id="idConfig.sidebarToggle" class="action-btn" type="button">
             Toggle sidebar
           </button>
@@ -183,16 +212,15 @@ export default {
         cursorSelectTool: "vuePdfAppCursorSelectTool",
         documentProperties: "vuePdfAppDocumentProperties",
         download: "vuePdfAppDownload",
-        // findbar: "vuePdfAppFindbar",
-        // findbarCaseSensitiveCheckbox: "vuePdfAppFindbarCaseSensitiveCheckbox",
-        // findbarEntireWordCheckbox: "vuePdfAppFindbarEntireWordCheckbox",
-        // findbarFindField: "vuePdfAppFindbarFindField",
-        // findbarFindMessage: "vuePdfAppFindbarFindMessage",
-        // findbarFindNextButton: "vuePdfAppFindbarFindNextButton",
-        // findbarFindPreviousButton: "vuePdfAppFindbarFindPreviousButton",
-        // findbarFindResultsCount: "vuePdfAppFindbarFindResultsCount",
-        // findbarHighlightAllCheckbox: "vuePdfAppFindbarHighlightAllCheckbox",
-        // findbarToggleButton: "vuePdfAppFindbarToggleButton",
+        findbar: "vuePdfAppFindbar",
+        findEntireWord: "vuePdfAppFindEntireWord",
+        findHighlightAll: "vuePdfAppFindHighlightAll",
+        findInput: "vuePdfAppFindInput",
+        findMessage: "vuePdfAppFindMessage",
+        findMatchCase: "vuePdfAppFindMatchCase",
+        findNext: "vuePdfAppFindNext",
+        findPrevious: "vuePdfAppFindPrevious",
+        findResultsCount: "vuePdfAppFindResultsCount",
         firstPage: "vuePdfAppFirstPage",
         lastPage: "vuePdfAppLastPage",
         nextPage: "vuePdfAppNextPage",
@@ -204,7 +232,6 @@ export default {
         presentationMode: "vuePdfAppPresentationMode",
         previousPage: "vuePdfAppPreviousPage",
         print: "vuePdfAppPrint",
-        // scaleSelect: "vuePdfAppScaleSelect",
         scrollHorizontal: "vuePdfAppScrollHorizontal",
         scrollVertical: "vuePdfAppScrollVertical",
         scrollWrapped: "vuePdfAppScrollWrapped",
@@ -212,6 +239,7 @@ export default {
         spreadEven: "vuePdfAppSpreadEven",
         spreadNone: "vuePdfAppSpreadNone",
         spreadOdd: "vuePdfAppSpreadOdd",
+        toggleFindbar: "vuePdfAppToggleFindbar",
         viewAttachments: "vuePdfAppViewAttachments",
         viewBookmark: "vuePdfAppViewBookmark",
         viewOutline: "vuePdfAppViewOutline",

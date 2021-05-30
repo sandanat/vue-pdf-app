@@ -73,7 +73,7 @@
 
       <div id="mainContainer">
         <div
-          v-show="showElem('toolbar.toolbarViewerLeft.findbar')"
+          v-show="showElem('toolbar.toolbarViewerLeft.findbar', 'findbar')"
           class="findbar hidden doorHanger"
           id="findbar"
         >
@@ -477,7 +477,12 @@
                   class="toolbarButtonSpacer"
                 ></div>
                 <button
-                  v-show="showElem('toolbar.toolbarViewerLeft.findbar')"
+                  v-show="
+                    showElem(
+                      'toolbar.toolbarViewerLeft.findbar',
+                      'toggleFindbar'
+                    )
+                  "
                   id="viewFind"
                   class="toolbarButton vue-pdf-app-icon view-find"
                   title="Find in Document"
@@ -1065,6 +1070,8 @@ export default class PdfViewer extends Vue {
 
   private isSidebarHidden = true;
 
+  private isFindbarHidden = true;
+
   private cacheTheme = window.localStorage.getItem(
     themeCacheKey
   ) as Theme | null;
@@ -1100,7 +1107,8 @@ export default class PdfViewer extends Vue {
   private get slotProps() {
     return {
       toggleTheme: this.toggleTheme,
-      isSidebarHidden: this.isSidebarHidden
+      isSidebarHidden: this.isSidebarHidden,
+      isFindbarHidden: this.isFindbarHidden,
     };
   }
 
@@ -1123,6 +1131,7 @@ export default class PdfViewer extends Vue {
       pdfApp.PDFViewerApplication.initializedPromise
         .then(this.open.bind(this))
         .then(this.bindSidebarToggleEvents.bind(this))
+        .then(this.bindFindbarToggleEvents.bind(this))
         .catch(errorHandler);
     }
   }
@@ -1130,8 +1139,19 @@ export default class PdfViewer extends Vue {
   private bindSidebarToggleEvents() {
     const config = getAppConfig(this.idConfig);
     const toggleButton = config.sidebar.toggleButton;
-    const handler = this.checkSidebarVisibility.bind(this)
-    
+    const handler = this.checkSidebarVisibility.bind(this);
+
+    toggleButton?.addEventListener("click", handler);
+    this.$once("hook:beforeDestroy", () => {
+      toggleButton?.removeEventListener("click", handler);
+    });
+  }
+
+  private bindFindbarToggleEvents() {
+    const config = getAppConfig(this.idConfig);
+    const toggleButton = config.findBar.toggleButton;
+    const handler = this.checkFindbarVisibility.bind(this);
+
     toggleButton?.addEventListener("click", handler);
     this.$once("hook:beforeDestroy", () => {
       toggleButton?.removeEventListener("click", handler);
@@ -1202,6 +1222,7 @@ export default class PdfViewer extends Vue {
       );
 
       this.checkSidebarVisibility();
+      this.checkFindbarVisibility();
       this.$emit("pages-rendered", pdfApp.PDFViewerApplication);
     }
   }
@@ -1209,6 +1230,11 @@ export default class PdfViewer extends Vue {
   private checkSidebarVisibility() {
     const sidebar = pdfApp.PDFViewerApplication?.pdfSidebar;
     this.isSidebarHidden = !(sidebar && sidebar.isOpen);
+  }
+
+  private checkFindbarVisibility() {
+    const findbar = pdfApp.PDFViewerApplication?.findBar;
+    this.isFindbarHidden = !(findbar && findbar.opened);
   }
 
   private addPrintContainer() {

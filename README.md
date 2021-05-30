@@ -206,7 +206,7 @@ export default {
 
 ## :id-config
 
-- Description: If default toolbar UI doesn't suite you it is possible to build custom toolbar. The prop contains elements ID to which to bind functionality. If element ID is specified in this prop appropriate button will be hidden in a default toolbar. May not work with UI framework components. So it is better to use native HTML element specified as recommended in ID config specification below. Four slots are specially designed to build custom toolbar (are situated near a pdf page): `viewer-header, viewer-prepend, viewer-append, viewer-footer` (refer slots API). It is also possible to use other slots or elements outside vue-pdf-app.
+- Description: If default toolbar UI doesn't suite you it is possible to build custom toolbar. The prop contains elements ID to which to bind functionality. If element ID is specified in this prop appropriate button will be hidden in a default toolbar. May not work with UI framework components. That is because pdfjs internally manages attributes specific to a certain HTML element (for instance pdfjs toggles `disabled` attribute of a button but it won't if a div is used instead of a button). So it is better to use native HTML element specified as recommended in ID config specification below. Four slots are specially designed to build custom toolbar (are situated near a pdf page): `viewer-header, viewer-prepend, viewer-append, viewer-footer` (refer slots API). It is also possible to use other slots or elements outside vue-pdf-app.
 - Type: ID config (see below)
 - Required: `false`
 - Usage:
@@ -246,6 +246,15 @@ cursorHandTool?: string; // &lt;button&gt; is recommended
 cursorSelectTool?: string; // &lt;button&gt; is recommended
 documentProperties?: string; // &lt;button&gt; is recommended
 download?: string; // &lt;button&gt; is recommended
+findbar?: string; // &lt;div&gt; is recommended
+findEntireWord?: string; // &lt;input type="checkbox"&gt; is recommended
+findHighlightAll?: string; // &lt;input type="checkbox"&gt; is recommended
+findMessage?: string; // &lt;span&gt; is recommended
+findInput?: string; // &lt;input type="text"&gt; is recommended
+findMatchCase?: string; // &lt;input type="checkbox"&gt; is recommended
+findNext?: string; // &lt;button&gt; is recommended
+findPrevious?: string; // &lt;button&gt; is recommended
+findResultsCount?: string; // &lt;span&gt; is recommended
 firstPage?: string; // &lt;button&gt; is recommended
 lastPage?: string; // &lt;button&gt; is recommended
 nextPage?: string; // &lt;button&gt; is recommended
@@ -264,6 +273,7 @@ sidebarToggle?: string; // &lt;button&gt; is recommended
 spreadEven?: string; // &lt;button&gt; is recommended
 spreadNone?: string; // &lt;button&gt; is recommended
 spreadOdd?: string; // &lt;button&gt; is recommended
+toggleFindbar?: string; // &lt;button&gt; is recommended
 viewAttachments?: string; // &lt;button&gt; is recommended
 viewBookmark?: string; // &lt;a&gt; tag is recommended
 viewOutline?: string; // &lt;button&gt; tag is recommended

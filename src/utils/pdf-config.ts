@@ -12,6 +12,7 @@ export default (idConfig: ToolbarIdConfig = {}) => ({
     container: getEl("toolbarViewer"),
     numPages: getEl(idConfig.numPages || "numPages"),
     pageNumber: getEl(idConfig.pageNumber || "pageNumber"),
+    // TODO make scale select customizable
     scaleSelectContainer: getEl("scaleSelectContainer"),
     scaleSelect: getEl("scaleSelect"),
     customScaleOption: getEl("customScaleOption"),
@@ -19,7 +20,7 @@ export default (idConfig: ToolbarIdConfig = {}) => ({
     next: getEl(idConfig.nextPage || "next"),
     zoomIn: getEl(idConfig.zoomIn || "zoomIn"),
     zoomOut: getEl(idConfig.zoomOut || "zoomOut"),
-    viewFind: getEl("viewFind"),
+    viewFind: getEl(idConfig.toggleFindbar || "viewFind"),
     openFile: getEl(idConfig.openFile || "openFile"),
     print: getEl(idConfig.print || "print"),
     presentationModeButton: getEl(
@@ -82,16 +83,18 @@ export default (idConfig: ToolbarIdConfig = {}) => ({
     resizer: getEl("sidebarResizer")
   },
   findBar: {
-    bar: getEl("findbar"),
-    toggleButton: getEl("viewFind"),
-    findField: getEl("findInput"),
-    highlightAllCheckbox: getEl("findHighlightAll"),
-    caseSensitiveCheckbox: getEl("findMatchCase"),
-    entireWordCheckbox: getEl("findEntireWord"),
-    findMsg: getEl("findMsg"),
-    findResultsCount: getEl("findResultsCount"),
-    findPreviousButton: getEl("findPrevious"),
-    findNextButton: getEl("findNext")
+    bar: getEl(idConfig.findbar || "findbar"),
+    toggleButton: getEl(idConfig.toggleFindbar || "viewFind"),
+    findField: getEl(idConfig.findInput || "findInput"),
+    highlightAllCheckbox: getEl(
+      idConfig.findHighlightAll || "findHighlightAll"
+    ),
+    caseSensitiveCheckbox: getEl(idConfig.findMatchCase || "findMatchCase"),
+    entireWordCheckbox: getEl(idConfig.findEntireWord || "findEntireWord"),
+    findMsg: getEl(idConfig.findMessage || "findMsg"),
+    findResultsCount: getEl(idConfig.findResultsCount || "findResultsCount"),
+    findPreviousButton: getEl(idConfig.findPrevious || "findPrevious"),
+    findNextButton: getEl(idConfig.findNext || "findNext")
   },
   passwordOverlay: {
     overlayName: "passwordOverlay",
