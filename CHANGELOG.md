@@ -1,3 +1,9 @@
+# v2.1.0
+
+## Features
+
+1. Toolbar custom UI
+
 # v2.0.0
 
 ## Features
