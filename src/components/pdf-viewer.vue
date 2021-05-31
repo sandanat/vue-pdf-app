@@ -1018,6 +1018,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import "@/pdfjs-dist/es5/build/pdf";
+// FIX typings
 // @ts-ignore
 import * as pdfApp from "@/pdfjs-dist/lib/web/app";
 // @ts-ignore
@@ -1229,10 +1230,12 @@ export default class PdfViewer extends Vue {
 
   private checkSidebarVisibility() {
     const sidebar = pdfApp.PDFViewerApplication?.pdfSidebar;
+      // @ts-ignore
     this.isSidebarHidden = !(sidebar && sidebar.isOpen);
   }
 
   private checkFindbarVisibility() {
+      // @ts-ignore
     const findbar = pdfApp.PDFViewerApplication?.findBar;
     this.isFindbarHidden = !(findbar && findbar.opened);
   }

@@ -2,7 +2,10 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Basic</router-link> |
-      <router-link to="/toolbar-configuration">Toolbar configuration</router-link> |
+      <router-link to="/toolbar-configuration"
+        >Toolbar configuration</router-link
+      >
+      | <router-link to="/toolbar-custom-ui">Toolbar custom UI</router-link> |
       <router-link to="/pdfjs-interaction">Pdfjs interaction</router-link> |
       <router-link to="/slots">Slots</router-link> |
       <router-link to="/color-customization">Color customization</router-link> |

@@ -4,6 +4,7 @@ import Basic from "@/views/Basic.vue";
 import Slots from "@/views/Slots.vue";
 import PdfjsInteraction from "@/views/PdfjsInteraction.vue";
 import ToolbarConfiguration from "@/views/ToolbarConfiguration.vue";
+import ToolbarCustomUI from "@/views/ToolbarCustomUI.vue";
 import ColorCustomization from "@/views/ColorCustomization.vue";
 import IconsCustomization from "@/views/IconsCustomization.vue";
 import ThemeToggling from "@/views/ThemeToggling.vue";
@@ -20,6 +21,11 @@ const routes = [
     path: "/toolbar-configuration",
     name: "toolbar-configuration",
     component: ToolbarConfiguration
+  },
+  {
+    path: "/toolbar-custom-ui",
+    name: "toolbar-custom-ui",
+    component: ToolbarCustomUI
   },
   {
     path: "/pdfjs-interaction",

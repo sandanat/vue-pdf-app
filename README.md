@@ -16,7 +16,9 @@ VUEjs v2 PDF viewer based on Mozilla's PDFJS.
 - pdf document password
 - thumbnail, outline, attachments, annotation layers
 
-Easily localized configurable panel
+Easily localized configurable toolbar
+
+<sup style="color: red">NEW</sup> Toolbar custom UI
 
 Cross-browser support (including IE11)
 
@@ -204,7 +206,7 @@ export default {
 </code>
 </details>
 
-## :id-config
+## <sup style="color: red">new</sup> :id-config
 
 - Description: If default toolbar UI doesn't suite you it is possible to build custom toolbar. The prop contains elements ID to which to bind functionality. If element ID is specified in this prop appropriate button will be hidden in a default toolbar. May not work with UI framework components. That is because pdfjs internally manages attributes specific to a certain HTML element (for instance pdfjs toggles `disabled` attribute of a button but it won't if a div is used instead of a button). So it is better to use native HTML element specified as recommended in ID config specification below. Four slots are specially designed to build custom toolbar (are situated near a pdf page): `viewer-header, viewer-prepend, viewer-append, viewer-footer` (refer slots API). It is also possible to use other slots or elements outside vue-pdf-app.
 - Type: ID config (see below)
@@ -348,10 +350,10 @@ export default {
 - secondary-toolbar-prepend
 - secondary-toolbar-append
 - footer
-- viewer-header: slot before `viewer-prepend` slot. Can be used to build custom toolbar.
-- viewer-prepend: slot before `viewerContainer` div. Can be used to build custom toolbar.
-- viewer-append: slot after `viewerContainer` div. Can be used to build custom toolbar.
-- viewer-footer: slot after `viewer-append` slot. Can be used to build custom toolbar.
+- <sup style="color: red">NEW</sup> viewer-header: slot before `viewer-prepend` slot. Can be used to build custom toolbar.
+- <sup style="color: red">NEW</sup> viewer-prepend: slot before `viewerContainer` div. Can be used to build custom toolbar.
+- <sup style="color: red">NEW</sup> viewer-append: slot after `viewerContainer` div. Can be used to build custom toolbar.
+- <sup style="color: red">NEW</sup> viewer-footer: slot after `viewer-append` slot. Can be used to build custom toolbar.
 
 ### Slot props
 
@@ -363,11 +365,17 @@ Each slot has props:
 
    Description: toggle theme handler
 
-1. isSidebarHidden
+1. <sup style="color: red">NEW</sup> isSidebarHidden
 
    Type: boolean
 
    Description: state of a sidebar (visible or hidden). Can be used to manage visibility of custom Attachments, Outline and Thumbnail buttons
+
+1. <sup style="color: red">NEW</sup> isFindbarHidden
+
+   Type: boolean
+
+   Description: state of a findbar (visible or hidden). Can be used to manage visibility of custom findbar
 
 ```vue
 <vue-pdf-app>
