@@ -16,7 +16,9 @@ VUEjs v2 PDF viewer based on Mozilla's PDFJS.
 - pdf document password
 - thumbnail, outline, attachments, annotation layers
 
-Easily localized configurable panel
+Easily localized configurable toolbar
+
+<sup style="color: red">NEW</sup> Toolbar custom UI
 
 Cross-browser support (including IE11)
 
@@ -204,7 +206,91 @@ export default {
 </code>
 </details>
 
-## :fileName
+## <sup style="color: red">new</sup> :id-config
+
+- Description: If default toolbar UI doesn't suite you it is possible to build custom toolbar. The prop contains elements ID to which to bind functionality. If element ID is specified in this prop appropriate button will be hidden in a default toolbar. May not work with UI framework components. That is because pdfjs internally manages attributes specific to a certain HTML element (for instance pdfjs toggles `disabled` attribute of a button but it won't if a div is used instead of a button). So it is better to use native HTML element specified as recommended in ID config specification below. Four slots are specially designed to build custom toolbar (are situated near a pdf page): `viewer-header, viewer-prepend, viewer-append, viewer-footer` (refer slots API). It is also possible to use other slots or elements outside vue-pdf-app.
+- Type: ID config (see below)
+- Required: `false`
+- Usage:
+
+```vue
+<template>
+  <div>
+    <button :id="idConfig.zoomOut" type="button">Zoom out</button>
+    <vue-pdf-app :id-config="idConfig">
+      <template #viewer-prepend>
+        <div class="viewer-prepend">
+          <button :id="idConfig.zoomIn" type="button">Zoom in</button>
+        </div>
+      </template>
+    </vue-pdf-app>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      idConfig: { zoomIn: "zoomInId", zoomOut: "zoomOutId" }
+    };
+  }
+};
+</script>
+```
+
+<details>
+<summary>ID config specification</summary>
+<code>
+<pre>
+{
+
+cursorHandTool?: string; // &lt;button&gt; is recommended
+cursorSelectTool?: string; // &lt;button&gt; is recommended
+documentProperties?: string; // &lt;button&gt; is recommended
+download?: string; // &lt;button&gt; is recommended
+findbar?: string; // &lt;div&gt; is recommended
+findEntireWord?: string; // &lt;input type="checkbox"&gt; is recommended
+findHighlightAll?: string; // &lt;input type="checkbox"&gt; is recommended
+findMessage?: string; // &lt;span&gt; is recommended
+findInput?: string; // &lt;input type="text"&gt; is recommended
+findMatchCase?: string; // &lt;input type="checkbox"&gt; is recommended
+findNext?: string; // &lt;button&gt; is recommended
+findPrevious?: string; // &lt;button&gt; is recommended
+findResultsCount?: string; // &lt;span&gt; is recommended
+firstPage?: string; // &lt;button&gt; is recommended
+lastPage?: string; // &lt;button&gt; is recommended
+nextPage?: string; // &lt;button&gt; is recommended
+numPages?: string; // total pages qty. &lt;span&gt; is recommended
+openFile?: string; // &lt;button&gt; is recommended
+pageNumber?: string; // input for page number. &lt;input type="number"&gt; is recommended
+pageRotateCcw?: string; // &lt;button&gt; is recommended
+pageRotateCw?: string; // &lt;button&gt; is recommended
+presentationMode?: string; // &lt;button&gt; is recommended
+previousPage?: string; // &lt;button&gt; is recommended
+print?: string; // &lt;button&gt; is recommended
+scrollHorizontal?: string; // &lt;button&gt; is recommended
+scrollVertical?: string; // &lt;button&gt; is recommended
+scrollWrapped?: string; // &lt;button&gt; is recommended
+sidebarToggle?: string; // &lt;button&gt; is recommended
+spreadEven?: string; // &lt;button&gt; is recommended
+spreadNone?: string; // &lt;button&gt; is recommended
+spreadOdd?: string; // &lt;button&gt; is recommended
+toggleFindbar?: string; // &lt;button&gt; is recommended
+viewAttachments?: string; // &lt;button&gt; is recommended
+viewBookmark?: string; // &lt;a&gt; tag is recommended
+viewOutline?: string; // &lt;button&gt; tag is recommended
+viewThumbnail?: string; // &lt;button&gt; tag is recommended
+zoomIn?: string; // &lt;button&gt; tag is recommended
+zoomOut?: string; // &lt;button&gt; tag is recommended
+}
+
+</pre>
+</code>
+</details>
+
+> ℹ️ Note that elements must be in HTML document by the time vue-pdf-app is mounting (use `v-show` instead of `v-if` directive if necessary). Otherwise an error occurs.
+
+## <sup style="color: red">new</sup> :fileName
 
 - Description: when pdf is passed like an array buffer default download file name is `document.pdf`. Set this prop to override it.
 - Type: string
@@ -262,32 +348,45 @@ export default {
 
 ## Slots
 
-<table>
-  <tr>
-    <th>Slot name</th>
-    <th>Slot props</th>
-    <th>Prop type</th>
-    <th>Description</th>
-  </tr>
-  <tr>
-    <td>toolbar-left-prepend
-      <hr> toolbar-left-append
-      <hr> toolbar-left-append
-      <hr> toolbar-middle-prepend
-      <hr> toolbar-middle-append
-      <hr> toolbar-right-prepend
-      <hr> toolbar-right-append
-      <hr> toolbar-sidebar-prepend
-      <hr> toolbar-sidebar-append
-      <hr> secondary-toolbar-prepend
-      <hr> secondary-toolbar-append
-      <hr> footer
-    </td>
-    <td>toggleTheme</td>
-    <td>function()</td>
-    <td>Toggle theme</td>
-  </tr>
-</table>
+### Slot names
+
+- toolbar-left-prepend
+- toolbar-left-append
+- toolbar-middle-prepend
+- toolbar-middle-append
+- toolbar-right-prepend
+- toolbar-right-append
+- toolbar-sidebar-prepend
+- toolbar-sidebar-append
+- secondary-toolbar-prepend
+- secondary-toolbar-append
+- footer
+- <sup style="color: red">NEW</sup> viewer-header: slot before `viewer-prepend` slot. Can be used to build custom toolbar.
+- <sup style="color: red">NEW</sup> viewer-prepend: slot before `viewerContainer` div. Can be used to build custom toolbar.
+- <sup style="color: red">NEW</sup> viewer-append: slot after `viewerContainer` div. Can be used to build custom toolbar.
+- <sup style="color: red">NEW</sup> viewer-footer: slot after `viewer-append` slot. Can be used to build custom toolbar.
+
+### Slot props
+
+Each slot has props:
+
+1. toggleTheme
+
+   Type: (): void.
+
+   Description: toggle theme handler
+
+1. <sup style="color: red">NEW</sup> isSidebarHidden
+
+   Type: boolean
+
+   Description: state of a sidebar (visible or hidden). Can be used to manage visibility of custom Attachments, Outline and Thumbnail buttons
+
+1. <sup style="color: red">NEW</sup> isFindbarHidden
+
+   Type: boolean
+
+   Description: state of a findbar (visible or hidden). Can be used to manage visibility of custom findbar
 
 ```vue
 <vue-pdf-app>

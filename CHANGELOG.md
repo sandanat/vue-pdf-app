@@ -2,6 +2,7 @@
 
 ## Features
 
+1. Toolbar custom UI
 1. Added prop `fileName`
 
 # v2.0.0

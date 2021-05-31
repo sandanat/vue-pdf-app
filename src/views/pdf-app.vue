@@ -1,7 +1,6 @@
 <template>
   <pdf-viewer
     :pdf="pdf"
-    :config="config"
     @after-created="afterCreated"
     @open="open"
     @pages-rendered="pagesRendered"
@@ -26,12 +25,13 @@ export default {
   data() {
     return {
       config: {
-        toolbar: {
-          toolbarViewerLeft: {
-            pageNumber: false,
-          },
-        },
+        // toolbar: {
+        //   toolbarViewerLeft: {
+        //     pageNumber: false,
+        //   },
+        // },
       },
+      scale: "1",
       pdf: "/sample.pdf",
     };
   },

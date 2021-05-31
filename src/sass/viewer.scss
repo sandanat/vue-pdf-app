@@ -115,7 +115,6 @@
   width: var(--sidebar-width);
   visibility: hidden;
   z-index: 100;
-  border-top: 1px solid rgba(51, 51, 51, 1);
   transition-duration: $pdf-sidebar-transition-duration;
   transition-duration: var(--sidebar-transition-duration);
   transition-timing-function: $pdf-sidebar-transition-timing-function;
