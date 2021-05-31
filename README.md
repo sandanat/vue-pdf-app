@@ -290,6 +290,17 @@ zoomOut?: string; // &lt;button&gt; tag is recommended
 
 > ℹ️ Note that elements must be in HTML document by the time vue-pdf-app is mounting (use `v-show` instead of `v-if` directive if necessary). Otherwise an error occurs.
 
+## <sup style="color: red">new</sup> :fileName
+
+- Description: when pdf is passed like an array buffer default download file name is `document.pdf`. Set this prop to override it.
+- Type: string
+- Required: `false`
+- Usage:
+
+```vue
+<vue-pdf-app :pdf="ArrayBuffer" file-name="file name" />
+```
+
 ## @after-created(PDFViewerApplication)
 
 - Description: emitted only once when Pdfjs library is binded to vue component. Can be used to set Pdfjs config before pdf document opening.
