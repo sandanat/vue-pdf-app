@@ -3,7 +3,8 @@
 ## Features
 
 1. Toolbar custom UI
-1. Added prop `fileName`
+1. Introduced prop `fileName`
+1. Introduced prop `pageScale`
 
 # v2.0.0
 

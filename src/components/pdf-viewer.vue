@@ -1027,7 +1027,7 @@ import "@/pdfjs-dist/lib/web/genericcom";
 import "@/pdfjs-dist/lib/web/pdf_print_service";
 import "@/pdfjs-dist/build/pdf.worker.entry";
 import "@/sass/index.scss";
-import { ToolbarConfig, Theme, ToolbarIdConfig } from "@/types";
+import { ToolbarConfig, Theme, ToolbarIdConfig, PageScale } from "@/types";
 import getAppConfig from "@/utils/pdf-config";
 import { PDF_FILE_INPUT_ID } from "@/utils/constants";
 import locale from "@/utils/locale";
@@ -1048,7 +1048,7 @@ window.print = (window as any).__nativePrint__ || pdfPrint;
 
 @Component
 export default class PdfViewer extends Vue {
-  @Prop({ required: false, default: () => toolbarConfig })
+  @Prop({ required: false, default: () => toolbarConfig, type: Object })
   readonly config!: ToolbarConfig;
 
   @Prop({ required: false, type: Boolean, default: () => false })
@@ -1065,7 +1065,10 @@ export default class PdfViewer extends Vue {
   readonly fileName?: string;
 
   @Prop({ required: false, type: Object })
-  private idConfig?: ToolbarIdConfig;
+  readonly idConfig?: ToolbarIdConfig;
+
+  @Prop({ required: false, type: [Number, String] })
+  readonly pageScale?: PageScale;
 
   private defaultLocale = JSON.stringify(locale);
 
@@ -1132,6 +1135,7 @@ export default class PdfViewer extends Vue {
     if (pdfApp.PDFViewerApplication) {
       pdfApp.PDFViewerApplication.run(config);
       pdfApp.PDFViewerApplication.initializedPromise
+        .then(this.setDefaultPageScale.bind(this))
         .then(this.open.bind(this))
         .then(this.bindSidebarToggleEvents.bind(this))
         .then(this.bindFindbarToggleEvents.bind(this))
@@ -1159,28 +1163,6 @@ export default class PdfViewer extends Vue {
     this.$once("hook:beforeDestroy", () => {
       toggleButton?.removeEventListener("click", handler);
     });
-  }
-
-  private clearCacheTimeout() {
-    const cacheTimeoutId =
-      // @ts-ignore
-      pdfApp.PDFViewerApplication.pdfRenderingQueue?.idleTimeout;
-    clearTimeout(cacheTimeoutId);
-  }
-
-  private getScale(value: number): string {
-    return `{ "scale": ${value} }`;
-  }
-
-  private showElem(
-    defaultToolbarPath: string,
-    customToolbarElem?: keyof ToolbarIdConfig
-  ): boolean {
-    if (customToolbarElem && this.idConfig) {
-      return !this.idConfig[customToolbarElem];
-    }
-
-    return !(getToolbarConfigValue(this.config, defaultToolbarPath) === false);
   }
 
   private bindOpenHandler() {
@@ -1213,6 +1195,7 @@ export default class PdfViewer extends Vue {
           return pdfApp.PDFViewerApplication.pdfDocument?.getMetadata();
         })
         .then((fileMetadata: { contentDispositionFilename: null | string }) => {
+          // @ts-ignore
           pdfApp.PDFViewerApplication.contentDispositionFilename =
             this.fileName || fileMetadata.contentDispositionFilename;
         })
@@ -1239,12 +1222,12 @@ export default class PdfViewer extends Vue {
 
   private checkSidebarVisibility() {
     const sidebar = pdfApp.PDFViewerApplication?.pdfSidebar;
-      // @ts-ignore
+    // @ts-ignore
     this.isSidebarHidden = !(sidebar && sidebar.isOpen);
   }
 
   private checkFindbarVisibility() {
-      // @ts-ignore
+    // @ts-ignore
     const findbar = pdfApp.PDFViewerApplication?.findBar;
     this.isFindbarHidden = !(findbar && findbar.opened);
   }
@@ -1293,8 +1276,34 @@ export default class PdfViewer extends Vue {
     window.localStorage.setItem(themeCacheKey, newTheme);
   }
 
+  private clearCacheTimeout() {
+    const cacheTimeoutId =
+      // @ts-ignore
+      pdfApp.PDFViewerApplication.pdfRenderingQueue?.idleTimeout;
+    clearTimeout(cacheTimeoutId);
+  }
+
+  private getScale(value: number): string {
+    return `{ "scale": ${value} }`;
+  }
+
+  private showElem(
+    defaultToolbarPath: string,
+    customToolbarElem?: keyof ToolbarIdConfig
+  ): boolean {
+    if (customToolbarElem && this.idConfig) {
+      return !this.idConfig[customToolbarElem];
+    }
+
+    return !(getToolbarConfigValue(this.config, defaultToolbarPath) === false);
+  }
+
+  private setDefaultPageScale() {
+    this.pageScale && AppOptions.set("defaultZoomValue", this.pageScale);
+  }
+
   @Watch("pdf")
-  handler() {
+  private pdfChangeHandler() {
     this.open();
   }
 }
