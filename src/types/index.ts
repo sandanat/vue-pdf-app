@@ -6,6 +6,14 @@ export interface ToolbarConfig {
 
 export type Theme = "dark" | "light";
 
+export type PageScale =
+  | number
+  | "page-actual"
+  | "page-width"
+  | "page-height"
+  | "page-fit"
+  | "auto";
+
 export interface ToolbarIdConfig {
   cursorHandTool?: string;
   cursorSelectTool?: string;

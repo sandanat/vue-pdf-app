@@ -84,10 +84,10 @@ export default {
 
 ## :title
 
-- Description: `true` renames document title to pdf file name
-- Type: boolean
-- Required: false
-- Default: false
+- Description: `true` renames document title to pdf file name.
+- Type: `boolean`
+- Required: `false`
+- Default: `false`
 - Usage:
 
 ```vue
@@ -106,12 +106,37 @@ export default {
 <vue-pdf-app :theme.sync="theme" />
 ```
 
+## <sup style="color: red">new</sup> :fileName
+
+- Description: when pdf is passed like an array buffer default download file name is `document.pdf`. Set this prop to override it.
+- Type: `string`
+- Required: `false`
+- Usage:
+
+```vue
+<vue-pdf-app :pdf="ArrayBuffer" file-name="file name" />
+```
+
+## <sup style="color: red">new</sup> :pageScale
+
+- Description: default page scale.
+- Type: `number | "page-actual"| "page-width"| "page-height"| "page-fit"| "auto"`
+- Required: `false`
+- Usage:
+
+```vue
+// 20%
+<vue-pdf-app page-scale="20" />
+<vue-pdf-app :page-scale="20" />
+<vue-pdf-app :page-scale="page-actual" />
+```
+
 ## :config
 
 - Description: toolbar configuration. Toolbar is available by default. Specify `false` for buttons or whole group of buttons to disable them.
-- Type: toolbar config (see below)
+- Type: `toolbar config (see below)`
 - Required: `false`
-- Default: toolbar config
+- Default: `toolbar config`
 - Usage:
 
 ```vue
@@ -209,7 +234,7 @@ export default {
 ## <sup style="color: red">new</sup> :id-config
 
 - Description: If default toolbar UI doesn't suite you it is possible to build custom toolbar. The prop contains elements ID to which to bind functionality. If element ID is specified in this prop appropriate button will be hidden in a default toolbar. May not work with UI framework components. That is because pdfjs internally manages attributes specific to a certain HTML element (for instance pdfjs toggles `disabled` attribute of a button but it won't if a div is used instead of a button). So it is better to use native HTML element specified as recommended in ID config specification below. Four slots are specially designed to build custom toolbar (are situated near a pdf page): `viewer-header, viewer-prepend, viewer-append, viewer-footer` (refer slots API). It is also possible to use other slots or elements outside vue-pdf-app.
-- Type: ID config (see below)
+- Type: `ID config (see below)`
 - Required: `false`
 - Usage:
 
@@ -289,17 +314,6 @@ zoomOut?: string; // &lt;button&gt; tag is recommended
 </details>
 
 > ℹ️ Note that elements must be in HTML document by the time vue-pdf-app is mounting (use `v-show` instead of `v-if` directive if necessary). Otherwise an error occurs.
-
-## <sup style="color: red">new</sup> :fileName
-
-- Description: when pdf is passed like an array buffer default download file name is `document.pdf`. Set this prop to override it.
-- Type: string
-- Required: `false`
-- Usage:
-
-```vue
-<vue-pdf-app :pdf="ArrayBuffer" file-name="file name" />
-```
 
 ## @after-created(PDFViewerApplication)
 
