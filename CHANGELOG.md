@@ -7,6 +7,10 @@
 1. Introduced prop `pageScale`
 1. Introduced prop `pageNumber`
 
+## Bugs
+
+1. The loading bar (progress bar) is displayed only for the first time - [b87b092](https://github.com/sandanat/vue-pdf-app/commit/b87b092676fa644305266fc5d91d6ef7d8e7b6c1), closes [#48](https://github.com/sandanat/vue-pdf-app/issues/48)
+
 # v2.0.0
 
 ## Features
