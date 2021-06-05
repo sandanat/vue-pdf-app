@@ -1217,7 +1217,10 @@ export default class PdfViewer extends Vue {
       await pdfApp.PDFViewerApplication.pdfViewer.pagesPromise.catch(
         errorHandler
       );
-      setTimeout(() => (pdfApp.PDFViewerApplication.page = 1));
+      
+      if (this.pageNumber) {
+        setTimeout(() => (pdfApp.PDFViewerApplication.page = this.pageNumber));
+      }
 
       this.checkSidebarVisibility();
       this.checkFindbarVisibility();
