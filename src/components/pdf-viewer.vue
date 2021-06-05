@@ -807,14 +807,13 @@
                 <slot v-bind="slotProps" name="toolbar-middle-append"></slot>
               </div>
             </div>
-            <div id="loadingBar">
-              <div class="progress">
-                <div class="glimmer"></div>
-              </div>
-            </div>
           </div>
         </div>
-
+        <div id="loadingBar">
+          <div class="progress">
+            <div class="glimmer"></div>
+          </div>
+        </div>
         <menu v-show="false" type="context" id="viewerContextMenu">
           <menuitem
             id="contextFirstPage"
@@ -1209,6 +1208,7 @@ export default class PdfViewer extends Vue {
   }
 
   private async openDocument() {
+    this.resetLoadingBar();
     this.$emit("open", pdfApp.PDFViewerApplication);
 
     // @ts-ignore
@@ -1217,7 +1217,7 @@ export default class PdfViewer extends Vue {
       await pdfApp.PDFViewerApplication.pdfViewer.pagesPromise.catch(
         errorHandler
       );
-      
+
       if (this.pageNumber) {
         setTimeout(() => (pdfApp.PDFViewerApplication.page = this.pageNumber));
       }
@@ -1308,6 +1308,11 @@ export default class PdfViewer extends Vue {
 
   private setDefaultPageScale() {
     this.pageScale && AppOptions.set("defaultZoomValue", this.pageScale);
+  }
+
+  private resetLoadingBar() {
+    pdfApp.PDFViewerApplication.loadingBar.show();
+    pdfApp.PDFViewerApplication.loadingBar.percent = 0;
   }
 
   @Watch("pdf")
