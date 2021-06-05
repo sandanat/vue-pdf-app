@@ -1,10 +1,11 @@
 <template>
   <pdf-viewer
     :pdf="pdf"
-    :config="config"
+    :page-number="2"
     @after-created="afterCreated"
     @open="open"
     @pages-rendered="pagesRendered"
+    file-name="Custom fileName"
     style="position: relative"
   >
     <template #footer>
@@ -25,12 +26,13 @@ export default {
   data() {
     return {
       config: {
-        toolbar: {
-          toolbarViewerLeft: {
-            pageNumber: false,
-          },
-        },
+        // toolbar: {
+        //   toolbarViewerLeft: {
+        //     pageNumber: false,
+        //   },
+        // },
       },
+      scale: "1",
       pdf: "/sample.pdf",
     };
   },

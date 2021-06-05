@@ -40,13 +40,10 @@
       <span :id="idConfig.numPages"></span>
       <span> pages</span>
     </div>
-    <pdf-viewer
+    <vue-pdf-app
       :pdf="pdf"
       :config="{ toolbar: false }"
       :id-config="idConfig"
-      @after-created="afterCreated"
-      @open="open"
-      @pages-rendered="pagesRendered"
       style="position: relative"
     >
       <template #viewer-header>
@@ -308,18 +305,15 @@
           </div>
         </div>
       </template>
-    </pdf-viewer>
+    </vue-pdf-app>
   </div>
 </template>
 
 <script>
+// VuePdfApp component is registered in src/main.js
 import "@mdi/font/css/materialdesignicons.css";
-import PdfViewer from "@/components/pdf-viewer.vue";
 
 export default {
-  components: {
-    PdfViewer,
-  },
   data() {
     return {
       idConfig: {
@@ -364,21 +358,6 @@ export default {
       },
       pdf: "sample.pdf",
     };
-  },
-  methods: {
-    afterCreated(pdfApp) {
-      window._pdfApp = pdfApp;
-      console.log("===***=== After created");
-    },
-    open() {
-      console.log("===***=== Opened");
-    },
-    pagesRendered() {
-      console.log("===***=== Pages rendered");
-    },
-    togglePdf() {
-      this.pdf = !this.pdf ? "sample.pdf" : null;
-    },
   },
 };
 </script>
