@@ -3,6 +3,7 @@
     <button @click="toggleDirection" type="button">
       Toggle web-page direction
     </button>
+    <button @click="clearCache">clear cache</button>
     <div id="nav">
       <router-link to="/">Home</router-link>|
       <router-link to="/theme-toggling">Theme toggling</router-link>|
@@ -22,6 +23,9 @@ export default {
       const newDir = dir === "rtl" ? "ltr" : "rtl";
       document.documentElement.setAttribute("dir", newDir);
     },
+    clearCache() {
+      window.localStorage.clear()
+    }
   },
 };
 </script>

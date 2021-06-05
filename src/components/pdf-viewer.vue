@@ -1070,6 +1070,9 @@ export default class PdfViewer extends Vue {
   @Prop({ required: false, type: [Number, String] })
   readonly pageScale?: PageScale;
 
+  @Prop({ required: false, type: Number })
+  readonly pageNumber?: number;
+
   private defaultLocale = JSON.stringify(locale);
 
   private isOpenHandlerBinded = false;
@@ -1192,6 +1195,7 @@ export default class PdfViewer extends Vue {
     } else {
       pdfApp.PDFViewerApplication.open(this.pdf)
         .then(() => {
+          // @ts-ignore
           return pdfApp.PDFViewerApplication.pdfDocument?.getMetadata();
         })
         .then((fileMetadata: { contentDispositionFilename: null | string }) => {
@@ -1213,6 +1217,10 @@ export default class PdfViewer extends Vue {
       await pdfApp.PDFViewerApplication.pdfViewer.pagesPromise.catch(
         errorHandler
       );
+      
+      if (this.pageNumber) {
+        setTimeout(() => (pdfApp.PDFViewerApplication.page = this.pageNumber));
+      }
 
       this.checkSidebarVisibility();
       this.checkFindbarVisibility();

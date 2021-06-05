@@ -131,6 +131,17 @@ export default {
 <vue-pdf-app :page-scale="page-actual" />
 ```
 
+## <sup style="color: red">new</sup> :pageNumber
+
+- Description: pdfjs stores last viewed page of a file in `window.localStorage.getItem("pdfjs.history")`. Specify the prop to override it.
+- Type: `number`
+- Required: `false`
+- Usage:
+
+```vue
+<vue-pdf-app :page-number="1" />
+```
+
 ## :config
 
 - Description: toolbar configuration. Toolbar is available by default. Specify `false` for buttons or whole group of buttons to disable them.

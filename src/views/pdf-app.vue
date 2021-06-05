@@ -1,6 +1,7 @@
 <template>
   <pdf-viewer
     :pdf="pdf"
+    :page-number="2"
     @after-created="afterCreated"
     @open="open"
     @pages-rendered="pagesRendered"
