@@ -5,6 +5,7 @@
 1. Toolbar custom UI
 1. Introduced prop `fileName`
 1. Introduced prop `pageScale`
+1. Introduced prop `pageNumber`
 
 # v2.0.0
 
