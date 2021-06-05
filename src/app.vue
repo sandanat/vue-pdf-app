@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <button @click="toggleDirection" type="button">
-      Toggle web-page direction
+      Toggle web--page direction
     </button>
     <button @click="clearCache">clear cache</button>
     <div id="nav">
@@ -24,8 +24,8 @@ export default {
       document.documentElement.setAttribute("dir", newDir);
     },
     clearCache() {
-      window.localStorage.clear()
-    }
+      window.localStorage.clear();
+    },
   },
 };
 </script>
