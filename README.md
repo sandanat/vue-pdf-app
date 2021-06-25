@@ -44,7 +44,7 @@ UMD/Unpkg support:
 ```vue
 <template>
   <!-- used `style="height: 100vh;"` because without it in the Firefox 89 and Chrome 91 (June 2021) the `vue-pdf-app` is not rendering on the page, just empty space without any errors-->
-  <vue-pdf-app style="height: 100vh;" pdf="http://example.com/sample.pdf"></vue-pdf-app>
+  <vue-pdf-app style="height: 100vh;" pdf="https://file-examples-com.github.io/uploads/2017/10/file-example_PDF_1MB.pdf"></vue-pdf-app>
 </template>
 
 <script>
