@@ -43,7 +43,9 @@ UMD/Unpkg support:
 
 ```vue
 <template>
-  <vue-pdf-app pdf="http://example.com/sample.pdf"></vue-pdf-app>
+  <!-- used `style="height: 100vh;"` because without it in the Firefox 89 and Chrome 91 (June 2021) the `vue-pdf-app` is not rendering on the page, just empty space without any errors (since `vue-pdf-app` does not have height and it is the top tag in the generated markup ) -->
+  <!-- or you can just wrap `vue-pdf-app` in <div> tag and set height for it via CSS (like in `Script tag (unpkg)` example below) -->
+  <vue-pdf-app style="height: 100vh;" pdf="https://file-examples-com.github.io/uploads/2017/10/file-example_PDF_1MB.pdf"></vue-pdf-app>
 </template>
 
 <script>
@@ -510,91 +512,91 @@ Colors of the pdf viewer are customized via custom css properties:
       <td>--pdf-error-more-info-color</td>
       <td>.pdf-app #errorMoreInfo</td>
       <td>
-        <img src="./readme/error-more-info.jpg" alt="error more info">      
+        <img src="./readme/error-more-info.jpg" alt="error more info">
       </td>
     </tr>
     <tr>
       <td>--pdf-error-more-info-font-color</td>
       <td>.pdf-app #errorMoreInfo</td>
       <td>
-        <img src="./readme/error-more-info.jpg" alt="error more info">      
+        <img src="./readme/error-more-info.jpg" alt="error more info">
       </td>
     </tr>
     <tr>
       <td>--pdf-error-wrapper-color</td>
       <td>.pdf-app #errorWrapper</td>
       <td>
-        <img src="./readme/error-wrapper.jpg" alt="error wrapper">      
+        <img src="./readme/error-wrapper.jpg" alt="error wrapper">
       </td>
     </tr>
     <tr>
       <td>--pdf-find-input-placeholder-font-color</td>
       <td>.pdf-app #findInput::placeholder</td>
       <td>
-        <img src="./readme/find-input-placeholder.jpg" alt="find input placeholder">      
+        <img src="./readme/find-input-placeholder.jpg" alt="find input placeholder">
       </td>
     </tr>
     <tr>
       <td>--pdf-find-message-font-color</td>
       <td>.pdf-app #findMsg</td>
       <td>
-        <img src="./readme/find-message.jpg" alt="find message">      
+        <img src="./readme/find-message.jpg" alt="find message">
       </td>
     </tr>
     <tr>
       <td>--pdf-find-results-count-color</td>
       <td>.pdf-app #findResultsCount</td>
       <td>
-        <img src="./readme/find-results-count.jpg" alt="find results count">      
+        <img src="./readme/find-results-count.jpg" alt="find results count">
       </td>
     </tr>
     <tr>
       <td>--pdf-find-results-count-font-color</td>
       <td>.pdf-app #findResultsCount</td>
       <td>
-        <img src="./readme/find-results-count.jpg" alt="find results count">      
+        <img src="./readme/find-results-count.jpg" alt="find results count">
       </td>
     </tr>
     <tr>
       <td>--pdf-horizontal-toolbar-separator-color</td>
       <td>.pdf-app .horizontalToolbarSeparator</td>
       <td>
-        <img src="./readme/horizontal-separator.jpg" alt="horizontal separator">      
+        <img src="./readme/horizontal-separator.jpg" alt="horizontal separator">
       </td>
     </tr>
     <tr>
       <td>--pdf-input-color</td>
       <td>.pdf-app .toolbarField</td>
       <td>
-        <img src="./readme/toolbar-field.jpg" alt="toolbar field">      
+        <img src="./readme/toolbar-field.jpg" alt="toolbar field">
       </td>
     </tr>
     <tr>
       <td>--pdf-input-font-color</td>
       <td>.pdf-app .toolbarField</td>
       <td>
-        <img src="./readme/toolbar-field.jpg" alt="toolbar field">      
+        <img src="./readme/toolbar-field.jpg" alt="toolbar field">
       </td>
     </tr>
     <tr>
       <td>--pdf-loading-bar-color</td>
       <td>.pdf-app #loadingBar .progress</td>
       <td>
-        <img src="./readme/loading-bar-color.jpg" alt="loading bar color">      
+        <img src="./readme/loading-bar-color.jpg" alt="loading bar color">
       </td>
     </tr>
     <tr>
       <td>--pdf-loading-bar-secondary-color</td>
       <td>.pdf-app #loadingBar .progress.indeterminate .glimmer</td>
       <td>
-        <img src="./readme/loading-bar-secondary-color.jpg" alt="loading bar secondary color">      
+        <img src="./readme/loading-bar-secondary-color.jpg" alt="loading bar secondary color">
       </td>
     </tr>
     <tr>
       <td>--pdf-not-found-color</td>
       <td>.pdf-app #findInput.notFound</td>
       <td>
-        <img src="./readme/not-found.jpg" alt="not found">      
+        <img src="./readme/not-found.jpg" alt="not found">
       </td>
     </tr>
     <tr>
@@ -620,7 +622,7 @@ Colors of the pdf viewer are customized via custom css properties:
       <td>--pdf-overlay-container-dialog-separator-color</td>
       <td>.pdf-app .dialog .separator</td>
       <td>
-        <img src="./readme/dialog-separator.jpg" alt="dialog separator">      
+        <img src="./readme/dialog-separator.jpg" alt="dialog separator">
       </td>
     </tr>
     <tr>
@@ -638,7 +640,7 @@ Colors of the pdf viewer are customized via custom css properties:
         .pdf-app .verticalToolbarSeparator
       </td>
       <td>
-        <img src="./readme/vertical-separator.jpg" alt="vertical separator">      
+        <img src="./readme/vertical-separator.jpg" alt="vertical separator">
       </td>
     </tr>
     <tr>
