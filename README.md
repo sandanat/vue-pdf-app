@@ -30,14 +30,16 @@ Light/dark themes
 
 Built-in typescript support
 
+Nuxtjs support
+
 UMD/Unpkg support:
 
-| File                   | Size                               | Gzipped    |
-| ---------------------- | ---------------------------------- | ---------- |
-| vue-pdf-app.umd.min.js | 1742.89 KiB                        | 478.86 KiB |
-| vue-pdf-app.umd.js     | 3115.59 KiB                        | 677.87 KiB |
-| vue-pdf-app.common.js  | 3115.12 KiB                        | 677.71 KiB |
-| icons/main.css         | 15 - 40 KiB (depends from browser) |            |
+| File                   | Size                               | Gzipped |
+| ---------------------- | ---------------------------------- | ------- |
+| vue-pdf-app.umd.min.js | 1746 KiB                           | 479 KiB |
+| vue-pdf-app.umd.js     | 3123 KiB                           | 679 KiB |
+| vue-pdf-app.common.js  | 3123 KiB                           | 679 KiB |
+| icons/main.css         | 15 - 40 KiB (depends from browser) |         |
 
 # Example
 
@@ -60,6 +62,8 @@ export default {
 ```
 
 ![pdf sample](./readme/sample.png "Pdf expample")
+
+![pdf sample 2](./readme/sample-2.jpg "Pdf expample")
 
 [Live demo](https://codesandbox.io/s/vue-2-vue-pdf-app-wz5kv)
 
@@ -904,5 +908,33 @@ export default {
     }
   }
 };
+</script>
+```
+
+## Nuxtjs
+
+```javascript
+// plugins/vuePdfApp.js
+
+import Vue from "vue";
+import VuePdfApp from "vue-pdf-app";
+import "vue-pdf-app/dist/icons/main.css";
+
+Vue.component("VuePdfApp", VuePdfApp);
+```
+
+```javascript
+// nuxt.config.js
+
+plugins: ["~/plugins/vuePdfApp.js"];
+```
+
+```vue
+<template>
+  <VuePdfApp style="height: 100vh" pdf="/sample.pdf"></VuePdfApp>
+</template>
+
+<script>
+export default {};
 </script>
 ```
