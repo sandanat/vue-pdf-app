@@ -1057,6 +1057,18 @@ export default class PdfViewer extends Vue {
   @Prop({ required: false, type: [String, ArrayBuffer] })
   readonly pdf?: string | ArrayBuffer;
 
+  /**
+   * Use to set the options passed to the `open` function on PDFViewerApplication,
+   * e.g. to add headers, etc to the request:
+   * 
+   *     <vue-pdf-app
+   *        :url="pathToPdf"
+   *        :loadOptions="{httpHeaders: {Authorization: `Bearer ${authToken}`}}"
+   *     />
+   */
+  @Prop({ required: false, type: Object })
+  readonly loadOptions?: any;
+
   @Prop({ required: false, type: String })
   readonly theme?: Theme;
 
@@ -1192,7 +1204,7 @@ export default class PdfViewer extends Vue {
     if (!this.pdf) {
       pdfApp.PDFViewerApplication.close();
     } else {
-      pdfApp.PDFViewerApplication.open(this.pdf)
+      pdfApp.PDFViewerApplication.open(this.pdf, this.loadOptions)
         .then(() => {
           // @ts-ignore
           return pdfApp.PDFViewerApplication.pdfDocument?.getMetadata();
