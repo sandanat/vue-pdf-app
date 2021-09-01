@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,9 @@ exports.DownloadManager = void 0;
 
 var _pdf = require("../pdf");
 
+var _viewer_compatibility = require("./viewer_compatibility.js");
+
 ;
-const DISABLE_CREATE_OBJECT_URL = _pdf.apiCompatibilityParams.disableCreateObjectURL || false;
 
 function download(blobUrl, filename) {
   const a = document.createElement("a");
@@ -51,10 +52,8 @@ function download(blobUrl, filename) {
 }
 
 class DownloadManager {
-  constructor({
-    disableCreateObjectURL = DISABLE_CREATE_OBJECT_URL
-  }) {
-    this.disableCreateObjectURL = disableCreateObjectURL;
+  constructor() {
+    this._openBlobUrls = new WeakMap();
   }
 
   downloadUrl(url, filename) {
@@ -66,27 +65,45 @@ class DownloadManager {
   }
 
   downloadData(data, filename, contentType) {
-    if (navigator.msSaveBlob) {
-      navigator.msSaveBlob(new Blob([data], {
-        type: contentType
-      }), filename);
-      return;
-    }
-
-    const blobUrl = (0, _pdf.createObjectURL)(data, contentType, this.disableCreateObjectURL);
+    const blobUrl = (0, _pdf.createObjectURL)(data, contentType, _viewer_compatibility.viewerCompatibilityParams.disableCreateObjectURL);
     download(blobUrl, filename);
   }
 
-  download(blob, url, filename) {
-    if (navigator.msSaveBlob) {
-      if (!navigator.msSaveBlob(blob, filename)) {
-        this.downloadUrl(url, filename);
+  openOrDownloadData(element, data, filename) {
+    const isPdfData = (0, _pdf.isPdfFile)(filename);
+    const contentType = isPdfData ? "application/pdf" : "";
+
+    if (isPdfData && !_viewer_compatibility.viewerCompatibilityParams.disableCreateObjectURL) {
+      let blobUrl = this._openBlobUrls.get(element);
+
+      if (!blobUrl) {
+        blobUrl = URL.createObjectURL(new Blob([data], {
+          type: contentType
+        }));
+
+        this._openBlobUrls.set(element, blobUrl);
       }
 
-      return;
+      let viewerUrl;
+      viewerUrl = "?file=" + encodeURIComponent(blobUrl + "#" + filename);
+
+      try {
+        window.open(viewerUrl);
+        return true;
+      } catch (ex) {
+        console.error(`openOrDownloadData: ${ex}`);
+        URL.revokeObjectURL(blobUrl);
+
+        this._openBlobUrls.delete(element);
+      }
     }
 
-    if (this.disableCreateObjectURL) {
+    this.downloadData(data, filename, contentType);
+    return false;
+  }
+
+  download(blob, url, filename, sourceEventType = "download") {
+    if (_viewer_compatibility.viewerCompatibilityParams.disableCreateObjectURL) {
       this.downloadUrl(url, filename);
       return;
     }

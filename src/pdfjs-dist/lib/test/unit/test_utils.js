@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,15 +26,26 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.buildGetDocumentParams = buildGetDocumentParams;
 exports.createIdFactory = createIdFactory;
-exports.TEST_PDFS_PATH = exports.XRefMock = exports.NodeCMapReaderFactory = exports.NodeCanvasFactory = exports.NodeFileReaderFactory = exports.DOMFileReaderFactory = void 0;
+exports.isEmptyObj = isEmptyObj;
+exports.XRefMock = exports.TEST_PDFS_PATH = exports.DefaultFileReaderFactory = exports.CMAP_PARAMS = void 0;
+
+var _primitives = require("../../core/primitives.js");
+
+var _document = require("../../core/document.js");
 
 var _util = require("../../shared/util.js");
 
 var _is_node = require("../../shared/is_node.js");
 
-var _primitives = require("../../core/primitives.js");
+var _stream = require("../../core/stream.js");
 
-var _document = require("../../core/document.js");
+const TEST_PDFS_PATH = _is_node.isNodeJS ? "./test/pdfs/" : "../pdfs/";
+exports.TEST_PDFS_PATH = TEST_PDFS_PATH;
+const CMAP_PARAMS = {
+  cMapUrl: _is_node.isNodeJS ? "./external/bcmaps/" : "../../external/bcmaps/",
+  cMapPacked: true
+};
+exports.CMAP_PARAMS = CMAP_PARAMS;
 
 class DOMFileReaderFactory {
   static async fetch(params) {
@@ -44,12 +55,10 @@ class DOMFileReaderFactory {
       throw new Error(response.statusText);
     }
 
-    return new Uint8Array((await response.arrayBuffer()));
+    return new Uint8Array(await response.arrayBuffer());
   }
 
 }
-
-exports.DOMFileReaderFactory = DOMFileReaderFactory;
 
 class NodeFileReaderFactory {
   static async fetch(params) {
@@ -69,21 +78,12 @@ class NodeFileReaderFactory {
 
 }
 
-exports.NodeFileReaderFactory = NodeFileReaderFactory;
-const TEST_PDFS_PATH = {
-  dom: "../pdfs/",
-  node: "./test/pdfs/"
-};
-exports.TEST_PDFS_PATH = TEST_PDFS_PATH;
+const DefaultFileReaderFactory = _is_node.isNodeJS ? NodeFileReaderFactory : DOMFileReaderFactory;
+exports.DefaultFileReaderFactory = DefaultFileReaderFactory;
 
 function buildGetDocumentParams(filename, options) {
   const params = Object.create(null);
-
-  if (_is_node.isNodeJS) {
-    params.url = TEST_PDFS_PATH.node + filename;
-  } else {
-    params.url = new URL(TEST_PDFS_PATH.dom + filename, window.location).href;
-  }
+  params.url = _is_node.isNodeJS ? TEST_PDFS_PATH + filename : new URL(TEST_PDFS_PATH + filename, window.location).href;
 
   for (const option in options) {
     params[option] = options[option];
@@ -92,86 +92,14 @@ function buildGetDocumentParams(filename, options) {
   return params;
 }
 
-class NodeCanvasFactory {
-  create(width, height) {
-    (0, _util.assert)(width > 0 && height > 0, "Invalid canvas size");
-
-    const Canvas = require("canvas");
-
-    const canvas = Canvas.createCanvas(width, height);
-    return {
-      canvas,
-      context: canvas.getContext("2d")
-    };
-  }
-
-  reset(canvasAndContext, width, height) {
-    (0, _util.assert)(canvasAndContext.canvas, "Canvas is not specified");
-    (0, _util.assert)(width > 0 && height > 0, "Invalid canvas size");
-    canvasAndContext.canvas.width = width;
-    canvasAndContext.canvas.height = height;
-  }
-
-  destroy(canvasAndContext) {
-    (0, _util.assert)(canvasAndContext.canvas, "Canvas is not specified");
-    canvasAndContext.canvas.width = 0;
-    canvasAndContext.canvas.height = 0;
-    canvasAndContext.canvas = null;
-    canvasAndContext.context = null;
-  }
-
-}
-
-exports.NodeCanvasFactory = NodeCanvasFactory;
-
-class NodeCMapReaderFactory {
-  constructor({
-    baseUrl = null,
-    isCompressed = false
-  }) {
-    this.baseUrl = baseUrl;
-    this.isCompressed = isCompressed;
-  }
-
-  async fetch({
-    name
-  }) {
-    if (!this.baseUrl) {
-      throw new Error('The CMap "baseUrl" parameter must be specified, ensure that ' + 'the "cMapUrl" and "cMapPacked" API parameters are provided.');
-    }
-
-    if (!name) {
-      throw new Error("CMap name must be specified.");
-    }
-
-    const url = this.baseUrl + name + (this.isCompressed ? ".bcmap" : "");
-    const compressionType = this.isCompressed ? _util.CMapCompressionType.BINARY : _util.CMapCompressionType.NONE;
-    return new Promise((resolve, reject) => {
-      const fs = require("fs");
-
-      fs.readFile(url, (error, data) => {
-        if (error || !data) {
-          reject(new Error(error));
-          return;
-        }
-
-        resolve({
-          cMapData: new Uint8Array(data),
-          compressionType
-        });
-      });
-    }).catch(reason => {
-      throw new Error(`Unable to load ${this.isCompressed ? "binary " : ""}` + `CMap at: ${url}`);
-    });
-  }
-
-}
-
-exports.NodeCMapReaderFactory = NodeCMapReaderFactory;
-
 class XRefMock {
   constructor(array) {
     this._map = Object.create(null);
+    this.stats = {
+      streamTypes: Object.create(null),
+      fontTypes: Object.create(null)
+    };
+    this._newRefNum = null;
 
     for (const key in array) {
       const obj = array[key];
@@ -179,12 +107,24 @@ class XRefMock {
     }
   }
 
+  getNewRef() {
+    if (this._newRefNum === null) {
+      this._newRefNum = Object.keys(this._map).length;
+    }
+
+    return _primitives.Ref.get(this._newRefNum++, 0);
+  }
+
+  resetNewRef() {
+    this.newRef = null;
+  }
+
   fetch(ref) {
     return this._map[ref.toString()];
   }
 
-  fetchAsync(ref) {
-    return Promise.resolve(this.fetch(ref));
+  async fetchAsync(ref) {
+    return this.fetch(ref);
   }
 
   fetchIfRef(obj) {
@@ -195,8 +135,8 @@ class XRefMock {
     return this.fetch(obj);
   }
 
-  fetchIfRefAsync(obj) {
-    return Promise.resolve(this.fetchIfRef(obj));
+  async fetchIfRefAsync(obj) {
+    return this.fetchIfRef(obj);
   }
 
 }
@@ -204,14 +144,24 @@ class XRefMock {
 exports.XRefMock = XRefMock;
 
 function createIdFactory(pageIndex) {
-  const page = new _document.Page({
-    pdfManager: {
-      get docId() {
-        return "d0";
-      }
+  const pdfManager = {
+    get docId() {
+      return "d0";
+    }
 
-    },
-    pageIndex
+  };
+  const stream = new _stream.StringStream("Dummy_PDF_data");
+  const pdfDocument = new _document.PDFDocument(pdfManager, stream);
+  const page = new _document.Page({
+    pdfManager: pdfDocument.pdfManager,
+    xref: pdfDocument.xref,
+    pageIndex,
+    globalIdFactory: pdfDocument._globalIdFactory
   });
-  return page.idFactory;
+  return page._localIdFactory;
+}
+
+function isEmptyObj(obj) {
+  (0, _util.assert)(typeof obj === "object" && obj !== null, "isEmptyObj - invalid argument.");
+  return Object.keys(obj).length === 0;
 }

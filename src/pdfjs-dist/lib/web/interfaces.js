@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.IL10n = exports.IPDFAnnotationLayerFactory = exports.IPDFTextLayerFactory = exports.IRenderableView = exports.IPDFHistory = exports.IPDFLinkService = void 0;
+exports.IRenderableView = exports.IPDFXfaLayerFactory = exports.IPDFTextLayerFactory = exports.IPDFStructTreeLayerFactory = exports.IPDFLinkService = exports.IPDFHistory = exports.IPDFAnnotationLayerFactory = exports.IL10n = void 0;
 
 class IPDFLinkService {
   get pagesCount() {}
@@ -41,7 +41,9 @@ class IPDFLinkService {
 
   set externalLinkEnabled(value) {}
 
-  navigateTo(dest) {}
+  async goToDestination(dest) {}
+
+  goToPage(val) {}
 
   getDestinationHash(dest) {}
 
@@ -54,6 +56,8 @@ class IPDFLinkService {
   cachePageRef(pageNum, pageRef) {}
 
   isPageVisible(pageNumber) {}
+
+  isPageCached(pageNumber) {}
 
 }
 
@@ -73,6 +77,8 @@ class IPDFHistory {
     explicitDest,
     pageNumber
   }) {}
+
+  pushPage(pageNumber) {}
 
   pushCurrentPosition() {}
 
@@ -105,11 +111,25 @@ class IPDFTextLayerFactory {
 exports.IPDFTextLayerFactory = IPDFTextLayerFactory;
 
 class IPDFAnnotationLayerFactory {
-  createAnnotationLayerBuilder(pageDiv, pdfPage, imageResourcesPath = "", renderInteractiveForms = false, l10n = undefined) {}
+  createAnnotationLayerBuilder(pageDiv, pdfPage, annotationStorage = null, imageResourcesPath = "", renderInteractiveForms = true, l10n = undefined, enableScripting = false, hasJSActionsPromise = null, mouseState = null) {}
 
 }
 
 exports.IPDFAnnotationLayerFactory = IPDFAnnotationLayerFactory;
+
+class IPDFXfaLayerFactory {
+  createXfaLayerBuilder(pageDiv, pdfPage) {}
+
+}
+
+exports.IPDFXfaLayerFactory = IPDFXfaLayerFactory;
+
+class IPDFStructTreeLayerFactory {
+  createStructTreeLayerBuilder(pdfPage) {}
+
+}
+
+exports.IPDFStructTreeLayerFactory = IPDFStructTreeLayerFactory;
 
 class IL10n {
   async getLanguage() {}

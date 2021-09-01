@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ const SCALE_SELECT_CONTAINER_WIDTH = 140;
 const SCALE_SELECT_WIDTH = 162;
 
 class Toolbar {
-  constructor(options, eventBus, l10n = _ui_utils.NullL10n) {
+  constructor(options, eventBus, l10n) {
     this.toolbar = options.container;
     this.eventBus = eventBus;
     this.l10n = l10n;
@@ -155,6 +155,13 @@ class Toolbar {
         value: this.value
       });
     });
+    scaleSelect.addEventListener("click", function (evt) {
+      const target = evt.target;
+
+      if (this.value === self.pageScaleValue && target.tagName.toUpperCase() === "OPTION") {
+        this.blur();
+      }
+    });
     scaleSelect.oncontextmenu = _ui_utils.noContextMenuHandler;
 
     this.eventBus._on("localized", () => {
@@ -186,7 +193,7 @@ class Toolbar {
         items.pageNumber.type = "number";
         this.l10n.get("of_pages", {
           pagesCount
-        }, "of {{pagesCount}}").then(msg => {
+        }).then(msg => {
           items.numPages.textContent = msg;
         });
       }
@@ -199,7 +206,7 @@ class Toolbar {
       this.l10n.get("page_of_pages", {
         pageNumber,
         pagesCount
-      }, "({{pageNumber}} of {{pagesCount}})").then(msg => {
+      }).then(msg => {
         items.numPages.textContent = msg;
       });
     } else {
@@ -210,10 +217,9 @@ class Toolbar {
     items.next.disabled = pageNumber >= pagesCount;
     items.zoomOut.disabled = pageScale <= _ui_utils.MIN_SCALE;
     items.zoomIn.disabled = pageScale >= _ui_utils.MAX_SCALE;
-    const customScale = Math.round(pageScale * 10000) / 100;
     this.l10n.get("page_scale_percent", {
-      scale: customScale
-    }, "{{scale}}%").then(msg => {
+      scale: Math.round(pageScale * 10000) / 100
+    }).then(msg => {
       let predefinedValueFound = false;
 
       for (const option of items.scaleSelect.options) {
@@ -243,7 +249,7 @@ class Toolbar {
       items,
       l10n
     } = this;
-    const predefinedValuesPromise = Promise.all([l10n.get("page_scale_auto", null, "Automatic Zoom"), l10n.get("page_scale_actual", null, "Actual Size"), l10n.get("page_scale_fit", null, "Page Fit"), l10n.get("page_scale_width", null, "Page Width")]);
+    const predefinedValuesPromise = Promise.all([l10n.get("page_scale_auto"), l10n.get("page_scale_actual"), l10n.get("page_scale_fit"), l10n.get("page_scale_width")]);
     let canvas = document.createElement("canvas");
     canvas.mozOpaque = true;
     let ctx = canvas.getContext("2d", {
@@ -268,7 +274,7 @@ class Toolbar {
     }
 
     const overflow = SCALE_SELECT_WIDTH - SCALE_SELECT_CONTAINER_WIDTH;
-    maxWidth += 1.5 * overflow;
+    maxWidth += 2 * overflow;
 
     if (maxWidth > SCALE_SELECT_CONTAINER_WIDTH) {
       items.scaleSelect.style.width = `${maxWidth + overflow}px`;

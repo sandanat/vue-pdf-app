@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.getFilenameFromContentDispositionHeader = getFilenameFromContentDispositionHeader;
+
+var _util = require("../shared/util.js");
 
 function getFilenameFromContentDispositionHeader(contentDisposition) {
   let needsEncodingFixup = true;
@@ -69,10 +71,8 @@ function getFilenameFromContentDispositionHeader(contentDisposition) {
         const decoder = new TextDecoder(encoding, {
           fatal: true
         });
-        const bytes = Array.from(value, function (ch) {
-          return ch.charCodeAt(0) & 0xff;
-        });
-        value = decoder.decode(new Uint8Array(bytes));
+        const buffer = (0, _util.stringToBytes)(value);
+        value = decoder.decode(buffer);
         needsEncodingFixup = false;
       } catch (e) {
         if (/^utf-?8$/i.test(encoding)) {
@@ -99,12 +99,12 @@ function getFilenameFromContentDispositionHeader(contentDisposition) {
     return value;
   }
 
-  function rfc2231getparam(contentDisposition) {
+  function rfc2231getparam(contentDispositionStr) {
     const matches = [];
     let match;
     const iter = toParamRegExp("filename\\*((?!0\\d)\\d+)(\\*?)", "ig");
 
-    while ((match = iter.exec(contentDisposition)) !== null) {
+    while ((match = iter.exec(contentDispositionStr)) !== null) {
       let [, n, quot, part] = match;
       n = parseInt(n, 10);
 
@@ -182,10 +182,10 @@ function getFilenameFromContentDispositionHeader(contentDisposition) {
       return value;
     }
 
-    return value.replace(/=\?([\w-]*)\?([QqBb])\?((?:[^?]|\?(?!=))*)\?=/g, function (_, charset, encoding, text) {
+    return value.replace(/=\?([\w-]*)\?([QqBb])\?((?:[^?]|\?(?!=))*)\?=/g, function (matches, charset, encoding, text) {
       if (encoding === "q" || encoding === "Q") {
         text = text.replace(/_/g, " ");
-        text = text.replace(/=([0-9a-fA-F]{2})/g, function (_, hex) {
+        text = text.replace(/=([0-9a-fA-F]{2})/g, function (match, hex) {
           return String.fromCharCode(parseInt(hex, 16));
         });
         return textdecode(charset, text);

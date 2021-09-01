@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,21 +26,33 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Parser = exports.Linearization = exports.Lexer = void 0;
 
-var _stream = require("./stream.js");
-
 var _util = require("../shared/util.js");
 
 var _primitives = require("./primitives.js");
 
 var _core_utils = require("./core_utils.js");
 
+var _ascii_85_stream = require("./ascii_85_stream.js");
+
+var _ascii_hex_stream = require("./ascii_hex_stream.js");
+
 var _ccitt_stream = require("./ccitt_stream.js");
+
+var _flate_stream = require("./flate_stream.js");
 
 var _jbig2_stream = require("./jbig2_stream.js");
 
 var _jpeg_stream = require("./jpeg_stream.js");
 
 var _jpx_stream = require("./jpx_stream.js");
+
+var _lzw_stream = require("./lzw_stream.js");
+
+var _stream = require("./stream.js");
+
+var _predictor_stream = require("./predictor_stream.js");
+
+var _run_length_stream = require("./run_length_stream.js");
 
 const MAX_LENGTH_TO_CACHE = 1000;
 const MAX_ADLER32_LENGTH = 5552;
@@ -196,10 +208,11 @@ class Parser {
           I = 0x49,
           SPACE = 0x20,
           LF = 0xa,
-          CR = 0xd;
-    const n = 10,
+          CR = 0xd,
           NUL = 0x0;
-    const startPos = stream.pos;
+    const lexer = this.lexer,
+          startPos = stream.pos,
+          n = 10;
     let state = 0,
         ch,
         maybeEIPos;
@@ -210,7 +223,7 @@ class Parser {
       } else if (state === 1) {
         state = ch === I ? 2 : 0;
       } else {
-        (0, _util.assert)(state === 2);
+        (0, _util.assert)(state === 2, "findDefaultInlineStreamEnd - invalid state.");
 
         if (ch === SPACE || ch === LF || ch === CR) {
           maybeEIPos = stream.pos;
@@ -227,6 +240,20 @@ class Parser {
               state = 0;
               break;
             }
+          }
+
+          if (state !== 2) {
+            continue;
+          }
+
+          if (lexer.knownCommands) {
+            const nextObj = lexer.peekObj();
+
+            if (nextObj instanceof _primitives.Cmd && !lexer.knownCommands[nextObj.cmd]) {
+              state = 0;
+            }
+          } else {
+            (0, _util.warn)("findDefaultInlineStreamEnd - `lexer.knownCommands` is undefined.");
           }
 
           if (state === 2) {
@@ -577,7 +604,7 @@ class Parser {
     if (this.tryShift() && (0, _primitives.isCmd)(this.buf2, "endstream")) {
       this.shift();
     } else {
-      const ENDSTREAM_SIGNATURE = new Uint8Array([0x65, 0x6E, 0x64, 0x73, 0x74, 0x72, 0x65, 0x61, 0x6D]);
+      const ENDSTREAM_SIGNATURE = new Uint8Array([0x65, 0x6e, 0x64, 0x73, 0x74, 0x72, 0x65, 0x61, 0x6d]);
 
       let actualLength = this._findStreamLength(startPos, ENDSTREAM_SIGNATURE);
 
@@ -678,10 +705,10 @@ class Parser {
         xrefStreamStats[_util.StreamType.FLATE] = true;
 
         if (params) {
-          return new _stream.PredictorStream(new _stream.FlateStream(stream, maybeLength), maybeLength, params);
+          return new _predictor_stream.PredictorStream(new _flate_stream.FlateStream(stream, maybeLength), maybeLength, params);
         }
 
-        return new _stream.FlateStream(stream, maybeLength);
+        return new _flate_stream.FlateStream(stream, maybeLength);
       }
 
       if (name === "LZWDecode" || name === "LZW") {
@@ -693,30 +720,30 @@ class Parser {
             earlyChange = params.get("EarlyChange");
           }
 
-          return new _stream.PredictorStream(new _stream.LZWStream(stream, maybeLength, earlyChange), maybeLength, params);
+          return new _predictor_stream.PredictorStream(new _lzw_stream.LZWStream(stream, maybeLength, earlyChange), maybeLength, params);
         }
 
-        return new _stream.LZWStream(stream, maybeLength, earlyChange);
+        return new _lzw_stream.LZWStream(stream, maybeLength, earlyChange);
       }
 
       if (name === "DCTDecode" || name === "DCT") {
         xrefStreamStats[_util.StreamType.DCT] = true;
-        return new _jpeg_stream.JpegStream(stream, maybeLength, stream.dict, params);
+        return new _jpeg_stream.JpegStream(stream, maybeLength, params);
       }
 
       if (name === "JPXDecode" || name === "JPX") {
         xrefStreamStats[_util.StreamType.JPX] = true;
-        return new _jpx_stream.JpxStream(stream, maybeLength, stream.dict, params);
+        return new _jpx_stream.JpxStream(stream, maybeLength, params);
       }
 
       if (name === "ASCII85Decode" || name === "A85") {
         xrefStreamStats[_util.StreamType.A85] = true;
-        return new _stream.Ascii85Stream(stream, maybeLength);
+        return new _ascii_85_stream.Ascii85Stream(stream, maybeLength);
       }
 
       if (name === "ASCIIHexDecode" || name === "AHx") {
         xrefStreamStats[_util.StreamType.AHX] = true;
-        return new _stream.AsciiHexStream(stream, maybeLength);
+        return new _ascii_hex_stream.AsciiHexStream(stream, maybeLength);
       }
 
       if (name === "CCITTFaxDecode" || name === "CCF") {
@@ -726,12 +753,12 @@ class Parser {
 
       if (name === "RunLengthDecode" || name === "RL") {
         xrefStreamStats[_util.StreamType.RLX] = true;
-        return new _stream.RunLengthStream(stream, maybeLength);
+        return new _run_length_stream.RunLengthStream(stream, maybeLength);
       }
 
       if (name === "JBIG2Decode") {
         xrefStreamStats[_util.StreamType.JBIG] = true;
-        return new _jbig2_stream.Jbig2Stream(stream, maybeLength, stream.dict, params);
+        return new _jbig2_stream.Jbig2Stream(stream, maybeLength, params);
       }
 
       (0, _util.warn)(`Filter "${name}" is not supported.`);
@@ -1232,6 +1259,28 @@ class Lexer {
     }
 
     return _primitives.Cmd.get(str);
+  }
+
+  peekObj() {
+    const streamPos = this.stream.pos,
+          currentChar = this.currentChar,
+          beginInlineImagePos = this.beginInlineImagePos;
+    let nextObj;
+
+    try {
+      nextObj = this.getObj();
+    } catch (ex) {
+      if (ex instanceof _core_utils.MissingDataException) {
+        throw ex;
+      }
+
+      (0, _util.warn)(`peekObj: ${ex}`);
+    }
+
+    this.stream.pos = streamPos;
+    this.currentChar = currentChar;
+    this.beginInlineImagePos = beginInlineImagePos;
+    return nextObj;
   }
 
   skipToNextLine() {

@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
 "use strict";
 
 function xmlEncode(s) {
-  var i = 0,
+  let i = 0,
       ch;
   s = String(s);
 
@@ -34,7 +34,7 @@ function xmlEncode(s) {
     return s;
   }
 
-  var buf = s.substring(0, i);
+  let buf = s.substring(0, i);
 
   while (i < s.length) {
     ch = s[i++];
@@ -82,9 +82,11 @@ function DOMElement(name) {
   if (name === "style") {
     this.sheet = {
       cssRules: [],
-      insertRule: function (rule) {
+
+      insertRule(rule) {
         this.cssRules.push(rule);
       }
+
     };
   }
 }
@@ -103,9 +105,9 @@ DOMElement.prototype = {
     }
 
     if (NS) {
-      var suffix = ":" + name;
+      const suffix = ":" + name;
 
-      for (var fullName in this.attributes) {
+      for (const fullName in this.attributes) {
         if (fullName.slice(-suffix.length) === suffix) {
           return this.attributes[fullName];
         }
@@ -123,7 +125,7 @@ DOMElement.prototype = {
     this.setAttribute(name, value);
   },
   appendChild: function DOMElement_appendChild(element) {
-    var childNodes = this.childNodes;
+    const childNodes = this.childNodes;
 
     if (!childNodes.includes(element)) {
       childNodes.push(element);
@@ -133,16 +135,16 @@ DOMElement.prototype = {
     return this.childNodes.length !== 0;
   },
   cloneNode: function DOMElement_cloneNode() {
-    var newNode = new DOMElement(this.nodeName);
+    const newNode = new DOMElement(this.nodeName);
     newNode.childNodes = this.childNodes;
     newNode.attributes = this.attributes;
     newNode.textContent = this.textContent;
     return newNode;
   },
   toString: function DOMElement_toString() {
-    var buf = [];
-    var serializer = this.getSerializer();
-    var chunk;
+    const buf = [];
+    const serializer = this.getSerializer();
+    let chunk;
 
     while ((chunk = serializer.getNext()) !== null) {
       buf.push(chunk);
@@ -165,7 +167,7 @@ function DOMElementSerializer(node) {
 
 DOMElementSerializer.prototype = {
   getNext: function DOMElementSerializer_getNext() {
-    var node = this._node;
+    const node = this._node;
 
     switch (this._state) {
       case 0:
@@ -186,7 +188,7 @@ DOMElementSerializer.prototype = {
 
       case 3:
         if (this._loopIndex < this._attributeKeys.length) {
-          var name = this._attributeKeys[this._loopIndex++];
+          const name = this._attributeKeys[this._loopIndex++];
           return " " + name + '="' + xmlEncode(node.attributes[name]) + '"';
         }
 
@@ -203,16 +205,14 @@ DOMElementSerializer.prototype = {
         this._loopIndex = 0;
 
       case 5:
-        var value;
-
         while (true) {
-          value = this._childSerializer && this._childSerializer.getNext();
+          const value = this._childSerializer && this._childSerializer.getNext();
 
           if (value !== null) {
             return value;
           }
 
-          var nextChild = node.childNodes[this._loopIndex++];
+          const nextChild = node.childNodes[this._loopIndex++];
 
           if (nextChild) {
             this._childSerializer = new DOMElementSerializer(nextChild);
@@ -248,20 +248,23 @@ const document = {
     return this;
   },
 
-  createElementNS: function (NS, element) {
-    var elObject = new DOMElement(element);
+  createElementNS(NS, element) {
+    const elObject = new DOMElement(element);
     return elObject;
   },
-  createElement: function (element) {
+
+  createElement(element) {
     return this.createElementNS("", element);
   },
-  getElementsByTagName: function (element) {
+
+  getElementsByTagName(element) {
     if (element === "head") {
       return [this.head || (this.head = new DOMElement("head"))];
     }
 
     return [];
   }
+
 };
 
 function Image() {
@@ -285,7 +288,7 @@ Image.prototype = {
 };
 exports.document = document;
 exports.Image = Image;
-var exported_symbols = Object.keys(exports);
+const exported_symbols = Object.keys(exports);
 
 exports.setStubs = function (namespace) {
   exported_symbols.forEach(function (key) {

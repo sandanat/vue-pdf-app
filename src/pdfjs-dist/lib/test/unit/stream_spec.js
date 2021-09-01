@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,11 @@
  */
 "use strict";
 
-var _stream = require("../../core/stream.js");
-
 var _primitives = require("../../core/primitives.js");
+
+var _predictor_stream = require("../../core/predictor_stream.js");
+
+var _stream = require("../../core/stream.js");
 
 describe("stream", function () {
   beforeEach(function () {
@@ -31,7 +33,7 @@ describe("stream", function () {
       toMatchTypedArray(util, customEqualityTesters) {
         return {
           compare(actual, expected) {
-            var result = {};
+            const result = {};
 
             if (actual.length !== expected.length) {
               result.pass = false;
@@ -41,9 +43,9 @@ describe("stream", function () {
 
             result.pass = true;
 
-            for (var i = 0, ii = expected.length; i < ii; i++) {
-              var a = actual[i],
-                  b = expected[i];
+            for (let i = 0, ii = expected.length; i < ii; i++) {
+              const a = actual[i],
+                    b = expected[i];
 
               if (a !== b) {
                 result.pass = false;
@@ -61,14 +63,14 @@ describe("stream", function () {
   });
   describe("PredictorStream", function () {
     it("should decode simple predictor data", function () {
-      var dict = new _primitives.Dict();
+      const dict = new _primitives.Dict();
       dict.set("Predictor", 12);
       dict.set("Colors", 1);
       dict.set("BitsPerComponent", 8);
       dict.set("Columns", 2);
-      var input = new _stream.Stream(new Uint8Array([2, 100, 3, 2, 1, 255, 2, 1, 255]), 0, 9, dict);
-      var predictor = new _stream.PredictorStream(input, 9, dict);
-      var result = predictor.getBytes(6);
+      const input = new _stream.Stream(new Uint8Array([2, 100, 3, 2, 1, 255, 2, 1, 255]), 0, 9, dict);
+      const predictor = new _predictor_stream.PredictorStream(input, 9, dict);
+      const result = predictor.getBytes(6);
       expect(result).toMatchTypedArray(new Uint8Array([100, 3, 101, 2, 102, 1]));
       predictor.reset();
       const clampedResult = predictor.getBytes(6, true);

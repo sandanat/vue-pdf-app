@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,14 +24,15 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.PDFThumbnailView = void 0;
-
-var _pdf = require("../pdf");
+exports.TempImageFactory = exports.PDFThumbnailView = void 0;
 
 var _ui_utils = require("./ui_utils.js");
 
+var _pdf = require("../pdf");
+
 var _pdf_rendering_queue = require("./pdf_rendering_queue.js");
 
+const DRAW_UPSCALE_FACTOR = 2;
 const MAX_NUM_SCALING_STEPS = 3;
 const THUMBNAIL_CANVAS_BORDER_WIDTH = 1;
 const THUMBNAIL_WIDTH = 98;
@@ -57,7 +58,7 @@ const TempImageFactory = function TempImageFactoryClosure() {
       ctx.fillStyle = "rgb(255, 255, 255)";
       ctx.fillRect(0, 0, width, height);
       ctx.restore();
-      return tempCanvas;
+      return [tempCanvas, tempCanvas.getContext("2d")];
     },
 
     destroyCanvas() {
@@ -74,15 +75,18 @@ const TempImageFactory = function TempImageFactoryClosure() {
   };
 }();
 
+exports.TempImageFactory = TempImageFactory;
+
 class PDFThumbnailView {
   constructor({
     container,
     id,
     defaultViewport,
+    optionalContentConfigPromise,
     linkService,
     renderingQueue,
-    disableCanvasToImageConversion = false,
-    l10n = _ui_utils.NullL10n
+    checkSetImageDisabled,
+    l10n
   }) {
     this.id = id;
     this.renderingId = "thumbnail" + id;
@@ -91,18 +95,23 @@ class PDFThumbnailView {
     this.rotation = 0;
     this.viewport = defaultViewport;
     this.pdfPageRotate = defaultViewport.rotation;
+    this._optionalContentConfigPromise = optionalContentConfigPromise || null;
     this.linkService = linkService;
     this.renderingQueue = renderingQueue;
     this.renderTask = null;
     this.renderingState = _pdf_rendering_queue.RenderingStates.INITIAL;
     this.resume = null;
-    this.disableCanvasToImageConversion = disableCanvasToImageConversion;
-    this.pageWidth = this.viewport.width;
-    this.pageHeight = this.viewport.height;
-    this.pageRatio = this.pageWidth / this.pageHeight;
+
+    this._checkSetImageDisabled = checkSetImageDisabled || function () {
+      return false;
+    };
+
+    const pageWidth = this.viewport.width,
+          pageHeight = this.viewport.height,
+          pageRatio = pageWidth / pageHeight;
     this.canvasWidth = THUMBNAIL_WIDTH;
-    this.canvasHeight = this.canvasWidth / this.pageRatio | 0;
-    this.scale = this.canvasWidth / this.pageWidth;
+    this.canvasHeight = this.canvasWidth / pageRatio | 0;
+    this.scale = this.canvasWidth / pageWidth;
     this.l10n = l10n;
     const anchor = document.createElement("a");
     anchor.href = linkService.getAnchorUrl("#page=" + id);
@@ -112,7 +121,7 @@ class PDFThumbnailView {
     });
 
     anchor.onclick = function () {
-      linkService.page = id;
+      linkService.goToPage(id);
       return false;
     };
 
@@ -146,19 +155,14 @@ class PDFThumbnailView {
   reset() {
     this.cancelRendering();
     this.renderingState = _pdf_rendering_queue.RenderingStates.INITIAL;
-    this.pageWidth = this.viewport.width;
-    this.pageHeight = this.viewport.height;
-    this.pageRatio = this.pageWidth / this.pageHeight;
-    this.canvasHeight = this.canvasWidth / this.pageRatio | 0;
-    this.scale = this.canvasWidth / this.pageWidth;
+    const pageWidth = this.viewport.width,
+          pageHeight = this.viewport.height,
+          pageRatio = pageWidth / pageHeight;
+    this.canvasHeight = this.canvasWidth / pageRatio | 0;
+    this.scale = this.canvasWidth / pageWidth;
     this.div.removeAttribute("data-loaded");
     const ring = this.ring;
-    const childNodes = ring.childNodes;
-
-    for (let i = childNodes.length - 1; i >= 0; i--) {
-      ring.removeChild(childNodes[i]);
-    }
-
+    ring.textContent = "";
     const borderAdjustment = 2 * THUMBNAIL_CANVAS_BORDER_WIDTH;
     ring.style.width = this.canvasWidth + borderAdjustment + "px";
     ring.style.height = this.canvasHeight + borderAdjustment + "px";
@@ -197,51 +201,32 @@ class PDFThumbnailView {
     this.resume = null;
   }
 
-  _getPageDrawContext(noCtxScale = false) {
+  _getPageDrawContext(upscaleFactor = 1) {
     const canvas = document.createElement("canvas");
-    this.canvas = canvas;
     canvas.mozOpaque = true;
     const ctx = canvas.getContext("2d", {
       alpha: false
     });
     const outputScale = (0, _ui_utils.getOutputScale)(ctx);
-    canvas.width = this.canvasWidth * outputScale.sx | 0;
-    canvas.height = this.canvasHeight * outputScale.sy | 0;
-    canvas.style.width = this.canvasWidth + "px";
-    canvas.style.height = this.canvasHeight + "px";
-
-    if (!noCtxScale && outputScale.scaled) {
-      ctx.scale(outputScale.sx, outputScale.sy);
-    }
-
-    return ctx;
+    canvas.width = upscaleFactor * this.canvasWidth * outputScale.sx | 0;
+    canvas.height = upscaleFactor * this.canvasHeight * outputScale.sy | 0;
+    const transform = outputScale.scaled ? [outputScale.sx, 0, 0, outputScale.sy, 0, 0] : null;
+    return {
+      ctx,
+      canvas,
+      transform
+    };
   }
 
-  _convertCanvasToImage() {
-    if (!this.canvas) {
-      return;
-    }
-
+  _convertCanvasToImage(canvas) {
     if (this.renderingState !== _pdf_rendering_queue.RenderingStates.FINISHED) {
-      return;
+      throw new Error("_convertCanvasToImage: Rendering has not finished.");
     }
 
-    const className = "thumbnailImage";
-
-    if (this.disableCanvasToImageConversion) {
-      this.canvas.className = className;
-
-      this._thumbPageCanvas.then(msg => {
-        this.canvas.setAttribute("aria-label", msg);
-      });
-
-      this.div.setAttribute("data-loaded", true);
-      this.ring.appendChild(this.canvas);
-      return;
-    }
+    const reducedCanvas = this._reduceImage(canvas);
 
     const image = document.createElement("img");
-    image.className = className;
+    image.className = "thumbnailImage";
 
     this._thumbPageCanvas.then(msg => {
       image.setAttribute("aria-label", msg);
@@ -249,13 +234,12 @@ class PDFThumbnailView {
 
     image.style.width = this.canvasWidth + "px";
     image.style.height = this.canvasHeight + "px";
-    image.src = this.canvas.toDataURL();
+    image.src = reducedCanvas.toDataURL();
     this.image = image;
     this.div.setAttribute("data-loaded", true);
     this.ring.appendChild(image);
-    this.canvas.width = 0;
-    this.canvas.height = 0;
-    delete this.canvas;
+    reducedCanvas.width = 0;
+    reducedCanvas.height = 0;
   }
 
   draw() {
@@ -274,33 +258,33 @@ class PDFThumbnailView {
     }
 
     this.renderingState = _pdf_rendering_queue.RenderingStates.RUNNING;
-    const renderCapability = (0, _pdf.createPromiseCapability)();
 
-    const finishRenderTask = error => {
+    const finishRenderTask = async (error = null) => {
       if (renderTask === this.renderTask) {
         this.renderTask = null;
       }
 
       if (error instanceof _pdf.RenderingCancelledException) {
-        renderCapability.resolve(undefined);
         return;
       }
 
       this.renderingState = _pdf_rendering_queue.RenderingStates.FINISHED;
 
-      this._convertCanvasToImage();
+      this._convertCanvasToImage(canvas);
 
-      if (!error) {
-        renderCapability.resolve(undefined);
-      } else {
-        renderCapability.reject(error);
+      if (error) {
+        throw error;
       }
     };
 
-    const ctx = this._getPageDrawContext();
+    const {
+      ctx,
+      canvas,
+      transform
+    } = this._getPageDrawContext(DRAW_UPSCALE_FACTOR);
 
     const drawViewport = this.viewport.clone({
-      scale: this.scale
+      scale: DRAW_UPSCALE_FACTOR * this.scale
     });
 
     const renderContinueCallback = cont => {
@@ -320,51 +304,70 @@ class PDFThumbnailView {
 
     const renderContext = {
       canvasContext: ctx,
-      viewport: drawViewport
+      transform,
+      viewport: drawViewport,
+      optionalContentConfigPromise: this._optionalContentConfigPromise
     };
     const renderTask = this.renderTask = pdfPage.render(renderContext);
     renderTask.onContinue = renderContinueCallback;
-    renderTask.promise.then(function () {
-      finishRenderTask(null);
+    const resultPromise = renderTask.promise.then(function () {
+      return finishRenderTask(null);
     }, function (error) {
-      finishRenderTask(error);
+      return finishRenderTask(error);
     });
-    return renderCapability.promise;
+    resultPromise.finally(() => {
+      canvas.width = 0;
+      canvas.height = 0;
+      const pageCached = this.linkService.isPageCached(this.id);
+
+      if (!pageCached) {
+        this.pdfPage?.cleanup();
+      }
+    });
+    return resultPromise;
   }
 
   setImage(pageView) {
+    if (this._checkSetImageDisabled()) {
+      return;
+    }
+
     if (this.renderingState !== _pdf_rendering_queue.RenderingStates.INITIAL) {
       return;
     }
 
-    const img = pageView.canvas;
+    const {
+      canvas,
+      pdfPage
+    } = pageView;
 
-    if (!img) {
+    if (!canvas) {
       return;
     }
 
     if (!this.pdfPage) {
-      this.setPdfPage(pageView.pdfPage);
+      this.setPdfPage(pdfPage);
     }
 
     this.renderingState = _pdf_rendering_queue.RenderingStates.FINISHED;
 
-    const ctx = this._getPageDrawContext(true);
+    this._convertCanvasToImage(canvas);
+  }
 
-    const canvas = ctx.canvas;
+  _reduceImage(img) {
+    const {
+      ctx,
+      canvas
+    } = this._getPageDrawContext();
 
     if (img.width <= 2 * canvas.width) {
       ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
-
-      this._convertCanvasToImage();
-
-      return;
+      return canvas;
     }
 
     let reducedWidth = canvas.width << MAX_NUM_SCALING_STEPS;
     let reducedHeight = canvas.height << MAX_NUM_SCALING_STEPS;
-    const reducedImage = TempImageFactory.getCanvas(reducedWidth, reducedHeight);
-    const reducedImageCtx = reducedImage.getContext("2d");
+    const [reducedImage, reducedImageCtx] = TempImageFactory.getCanvas(reducedWidth, reducedHeight);
 
     while (reducedWidth > img.width || reducedHeight > img.height) {
       reducedWidth >>= 1;
@@ -380,20 +383,19 @@ class PDFThumbnailView {
     }
 
     ctx.drawImage(reducedImage, 0, 0, reducedWidth, reducedHeight, 0, 0, canvas.width, canvas.height);
-
-    this._convertCanvasToImage();
+    return canvas;
   }
 
   get _thumbPageTitle() {
     return this.l10n.get("thumb_page_title", {
-      page: this.pageLabel !== null ? this.pageLabel : this.id
-    }, "Page {{page}}");
+      page: this.pageLabel ?? this.id
+    });
   }
 
   get _thumbPageCanvas() {
     return this.l10n.get("thumb_page_canvas", {
-      page: this.pageLabel !== null ? this.pageLabel : this.id
-    }, "Thumbnail of Page {{page}}");
+      page: this.pageLabel ?? this.id
+    });
   }
 
   setPageLabel(label) {
@@ -408,16 +410,8 @@ class PDFThumbnailView {
     }
 
     this._thumbPageCanvas.then(msg => {
-      if (this.image) {
-        this.image.setAttribute("aria-label", msg);
-      } else if (this.disableCanvasToImageConversion && this.canvas) {
-        this.canvas.setAttribute("aria-label", msg);
-      }
+      this.image?.setAttribute("aria-label", msg);
     });
-  }
-
-  static cleanup() {
-    TempImageFactory.destroyCanvas();
   }
 
 }

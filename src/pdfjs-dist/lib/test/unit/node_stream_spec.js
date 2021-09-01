@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,9 @@ var _is_node = require("../../shared/is_node.js");
 
 var _node_stream = require("../../display/node_stream.js");
 
-(0, _util.assert)(_is_node.isNodeJS);
+if (!_is_node.isNodeJS) {
+  throw new Error('The "node_stream" unit-tests can only be run in Node.js environments.');
+}
 
 const path = require("path");
 
@@ -42,7 +44,7 @@ describe("node_stream", function () {
   let port = null;
   const pdf = url.parse(encodeURI("file://" + path.join(process.cwd(), "./test/pdfs/tracemonkey.pdf"))).href;
   const pdfLength = 1016315;
-  beforeAll(done => {
+  beforeAll(function () {
     server = http.createServer((request, response) => {
       const filePath = process.cwd() + "/test/pdfs" + request.url;
       fs.lstat(filePath, (error, stat) => {
@@ -52,7 +54,7 @@ describe("node_stream", function () {
           return;
         }
 
-        if (!request.headers["range"]) {
+        if (!request.headers.range) {
           const contentLength = stat.size;
           const stream = fs.createReadStream(filePath);
           response.writeHead(200, {
@@ -62,7 +64,7 @@ describe("node_stream", function () {
           });
           stream.pipe(response);
         } else {
-          const [start, end] = request.headers["range"].split("=")[1].split("-").map(x => {
+          const [start, end] = request.headers.range.split("=")[1].split("-").map(x => {
             return Number(x);
           });
           const stream = fs.createReadStream(filePath, {
@@ -77,13 +79,11 @@ describe("node_stream", function () {
       });
     }).listen(0);
     port = server.address().port;
-    done();
   });
-  afterAll(done => {
+  afterAll(function () {
     server.close();
-    done();
   });
-  it("read both http(s) and filesystem pdf files", function (done) {
+  it("read both http(s) and filesystem pdf files", async function () {
     const stream1 = new _node_stream.PDFNodeStream({
       url: `http://127.0.0.1:${port}/tracemonkey.pdf`,
       rangeChunkSize: 65536,
@@ -133,20 +133,15 @@ describe("node_stream", function () {
       });
     };
 
-    const readPromise = Promise.all([read1(), read2(), promise1, promise2]);
-    readPromise.then(result => {
-      expect(isStreamingSupported1).toEqual(false);
-      expect(isRangeSupported1).toEqual(false);
-      expect(isStreamingSupported2).toEqual(false);
-      expect(isRangeSupported2).toEqual(false);
-      expect(len1).toEqual(pdfLength);
-      expect(len1).toEqual(len2);
-      done();
-    }).catch(reason => {
-      done.fail(reason);
-    });
+    await Promise.all([read1(), read2(), promise1, promise2]);
+    expect(isStreamingSupported1).toEqual(false);
+    expect(isRangeSupported1).toEqual(false);
+    expect(isStreamingSupported2).toEqual(false);
+    expect(isRangeSupported2).toEqual(false);
+    expect(len1).toEqual(pdfLength);
+    expect(len1).toEqual(len2);
   });
-  it("read custom ranges for both http(s) and filesystem urls", function (done) {
+  it("read custom ranges for both http(s) and filesystem urls", async function () {
     const rangeSize = 32768;
     const stream1 = new _node_stream.PDFNodeStream({
       url: `http://127.0.0.1:${port}/tracemonkey.pdf`,
@@ -207,21 +202,16 @@ describe("node_stream", function () {
       });
     };
 
-    const readPromises = Promise.all([read(range11Reader, result11), read(range12Reader, result12), read(range21Reader, result21), read(range22Reader, result22), promise1, promise2]);
-    readPromises.then(function () {
-      expect(result11.value).toEqual(rangeSize);
-      expect(result12.value).toEqual(tailSize);
-      expect(result21.value).toEqual(rangeSize);
-      expect(result22.value).toEqual(tailSize);
-      expect(isStreamingSupported1).toEqual(false);
-      expect(isRangeSupported1).toEqual(true);
-      expect(fullReaderCancelled1).toEqual(true);
-      expect(isStreamingSupported2).toEqual(false);
-      expect(isRangeSupported2).toEqual(true);
-      expect(fullReaderCancelled2).toEqual(true);
-      done();
-    }).catch(function (reason) {
-      done.fail(reason);
-    });
+    await Promise.all([read(range11Reader, result11), read(range12Reader, result12), read(range21Reader, result21), read(range22Reader, result22), promise1, promise2]);
+    expect(result11.value).toEqual(rangeSize);
+    expect(result12.value).toEqual(tailSize);
+    expect(result21.value).toEqual(rangeSize);
+    expect(result22.value).toEqual(tailSize);
+    expect(isStreamingSupported1).toEqual(false);
+    expect(isRangeSupported1).toEqual(true);
+    expect(fullReaderCancelled1).toEqual(true);
+    expect(isStreamingSupported2).toEqual(false);
+    expect(isRangeSupported2).toEqual(true);
+    expect(fullReaderCancelled2).toEqual(true);
   });
 });

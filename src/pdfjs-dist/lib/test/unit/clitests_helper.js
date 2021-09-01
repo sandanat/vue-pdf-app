@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,10 @@ var _node_stream = require("../../display/node_stream.js");
 
 var _api = require("../../display/api.js");
 
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
+
 if (!_is_node.isNodeJS) {
-  throw new Error("The `gulp unittestcli` command can only be used in " + "Node.js environments.");
+  throw new Error("The `gulp unittestcli` command can only be used in Node.js environments.");
 }
 
 (0, _util.setVerbosityLevel)(_util.VerbosityLevel.ERRORS);

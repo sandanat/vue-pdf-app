@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,8 @@ var _util = require("../shared/util.js");
 class BaseFontLoader {
   constructor({
     docId,
-    onUnsupportedFeature
+    onUnsupportedFeature,
+    ownerDocument = globalThis.document
   }) {
     if (this.constructor === BaseFontLoader) {
       (0, _util.unreachable)("Cannot initialize BaseFontLoader.");
@@ -39,22 +40,25 @@ class BaseFontLoader {
 
     this.docId = docId;
     this._onUnsupportedFeature = onUnsupportedFeature;
+    this._document = ownerDocument;
     this.nativeFontFaces = [];
     this.styleElement = null;
   }
 
   addNativeFontFace(nativeFontFace) {
     this.nativeFontFaces.push(nativeFontFace);
-    document.fonts.add(nativeFontFace);
+
+    this._document.fonts.add(nativeFontFace);
   }
 
   insertRule(rule) {
     let styleElement = this.styleElement;
 
     if (!styleElement) {
-      styleElement = this.styleElement = document.createElement("style");
+      styleElement = this.styleElement = this._document.createElement("style");
       styleElement.id = `PDFJS_FONT_STYLE_TAG_${this.docId}`;
-      document.documentElement.getElementsByTagName("head")[0].appendChild(styleElement);
+
+      this._document.documentElement.getElementsByTagName("head")[0].appendChild(styleElement);
     }
 
     const styleSheet = styleElement.sheet;
@@ -62,9 +66,10 @@ class BaseFontLoader {
   }
 
   clear() {
-    this.nativeFontFaces.forEach(function (nativeFontFace) {
-      document.fonts.delete(nativeFontFace);
-    });
+    for (const nativeFontFace of this.nativeFontFaces) {
+      this._document.fonts.delete(nativeFontFace);
+    }
+
     this.nativeFontFaces.length = 0;
 
     if (this.styleElement) {
@@ -90,7 +95,7 @@ class BaseFontLoader {
           await nativeFontFace.loaded;
         } catch (ex) {
           this._onUnsupportedFeature({
-            featureId: _util.UNSUPPORTED_FEATURES.font
+            featureId: _util.UNSUPPORTED_FEATURES.errorFontLoadNative
           });
 
           (0, _util.warn)(`Failed to load font '${nativeFontFace.family}': '${ex}'.`);
@@ -124,8 +129,7 @@ class BaseFontLoader {
   }
 
   get isFontLoadingAPISupported() {
-    const supported = typeof document !== "undefined" && !!document.fonts;
-    return (0, _util.shadow)(this, "isFontLoadingAPISupported", supported);
+    return (0, _util.shadow)(this, "isFontLoadingAPISupported", !!this._document?.fonts);
   }
 
   get isSyncFontLoadingSupported() {
@@ -146,8 +150,8 @@ let FontLoader;
 exports.FontLoader = FontLoader;
 {
   exports.FontLoader = FontLoader = class GenericFontLoader extends BaseFontLoader {
-    constructor(docId) {
-      super(docId);
+    constructor(params) {
+      super(params);
       this.loadingContext = {
         requests: [],
         nextRequestId: 0
@@ -163,7 +167,7 @@ exports.FontLoader = FontLoader;
       } else {
         const m = /Mozilla\/5.0.*?rv:(\d+).*? Gecko/.exec(navigator.userAgent);
 
-        if (m && m[1] >= 14) {
+        if (m?.[1] >= 14) {
           supported = true;
         }
       }
@@ -213,7 +217,9 @@ exports.FontLoader = FontLoader;
       }
 
       let i, ii;
-      const canvas = document.createElement("canvas");
+
+      const canvas = this._document.createElement("canvas");
+
       canvas.width = 1;
       canvas.height = 1;
       const ctx = canvas.getContext("2d");
@@ -262,27 +268,32 @@ exports.FontLoader = FontLoader;
       this.insertRule(rule);
       const names = [];
 
-      for (i = 0, ii = fonts.length; i < ii; i++) {
-        names.push(fonts[i].loadedName);
+      for (const font of fonts) {
+        names.push(font.loadedName);
       }
 
       names.push(loadTestFontId);
-      const div = document.createElement("div");
+
+      const div = this._document.createElement("div");
+
       div.style.visibility = "hidden";
       div.style.width = div.style.height = "10px";
       div.style.position = "absolute";
       div.style.top = div.style.left = "0px";
 
-      for (i = 0, ii = names.length; i < ii; ++i) {
-        const span = document.createElement("span");
+      for (const name of names) {
+        const span = this._document.createElement("span");
+
         span.textContent = "Hi";
-        span.style.fontFamily = names[i];
+        span.style.fontFamily = name;
         div.appendChild(span);
       }
 
-      document.body.appendChild(div);
-      isFontReady(loadTestFontId, function () {
-        document.body.removeChild(div);
+      this._document.body.appendChild(div);
+
+      isFontReady(loadTestFontId, () => {
+        this._document.body.removeChild(div);
+
         request.complete();
       });
     }
@@ -295,7 +306,7 @@ class FontFaceObject {
     isEvalSupported = true,
     disableFontFace = false,
     ignoreErrors = false,
-    onUnsupportedFeature = null,
+    onUnsupportedFeature,
     fontRegistry = null
   }) {
     this.compiledGlyphs = Object.create(null);
@@ -316,7 +327,21 @@ class FontFaceObject {
       return null;
     }
 
-    const nativeFontFace = new FontFace(this.loadedName, this.data, {});
+    let nativeFontFace;
+
+    if (!this.cssFontInfo) {
+      nativeFontFace = new FontFace(this.loadedName, this.data, {});
+    } else {
+      const css = {
+        weight: this.cssFontInfo.fontWeight
+      };
+
+      if (this.cssFontInfo.italicAngle) {
+        css.style = `oblique ${this.cssFontInfo.italicAngle}deg`;
+      }
+
+      nativeFontFace = new FontFace(this.cssFontInfo.fontFamily, this.data, css);
+    }
 
     if (this.fontRegistry) {
       this.fontRegistry.registerFont(this);
@@ -330,9 +355,21 @@ class FontFaceObject {
       return null;
     }
 
-    const data = (0, _util.bytesToString)(new Uint8Array(this.data));
+    const data = (0, _util.bytesToString)(this.data);
     const url = `url(data:${this.mimetype};base64,${btoa(data)});`;
-    const rule = `@font-face {font-family:"${this.loadedName}";src:${url}}`;
+    let rule;
+
+    if (!this.cssFontInfo) {
+      rule = `@font-face {font-family:"${this.loadedName}";src:${url}}`;
+    } else {
+      let css = `font-weight: ${this.cssFontInfo.fontWeight};`;
+
+      if (this.cssFontInfo.italicAngle) {
+        css += `font-style: oblique ${this.cssFontInfo.italicAngle}deg;`;
+      }
+
+      rule = `@font-face {font-family:"${this.cssFontInfo.fontFamily}";${css}src:${url}}`;
+    }
 
     if (this.fontRegistry) {
       this.fontRegistry.registerFont(this, url);
@@ -346,7 +383,7 @@ class FontFaceObject {
       return this.compiledGlyphs[character];
     }
 
-    let cmds, current;
+    let cmds;
 
     try {
       cmds = objs.get(this.loadedName + "_path_" + character);
@@ -355,39 +392,27 @@ class FontFaceObject {
         throw ex;
       }
 
-      if (this._onUnsupportedFeature) {
-        this._onUnsupportedFeature({
-          featureId: _util.UNSUPPORTED_FEATURES.font
-        });
-      }
+      this._onUnsupportedFeature({
+        featureId: _util.UNSUPPORTED_FEATURES.errorFontGetPath
+      });
 
       (0, _util.warn)(`getPathGenerator - ignoring character: "${ex}".`);
       return this.compiledGlyphs[character] = function (c, size) {};
     }
 
     if (this.isEvalSupported && _util.IsEvalSupportedCached.value) {
-      let args,
-          js = "";
+      const jsBuf = [];
 
-      for (let i = 0, ii = cmds.length; i < ii; i++) {
-        current = cmds[i];
-
-        if (current.args !== undefined) {
-          args = current.args.join(",");
-        } else {
-          args = "";
-        }
-
-        js += "c." + current.cmd + "(" + args + ");\n";
+      for (const current of cmds) {
+        const args = current.args !== undefined ? current.args.join(",") : "";
+        jsBuf.push("c.", current.cmd, "(", args, ");\n");
       }
 
-      return this.compiledGlyphs[character] = new Function("c", "size", js);
+      return this.compiledGlyphs[character] = new Function("c", "size", jsBuf.join(""));
     }
 
     return this.compiledGlyphs[character] = function (c, size) {
-      for (let i = 0, ii = cmds.length; i < ii; i++) {
-        current = cmds[i];
-
+      for (const current of cmds) {
         if (current.cmd === "scale") {
           current.args = [size, -size];
         }

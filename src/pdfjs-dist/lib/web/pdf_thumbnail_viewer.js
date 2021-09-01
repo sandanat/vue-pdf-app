@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,15 +30,18 @@ var _ui_utils = require("./ui_utils.js");
 
 var _pdf_thumbnail_view = require("./pdf_thumbnail_view.js");
 
+var _pdf_rendering_queue = require("./pdf_rendering_queue.js");
+
 const THUMBNAIL_SCROLL_MARGIN = -19;
 const THUMBNAIL_SELECTED_CLASS = "selected";
 
 class PDFThumbnailViewer {
   constructor({
     container,
+    eventBus,
     linkService,
     renderingQueue,
-    l10n = _ui_utils.NullL10n
+    l10n
   }) {
     this.container = container;
     this.linkService = linkService;
@@ -47,6 +50,10 @@ class PDFThumbnailViewer {
     this.scroll = (0, _ui_utils.watchScroll)(this.container, this._scrollUpdated.bind(this));
 
     this._resetView();
+
+    eventBus._on("optionalcontentconfigchanged", () => {
+      this._setImageDisabled = true;
+    });
   }
 
   _scrollUpdated() {
@@ -58,7 +65,10 @@ class PDFThumbnailViewer {
   }
 
   _getVisibleThumbs() {
-    return (0, _ui_utils.getVisibleElements)(this.container, this._thumbnails);
+    return (0, _ui_utils.getVisibleElements)({
+      scrollEl: this.container,
+      views: this._thumbnails
+    });
   }
 
   scrollThumbnailIntoView(pageNumber) {
@@ -136,7 +146,13 @@ class PDFThumbnailViewer {
   }
 
   cleanup() {
-    _pdf_thumbnail_view.PDFThumbnailView.cleanup();
+    for (let i = 0, ii = this._thumbnails.length; i < ii; i++) {
+      if (this._thumbnails[i] && this._thumbnails[i].renderingState !== _pdf_rendering_queue.RenderingStates.FINISHED) {
+        this._thumbnails[i].reset();
+      }
+    }
+
+    _pdf_thumbnail_view.TempImageFactory.destroyCanvas();
   }
 
   _resetView() {
@@ -144,7 +160,9 @@ class PDFThumbnailViewer {
     this._currentPageNumber = 1;
     this._pageLabels = null;
     this._pagesRotation = 0;
+    this._optionalContentConfigPromise = null;
     this._pagesRequests = new WeakMap();
+    this._setImageDisabled = false;
     this.container.textContent = "";
   }
 
@@ -161,20 +179,28 @@ class PDFThumbnailViewer {
       return;
     }
 
-    pdfDocument.getPage(1).then(firstPdfPage => {
+    const firstPagePromise = pdfDocument.getPage(1);
+    const optionalContentConfigPromise = pdfDocument.getOptionalContentConfig();
+    firstPagePromise.then(firstPdfPage => {
+      this._optionalContentConfigPromise = optionalContentConfigPromise;
       const pagesCount = pdfDocument.numPages;
       const viewport = firstPdfPage.getViewport({
         scale: 1
       });
+
+      const checkSetImageDisabled = () => {
+        return this._setImageDisabled;
+      };
 
       for (let pageNum = 1; pageNum <= pagesCount; ++pageNum) {
         const thumbnail = new _pdf_thumbnail_view.PDFThumbnailView({
           container: this.container,
           id: pageNum,
           defaultViewport: viewport.clone(),
+          optionalContentConfigPromise,
           linkService: this.linkService,
           renderingQueue: this.renderingQueue,
-          disableCanvasToImageConversion: false,
+          checkSetImageDisabled,
           l10n: this.l10n
         });
 
@@ -217,9 +243,7 @@ class PDFThumbnailViewer {
     }
 
     for (let i = 0, ii = this._thumbnails.length; i < ii; i++) {
-      const label = this._pageLabels && this._pageLabels[i];
-
-      this._thumbnails[i].setPageLabel(label);
+      this._thumbnails[i].setPageLabel(this._pageLabels?.[i] ?? null);
     }
   }
 

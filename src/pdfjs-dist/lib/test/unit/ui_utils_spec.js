@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@
 "use strict";
 
 var _ui_utils = require("../../web/ui_utils.js");
-
-var _util = require("../../shared/util.js");
 
 var _is_node = require("../../shared/is_node.js");
 
@@ -56,78 +54,10 @@ describe("ui_utils", function () {
       expect((0, _ui_utils.binarySearchFirstItem)([4, 5, 6], isGreater3)).toEqual(0);
     });
   });
-  describe("getPDFFileNameFromURL", function () {
-    it("gets PDF filename", function () {
-      expect((0, _ui_utils.getPDFFileNameFromURL)("/pdfs/file1.pdf")).toEqual("file1.pdf");
-      expect((0, _ui_utils.getPDFFileNameFromURL)("http://www.example.com/pdfs/file2.pdf")).toEqual("file2.pdf");
-    });
-    it("gets fallback filename", function () {
-      expect((0, _ui_utils.getPDFFileNameFromURL)("/pdfs/file1.txt")).toEqual("document.pdf");
-      expect((0, _ui_utils.getPDFFileNameFromURL)("http://www.example.com/pdfs/file2.txt")).toEqual("document.pdf");
-    });
-    it("gets custom fallback filename", function () {
-      expect((0, _ui_utils.getPDFFileNameFromURL)("/pdfs/file1.txt", "qwerty1.pdf")).toEqual("qwerty1.pdf");
-      expect((0, _ui_utils.getPDFFileNameFromURL)("http://www.example.com/pdfs/file2.txt", "qwerty2.pdf")).toEqual("qwerty2.pdf");
-      expect((0, _ui_utils.getPDFFileNameFromURL)("/pdfs/file3.txt", "")).toEqual("");
-    });
-    it("gets fallback filename when url is not a string", function () {
-      expect((0, _ui_utils.getPDFFileNameFromURL)(null)).toEqual("document.pdf");
-      expect((0, _ui_utils.getPDFFileNameFromURL)(null, "file.pdf")).toEqual("file.pdf");
-    });
-    it("gets PDF filename from URL containing leading/trailing whitespace", function () {
-      expect((0, _ui_utils.getPDFFileNameFromURL)("   /pdfs/file1.pdf   ")).toEqual("file1.pdf");
-      expect((0, _ui_utils.getPDFFileNameFromURL)("   http://www.example.com/pdfs/file2.pdf   ")).toEqual("file2.pdf");
-    });
-    it("gets PDF filename from query string", function () {
-      expect((0, _ui_utils.getPDFFileNameFromURL)("/pdfs/pdfs.html?name=file1.pdf")).toEqual("file1.pdf");
-      expect((0, _ui_utils.getPDFFileNameFromURL)("http://www.example.com/pdfs/pdf.html?file2.pdf")).toEqual("file2.pdf");
-    });
-    it("gets PDF filename from hash string", function () {
-      expect((0, _ui_utils.getPDFFileNameFromURL)("/pdfs/pdfs.html#name=file1.pdf")).toEqual("file1.pdf");
-      expect((0, _ui_utils.getPDFFileNameFromURL)("http://www.example.com/pdfs/pdf.html#file2.pdf")).toEqual("file2.pdf");
-    });
-    it("gets correct PDF filename when multiple ones are present", function () {
-      expect((0, _ui_utils.getPDFFileNameFromURL)("/pdfs/file1.pdf?name=file.pdf")).toEqual("file1.pdf");
-      expect((0, _ui_utils.getPDFFileNameFromURL)("http://www.example.com/pdfs/file2.pdf#file.pdf")).toEqual("file2.pdf");
-    });
-    it("gets PDF filename from URI-encoded data", function () {
-      var encodedUrl = encodeURIComponent("http://www.example.com/pdfs/file1.pdf");
-      expect((0, _ui_utils.getPDFFileNameFromURL)(encodedUrl)).toEqual("file1.pdf");
-      var encodedUrlWithQuery = encodeURIComponent("http://www.example.com/pdfs/file.txt?file2.pdf");
-      expect((0, _ui_utils.getPDFFileNameFromURL)(encodedUrlWithQuery)).toEqual("file2.pdf");
-    });
-    it("gets PDF filename from data mistaken for URI-encoded", function () {
-      expect((0, _ui_utils.getPDFFileNameFromURL)("/pdfs/%AA.pdf")).toEqual("%AA.pdf");
-      expect((0, _ui_utils.getPDFFileNameFromURL)("/pdfs/%2F.pdf")).toEqual("%2F.pdf");
-    });
-    it("gets PDF filename from (some) standard protocols", function () {
-      expect((0, _ui_utils.getPDFFileNameFromURL)("http://www.example.com/file1.pdf")).toEqual("file1.pdf");
-      expect((0, _ui_utils.getPDFFileNameFromURL)("https://www.example.com/file2.pdf")).toEqual("file2.pdf");
-      expect((0, _ui_utils.getPDFFileNameFromURL)("file:///path/to/files/file3.pdf")).toEqual("file3.pdf");
-      expect((0, _ui_utils.getPDFFileNameFromURL)("ftp://www.example.com/file4.pdf")).toEqual("file4.pdf");
-    });
-    it('gets PDF filename from query string appended to "blob:" URL', function () {
-      if (_is_node.isNodeJS) {
-        pending("Blob in not supported in Node.js.");
-      }
-
-      var typedArray = new Uint8Array([1, 2, 3, 4, 5]);
-      var blobUrl = (0, _util.createObjectURL)(typedArray, "application/pdf");
-      expect(blobUrl.startsWith("blob:")).toEqual(true);
-      expect((0, _ui_utils.getPDFFileNameFromURL)(blobUrl + "?file.pdf")).toEqual("file.pdf");
-    });
-    it('gets fallback filename from query string appended to "data:" URL', function () {
-      var typedArray = new Uint8Array([1, 2, 3, 4, 5]);
-      var dataUrl = (0, _util.createObjectURL)(typedArray, "application/pdf", true);
-      expect(dataUrl.startsWith("data:")).toEqual(true);
-      expect((0, _ui_utils.getPDFFileNameFromURL)(dataUrl + "?file1.pdf")).toEqual("document.pdf");
-      expect((0, _ui_utils.getPDFFileNameFromURL)("     " + dataUrl + "?file2.pdf")).toEqual("document.pdf");
-    });
-  });
   describe("EventBus", function () {
     it("dispatch event", function () {
-      var eventBus = new _ui_utils.EventBus();
-      var count = 0;
+      const eventBus = new _ui_utils.EventBus();
+      let count = 0;
       eventBus.on("test", function (evt) {
         expect(evt).toEqual(undefined);
         count++;
@@ -150,8 +80,8 @@ describe("ui_utils", function () {
       expect(count).toEqual(1);
     });
     it("dispatch different event", function () {
-      var eventBus = new _ui_utils.EventBus();
-      var count = 0;
+      const eventBus = new _ui_utils.EventBus();
+      let count = 0;
       eventBus.on("test", function () {
         count++;
       });
@@ -159,8 +89,8 @@ describe("ui_utils", function () {
       expect(count).toEqual(0);
     });
     it("dispatch event multiple times", function () {
-      var eventBus = new _ui_utils.EventBus();
-      var count = 0;
+      const eventBus = new _ui_utils.EventBus();
+      let count = 0;
       eventBus.dispatch("test");
       eventBus.on("test", function () {
         count++;
@@ -170,8 +100,8 @@ describe("ui_utils", function () {
       expect(count).toEqual(2);
     });
     it("dispatch event to multiple handlers", function () {
-      var eventBus = new _ui_utils.EventBus();
-      var count = 0;
+      const eventBus = new _ui_utils.EventBus();
+      let count = 0;
       eventBus.on("test", function () {
         count++;
       });
@@ -182,10 +112,10 @@ describe("ui_utils", function () {
       expect(count).toEqual(2);
     });
     it("dispatch to detached", function () {
-      var eventBus = new _ui_utils.EventBus();
-      var count = 0;
+      const eventBus = new _ui_utils.EventBus();
+      let count = 0;
 
-      var listener = function () {
+      const listener = function () {
         count++;
       };
 
@@ -196,8 +126,8 @@ describe("ui_utils", function () {
       expect(count).toEqual(1);
     });
     it("dispatch to wrong detached", function () {
-      var eventBus = new _ui_utils.EventBus();
-      var count = 0;
+      const eventBus = new _ui_utils.EventBus();
+      let count = 0;
       eventBus.on("test", function () {
         count++;
       });
@@ -209,15 +139,15 @@ describe("ui_utils", function () {
       expect(count).toEqual(2);
     });
     it("dispatch to detached during handling", function () {
-      var eventBus = new _ui_utils.EventBus();
-      var count = 0;
+      const eventBus = new _ui_utils.EventBus();
+      let count = 0;
 
-      var listener1 = function () {
+      const listener1 = function () {
         eventBus.off("test", listener2);
         count++;
       };
 
-      var listener2 = function () {
+      const listener2 = function () {
         eventBus.off("test", listener1);
         count++;
       };
@@ -228,9 +158,27 @@ describe("ui_utils", function () {
       eventBus.dispatch("test");
       expect(count).toEqual(2);
     });
-    it("should not, by default, re-dispatch to DOM", function (done) {
+    it("dispatch event to handlers with/without 'once' option", function () {
+      const eventBus = new _ui_utils.EventBus();
+      let multipleCount = 0,
+          onceCount = 0;
+      eventBus.on("test", function () {
+        multipleCount++;
+      });
+      eventBus.on("test", function () {
+        onceCount++;
+      }, {
+        once: true
+      });
+      eventBus.dispatch("test");
+      eventBus.dispatch("test");
+      eventBus.dispatch("test");
+      expect(multipleCount).toEqual(3);
+      expect(onceCount).toEqual(1);
+    });
+    it("should not re-dispatch to DOM", async function () {
       if (_is_node.isNodeJS) {
-        pending("Document in not supported in Node.js.");
+        pending("Document is not supported in Node.js.");
       }
 
       const eventBus = new _ui_utils.EventBus();
@@ -241,70 +189,14 @@ describe("ui_utils", function () {
       });
 
       function domEventListener() {
-        done.fail("shall not dispatch DOM event.");
+        expect(false).toEqual(true);
       }
 
       document.addEventListener("test", domEventListener);
       eventBus.dispatch("test");
-      Promise.resolve().then(() => {
-        expect(count).toEqual(1);
-        document.removeEventListener("test", domEventListener);
-        done();
-      });
-    });
-    it("should re-dispatch to DOM", function (done) {
-      if (_is_node.isNodeJS) {
-        pending("Document in not supported in Node.js.");
-      }
-
-      const eventBus = new _ui_utils.EventBus({
-        dispatchToDOM: true
-      });
-      let count = 0;
-      eventBus.on("test", function (evt) {
-        expect(evt).toEqual(undefined);
-        count++;
-      });
-
-      function domEventListener(evt) {
-        expect(evt.detail).toEqual({});
-        count++;
-      }
-
-      document.addEventListener("test", domEventListener);
-      eventBus.dispatch("test");
-      Promise.resolve().then(() => {
-        expect(count).toEqual(2);
-        document.removeEventListener("test", domEventListener);
-        done();
-      });
-    });
-    it("should re-dispatch to DOM, with arguments (without internal listeners)", function (done) {
-      if (_is_node.isNodeJS) {
-        pending("Document in not supported in Node.js.");
-      }
-
-      const eventBus = new _ui_utils.EventBus({
-        dispatchToDOM: true
-      });
-      let count = 0;
-
-      function domEventListener(evt) {
-        expect(evt.detail).toEqual({
-          abc: 123
-        });
-        count++;
-      }
-
-      document.addEventListener("test", domEventListener);
-      eventBus.dispatch("test", {
-        abc: 123
-      });
-      Promise.resolve().then(() => {
-        expect(count).toEqual(1);
-        document.removeEventListener("test", domEventListener);
-        done();
-      });
+      await Promise.resolve();
+      expect(count).toEqual(1);
+      document.removeEventListener("test", domEventListener);
     });
   });
   describe("isValidRotation", function () {
@@ -347,19 +239,18 @@ describe("ui_utils", function () {
   });
   describe("waitOnEventOrTimeout", function () {
     let eventBus;
-    beforeAll(function (done) {
+    beforeAll(function () {
       eventBus = new _ui_utils.EventBus();
-      done();
     });
     afterAll(function () {
       eventBus = null;
     });
-    it("should reject invalid parameters", function (done) {
+    it("should reject invalid parameters", async function () {
       const invalidTarget = (0, _ui_utils.waitOnEventOrTimeout)({
         target: "window",
         name: "DOMContentLoaded"
       }).then(function () {
-        throw new Error("Should reject invalid parameters.");
+        expect(false).toEqual(true);
       }, function (reason) {
         expect(reason instanceof Error).toEqual(true);
       });
@@ -367,7 +258,7 @@ describe("ui_utils", function () {
         target: eventBus,
         name: ""
       }).then(function () {
-        throw new Error("Should reject invalid parameters.");
+        expect(false).toEqual(true);
       }, function (reason) {
         expect(reason instanceof Error).toEqual(true);
       });
@@ -376,15 +267,15 @@ describe("ui_utils", function () {
         name: "pagerendered",
         delay: -1000
       }).then(function () {
-        throw new Error("Should reject invalid parameters.");
+        expect(false).toEqual(true);
       }, function (reason) {
         expect(reason instanceof Error).toEqual(true);
       });
-      Promise.all([invalidTarget, invalidName, invalidDelay]).then(done, done.fail);
+      await Promise.all([invalidTarget, invalidName, invalidDelay]);
     });
-    it("should resolve on event, using the DOM", function (done) {
+    it("should resolve on event, using the DOM", async function () {
       if (_is_node.isNodeJS) {
-        pending("Document in not supported in Node.js.");
+        pending("Document is not supported in Node.js.");
       }
 
       const button = document.createElement("button");
@@ -394,14 +285,12 @@ describe("ui_utils", function () {
         delay: 10000
       });
       button.click();
-      buttonClicked.then(function (type) {
-        expect(type).toEqual(_ui_utils.WaitOnType.EVENT);
-        done();
-      }, done.fail);
+      const type = await buttonClicked;
+      expect(type).toEqual(_ui_utils.WaitOnType.EVENT);
     });
-    it("should resolve on timeout, using the DOM", function (done) {
+    it("should resolve on timeout, using the DOM", async function () {
       if (_is_node.isNodeJS) {
-        pending("Document in not supported in Node.js.");
+        pending("Document is not supported in Node.js.");
       }
 
       const button = document.createElement("button");
@@ -410,33 +299,27 @@ describe("ui_utils", function () {
         name: "click",
         delay: 10
       });
-      buttonClicked.then(function (type) {
-        expect(type).toEqual(_ui_utils.WaitOnType.TIMEOUT);
-        done();
-      }, done.fail);
+      const type = await buttonClicked;
+      expect(type).toEqual(_ui_utils.WaitOnType.TIMEOUT);
     });
-    it("should resolve on event, using the EventBus", function (done) {
+    it("should resolve on event, using the EventBus", async function () {
       const pageRendered = (0, _ui_utils.waitOnEventOrTimeout)({
         target: eventBus,
         name: "pagerendered",
         delay: 10000
       });
       eventBus.dispatch("pagerendered");
-      pageRendered.then(function (type) {
-        expect(type).toEqual(_ui_utils.WaitOnType.EVENT);
-        done();
-      }, done.fail);
+      const type = await pageRendered;
+      expect(type).toEqual(_ui_utils.WaitOnType.EVENT);
     });
-    it("should resolve on timeout, using the EventBus", function (done) {
+    it("should resolve on timeout, using the EventBus", async function () {
       const pageRendered = (0, _ui_utils.waitOnEventOrTimeout)({
         target: eventBus,
         name: "pagerendered",
         delay: 10
       });
-      pageRendered.then(function (type) {
-        expect(type).toEqual(_ui_utils.WaitOnType.TIMEOUT);
-        done();
-      }, done.fail);
+      const type = await pageRendered;
+      expect(type).toEqual(_ui_utils.WaitOnType.TIMEOUT);
     });
   });
   describe("getPageSizeInches", function () {
@@ -538,14 +421,16 @@ describe("ui_utils", function () {
         if (viewLeft < scrollRight && viewRight > scrollLeft && viewTop < scrollBottom && viewBottom > scrollTop) {
           const hiddenHeight = Math.max(0, scrollTop - viewTop) + Math.max(0, viewBottom - scrollBottom);
           const hiddenWidth = Math.max(0, scrollLeft - viewLeft) + Math.max(0, viewRight - scrollRight);
-          const visibleArea = (div.clientHeight - hiddenHeight) * (div.clientWidth - hiddenWidth);
-          const percent = visibleArea * 100 / div.clientHeight / div.clientWidth | 0;
+          const fractionHeight = (div.clientHeight - hiddenHeight) / div.clientHeight;
+          const fractionWidth = (div.clientWidth - hiddenWidth) / div.clientWidth;
+          const percent = fractionHeight * fractionWidth * 100 | 0;
           views.push({
             id: view.id,
             x: viewLeft,
             y: viewTop,
             view,
-            percent
+            percent,
+            widthPercent: fractionWidth * 100 | 0
           });
         }
       }
@@ -557,16 +442,16 @@ describe("ui_utils", function () {
       };
     }
 
-    function scrollOverDocument(pages, horizontally = false) {
+    function scrollOverDocument(pages, horizontal = false, rtl = false) {
       const size = pages.reduce(function (max, {
         div
       }) {
-        return Math.max(max, horizontally ? div.offsetLeft + div.clientLeft + div.clientWidth : div.offsetTop + div.clientTop + div.clientHeight);
+        return Math.max(max, horizontal ? Math.abs(div.offsetLeft + div.clientLeft + div.clientWidth) : div.offsetTop + div.clientTop + div.clientHeight);
       }, 0);
 
-      for (let i = 0; i < size; i += 7) {
+      for (let i = -size; i < size; i += 7) {
         for (let j = i + 5; j < size; j += j - i) {
-          const scroll = horizontally ? {
+          const scrollEl = horizontal ? {
             scrollTop: 0,
             scrollLeft: i,
             clientHeight: 10000,
@@ -577,7 +462,13 @@ describe("ui_utils", function () {
             clientHeight: j - i,
             clientWidth: 10000
           };
-          expect((0, _ui_utils.getVisibleElements)(scroll, pages, false, horizontally)).toEqual(slowGetVisibleElements(scroll, pages));
+          expect((0, _ui_utils.getVisibleElements)({
+            scrollEl,
+            views: pages,
+            sortByVisibility: false,
+            horizontal,
+            rtl
+          })).toEqual(slowGetVisibleElements(scrollEl, pages));
         }
       }
     }
@@ -594,6 +485,10 @@ describe("ui_utils", function () {
       const pages = makePages([[[10, 50], [20, 20], [30, 10]]]);
       scrollOverDocument(pages, true);
     });
+    it("works with horizontal scrolling with RTL-documents", function () {
+      const pages = makePages([[[-10, 50], [-20, 20], [-30, 10]]]);
+      scrollOverDocument(pages, true, true);
+    });
     it("handles `sortByVisibility` correctly", function () {
       const scrollEl = {
         scrollTop: 75,
@@ -602,8 +497,15 @@ describe("ui_utils", function () {
         clientWidth: 1500
       };
       const views = makePages([[[100, 150]], [[100, 150]], [[100, 150]]]);
-      const visible = (0, _ui_utils.getVisibleElements)(scrollEl, views);
-      const visibleSorted = (0, _ui_utils.getVisibleElements)(scrollEl, views, true);
+      const visible = (0, _ui_utils.getVisibleElements)({
+        scrollEl,
+        views
+      });
+      const visibleSorted = (0, _ui_utils.getVisibleElements)({
+        scrollEl,
+        views,
+        sortByVisibility: true
+      });
       const viewsOrder = [],
             viewsSortedOrder = [];
 
@@ -626,7 +528,10 @@ describe("ui_utils", function () {
         clientWidth: 1500
       };
       const views = [];
-      expect((0, _ui_utils.getVisibleElements)(scrollEl, views)).toEqual({
+      expect((0, _ui_utils.getVisibleElements)({
+        scrollEl,
+        views
+      })).toEqual({
         first: undefined,
         last: undefined,
         views: []
@@ -640,7 +545,10 @@ describe("ui_utils", function () {
         clientWidth: 1500
       };
       const views = makePages([[[100, 150]], [[100, 150]], [[100, 150]]]);
-      expect((0, _ui_utils.getVisibleElements)(scrollEl, views)).toEqual({
+      expect((0, _ui_utils.getVisibleElements)({
+        scrollEl,
+        views
+      })).toEqual({
         first: undefined,
         last: undefined,
         views: []

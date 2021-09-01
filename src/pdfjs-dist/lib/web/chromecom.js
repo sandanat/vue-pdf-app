@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,8 @@ var _preferences = require("./preferences.js");
 var _download_manager = require("./download_manager.js");
 
 var _genericl10n = require("./genericl10n.js");
+
+var _generic_scripting = require("./generic_scripting.js");
 
 {
   throw new Error('Module "pdfjs-web/chromecom" shall not be used outside CHROME build.');
@@ -72,7 +74,7 @@ const ChromeCom = {
     if (/^file?:/.test(file)) {
       getEmbedderOrigin(function (origin) {
         if (origin && !/^file:|^chrome-extension:/.test(origin)) {
-          _app.PDFViewerApplication.error("Blocked " + origin + " from loading " + file + ". Refused to load a local file in a non-local page " + "for security reasons.");
+          _app.PDFViewerApplication._documentError("Blocked " + origin + " from loading " + file + ". Refused to load a local file in a non-local page " + "for security reasons.");
 
           return;
         }
@@ -114,7 +116,7 @@ function isAllowedFileSchemeAccess(callback) {
 
 function isRuntimeAvailable() {
   try {
-    if (chrome.runtime && chrome.runtime.getManifest()) {
+    if (chrome.runtime?.getManifest()) {
       return true;
     }
   } catch (e) {}
@@ -203,7 +205,7 @@ function requestAccessToLocalFile(fileUrl, overlayManager, callback) {
       "vi": "Cho ph\u00e9p truy c\u1eadp v\u00e0o c\u00e1c URL c\u1ee7a t\u1ec7p",
       "zh-CN": "\u5141\u8bb8\u8bbf\u95ee\u6587\u4ef6\u7f51\u5740",
       "zh-TW": "\u5141\u8a31\u5b58\u53d6\u6a94\u6848\u7db2\u5740"
-    }[chrome.i18n.getUILanguage && chrome.i18n.getUILanguage()];
+    }[chrome.i18n.getUILanguage?.()];
 
     if (i18nFileAccessLabel) {
       document.getElementById("chrome-file-access-label").textContent = i18nFileAccessLabel;
@@ -268,7 +270,7 @@ function setReferer(url, callback) {
   port.onDisconnect.addListener(onDisconnect);
   port.onMessage.addListener(onMessage);
   port.postMessage({
-    referer: window.history.state && window.history.state.chromecomState,
+    referer: window.history.state?.chromecomState,
     requestUrl: url
   });
 
@@ -376,7 +378,7 @@ class ChromeExternalServices extends _app.DefaultExternalServices {
   }
 
   static createDownloadManager(options) {
-    return new _download_manager.DownloadManager(options);
+    return new _download_manager.DownloadManager();
   }
 
   static createPreferences() {
@@ -385,6 +387,12 @@ class ChromeExternalServices extends _app.DefaultExternalServices {
 
   static createL10n(options) {
     return new _genericl10n.GenericL10n(navigator.language);
+  }
+
+  static createScripting({
+    sandboxBundleSrc
+  }) {
+    return new _generic_scripting.GenericScripting(sandboxBundleSrc);
   }
 
 }

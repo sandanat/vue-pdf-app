@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,17 +24,25 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getLookupTableFactory = getLookupTableFactory;
+exports.collectActions = collectActions;
+exports.encodeToXmlString = encodeToXmlString;
+exports.escapePDFName = escapePDFName;
+exports.getArrayLookupTableFactory = getArrayLookupTableFactory;
 exports.getInheritableProperty = getInheritableProperty;
-exports.toRomanNumerals = toRomanNumerals;
+exports.getLookupTableFactory = getLookupTableFactory;
+exports.isWhiteSpace = isWhiteSpace;
 exports.log2 = log2;
+exports.parseXFAPath = parseXFAPath;
 exports.readInt8 = readInt8;
 exports.readUint16 = readUint16;
 exports.readUint32 = readUint32;
-exports.isWhiteSpace = isWhiteSpace;
+exports.toRomanNumerals = toRomanNumerals;
+exports.validateCSSFont = validateCSSFont;
 exports.XRefParseException = exports.XRefEntryException = exports.MissingDataException = void 0;
 
 var _util = require("../shared/util.js");
+
+var _primitives = require("./primitives.js");
 
 function getLookupTableFactory(initializer) {
   let lookup;
@@ -43,6 +51,25 @@ function getLookupTableFactory(initializer) {
       lookup = Object.create(null);
       initializer(lookup);
       initializer = null;
+    }
+
+    return lookup;
+  };
+}
+
+function getArrayLookupTableFactory(initializer) {
+  let lookup;
+  return function () {
+    if (initializer) {
+      let arr = initializer();
+      initializer = null;
+      lookup = Object.create(null);
+
+      for (let i = 0, ii = arr.length; i < ii; i += 2) {
+        lookup[arr[i]] = arr[i + 1];
+      }
+
+      arr = null;
     }
 
     return lookup;
@@ -74,11 +101,14 @@ function getInheritableProperty({
   getArray = false,
   stopWhenFound = true
 }) {
-  const LOOP_LIMIT = 100;
-  let loopCount = 0;
   let values;
+  const visited = new _primitives.RefSet();
 
-  while (dict) {
+  while (dict instanceof _primitives.Dict && !(dict.objId && visited.has(dict.objId))) {
+    if (dict.objId) {
+      visited.put(dict.objId);
+    }
+
     const value = getArray ? dict.getArray(key) : dict.get(key);
 
     if (value !== undefined) {
@@ -91,11 +121,6 @@ function getInheritableProperty({
       }
 
       values.push(value);
-    }
-
-    if (++loopCount > LOOP_LIMIT) {
-      (0, _util.warn)(`getInheritableProperty: maximum loop count exceeded for "${key}"`);
-      break;
     }
 
     dict = dict.get("Parent");
@@ -149,4 +174,237 @@ function readUint32(data, offset) {
 
 function isWhiteSpace(ch) {
   return ch === 0x20 || ch === 0x09 || ch === 0x0d || ch === 0x0a;
+}
+
+function parseXFAPath(path) {
+  const positionPattern = /(.+)\[([0-9]+)\]$/;
+  return path.split(".").map(component => {
+    const m = component.match(positionPattern);
+
+    if (m) {
+      return {
+        name: m[1],
+        pos: parseInt(m[2], 10)
+      };
+    }
+
+    return {
+      name: component,
+      pos: 0
+    };
+  });
+}
+
+function escapePDFName(str) {
+  const buffer = [];
+  let start = 0;
+
+  for (let i = 0, ii = str.length; i < ii; i++) {
+    const char = str.charCodeAt(i);
+
+    if (char < 0x21 || char > 0x7e || char === 0x23 || char === 0x28 || char === 0x29 || char === 0x3c || char === 0x3e || char === 0x5b || char === 0x5d || char === 0x7b || char === 0x7d || char === 0x2f || char === 0x25) {
+      if (start < i) {
+        buffer.push(str.substring(start, i));
+      }
+
+      buffer.push(`#${char.toString(16)}`);
+      start = i + 1;
+    }
+  }
+
+  if (buffer.length === 0) {
+    return str;
+  }
+
+  if (start < str.length) {
+    buffer.push(str.substring(start, str.length));
+  }
+
+  return buffer.join("");
+}
+
+function _collectJS(entry, xref, list, parents) {
+  if (!entry) {
+    return;
+  }
+
+  let parent = null;
+
+  if ((0, _primitives.isRef)(entry)) {
+    if (parents.has(entry)) {
+      return;
+    }
+
+    parent = entry;
+    parents.put(parent);
+    entry = xref.fetch(entry);
+  }
+
+  if (Array.isArray(entry)) {
+    for (const element of entry) {
+      _collectJS(element, xref, list, parents);
+    }
+  } else if (entry instanceof _primitives.Dict) {
+    if ((0, _primitives.isName)(entry.get("S"), "JavaScript") && entry.has("JS")) {
+      const js = entry.get("JS");
+      let code;
+
+      if ((0, _primitives.isStream)(js)) {
+        code = js.getString();
+      } else {
+        code = js;
+      }
+
+      code = (0, _util.stringToPDFString)(code);
+
+      if (code) {
+        list.push(code);
+      }
+    }
+
+    _collectJS(entry.getRaw("Next"), xref, list, parents);
+  }
+
+  if (parent) {
+    parents.remove(parent);
+  }
+}
+
+function collectActions(xref, dict, eventType) {
+  const actions = Object.create(null);
+  const additionalActionsDicts = getInheritableProperty({
+    dict,
+    key: "AA",
+    stopWhenFound: false
+  });
+
+  if (additionalActionsDicts) {
+    for (let i = additionalActionsDicts.length - 1; i >= 0; i--) {
+      const additionalActions = additionalActionsDicts[i];
+
+      if (!(additionalActions instanceof _primitives.Dict)) {
+        continue;
+      }
+
+      for (const key of additionalActions.getKeys()) {
+        const action = eventType[key];
+
+        if (!action) {
+          continue;
+        }
+
+        const actionDict = additionalActions.getRaw(key);
+        const parents = new _primitives.RefSet();
+        const list = [];
+
+        _collectJS(actionDict, xref, list, parents);
+
+        if (list.length > 0) {
+          actions[action] = list;
+        }
+      }
+    }
+  }
+
+  if (dict.has("A")) {
+    const actionDict = dict.get("A");
+    const parents = new _primitives.RefSet();
+    const list = [];
+
+    _collectJS(actionDict, xref, list, parents);
+
+    if (list.length > 0) {
+      actions.Action = list;
+    }
+  }
+
+  return (0, _util.objectSize)(actions) > 0 ? actions : null;
+}
+
+const XMLEntities = {
+  0x3c: "&lt;",
+  0x3e: "&gt;",
+  0x26: "&amp;",
+  0x22: "&quot;",
+  0x27: "&apos;"
+};
+
+function encodeToXmlString(str) {
+  const buffer = [];
+  let start = 0;
+
+  for (let i = 0, ii = str.length; i < ii; i++) {
+    const char = str.codePointAt(i);
+
+    if (0x20 <= char && char <= 0x7e) {
+      const entity = XMLEntities[char];
+
+      if (entity) {
+        if (start < i) {
+          buffer.push(str.substring(start, i));
+        }
+
+        buffer.push(entity);
+        start = i + 1;
+      }
+    } else {
+      if (start < i) {
+        buffer.push(str.substring(start, i));
+      }
+
+      buffer.push(`&#x${char.toString(16).toUpperCase()};`);
+
+      if (char > 0xd7ff && (char < 0xe000 || char > 0xfffd)) {
+        i++;
+      }
+
+      start = i + 1;
+    }
+  }
+
+  if (buffer.length === 0) {
+    return str;
+  }
+
+  if (start < str.length) {
+    buffer.push(str.substring(start, str.length));
+  }
+
+  return buffer.join("");
+}
+
+function validateCSSFont(cssFontInfo) {
+  const DEFAULT_CSS_FONT_OBLIQUE = "14";
+  const DEFAULT_CSS_FONT_WEIGHT = "400";
+  const CSS_FONT_WEIGHT_VALUES = new Set(["100", "200", "300", "400", "500", "600", "700", "800", "900", "1000", "normal", "bold", "bolder", "lighter"]);
+  const {
+    fontFamily,
+    fontWeight,
+    italicAngle
+  } = cssFontInfo;
+
+  if (/^".*"$/.test(fontFamily)) {
+    if (/[^\\]"/.test(fontFamily.slice(1, fontFamily.length - 1))) {
+      (0, _util.warn)(`XFA - FontFamily contains some unescaped ": ${fontFamily}.`);
+      return false;
+    }
+  } else if (/^'.*'$/.test(fontFamily)) {
+    if (/[^\\]'/.test(fontFamily.slice(1, fontFamily.length - 1))) {
+      (0, _util.warn)(`XFA - FontFamily contains some unescaped ': ${fontFamily}.`);
+      return false;
+    }
+  } else {
+    for (const ident of fontFamily.split(/[ \t]+/)) {
+      if (/^([0-9]|(-([0-9]|-)))/.test(ident) || !/^[a-zA-Z0-9\-_\\]+$/.test(ident)) {
+        (0, _util.warn)(`XFA - FontFamily contains some invalid <custom-ident>: ${fontFamily}.`);
+        return false;
+      }
+    }
+  }
+
+  const weight = fontWeight ? fontWeight.toString() : "";
+  cssFontInfo.fontWeight = CSS_FONT_WEIGHT_VALUES.has(weight) ? weight : DEFAULT_CSS_FONT_WEIGHT;
+  const angle = parseFloat(italicAngle);
+  cssFontInfo.italicAngle = isNaN(angle) || angle < -90 || angle > 90 ? DEFAULT_CSS_FONT_OBLIQUE : italicAngle.toString();
+  return true;
 }

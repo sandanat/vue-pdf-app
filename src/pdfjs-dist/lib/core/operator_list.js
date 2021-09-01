@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,402 +28,423 @@ exports.OperatorList = void 0;
 
 var _util = require("../shared/util.js");
 
-var QueueOptimizer = function QueueOptimizerClosure() {
-  function addState(parentState, pattern, checkFn, iterateFn, processFn) {
-    var state = parentState;
+function addState(parentState, pattern, checkFn, iterateFn, processFn) {
+  let state = parentState;
 
-    for (var i = 0, ii = pattern.length - 1; i < ii; i++) {
-      var item = pattern[i];
-      state = state[item] || (state[item] = []);
-    }
-
-    state[pattern[pattern.length - 1]] = {
-      checkFn,
-      iterateFn,
-      processFn
-    };
+  for (let i = 0, ii = pattern.length - 1; i < ii; i++) {
+    const item = pattern[i];
+    state = state[item] || (state[item] = []);
   }
 
-  function handlePaintSolidColorImageMask(iFirstSave, count, fnArray, argsArray) {
-    var iFirstPIMXO = iFirstSave + 2;
+  state[pattern[pattern.length - 1]] = {
+    checkFn,
+    iterateFn,
+    processFn
+  };
+}
 
-    for (var i = 0; i < count; i++) {
-      var arg = argsArray[iFirstPIMXO + 4 * i];
-      var imageMask = arg.length === 1 && arg[0];
+function handlePaintSolidColorImageMask(iFirstSave, count, fnArray, argsArray) {
+  const iFirstPIMXO = iFirstSave + 2;
+  let i;
 
-      if (imageMask && imageMask.width === 1 && imageMask.height === 1 && (!imageMask.data.length || imageMask.data.length === 1 && imageMask.data[0] === 0)) {
-        fnArray[iFirstPIMXO + 4 * i] = _util.OPS.paintSolidColorImageMask;
-        continue;
-      }
+  for (i = 0; i < count; i++) {
+    const arg = argsArray[iFirstPIMXO + 4 * i];
+    const imageMask = arg.length === 1 && arg[0];
 
-      break;
+    if (imageMask && imageMask.width === 1 && imageMask.height === 1 && (!imageMask.data.length || imageMask.data.length === 1 && imageMask.data[0] === 0)) {
+      fnArray[iFirstPIMXO + 4 * i] = _util.OPS.paintSolidColorImageMask;
+      continue;
     }
 
-    return count - i;
+    break;
   }
 
-  var InitialState = [];
-  addState(InitialState, [_util.OPS.save, _util.OPS.transform, _util.OPS.paintInlineImageXObject, _util.OPS.restore], null, function iterateInlineImageGroup(context, i) {
-    var fnArray = context.fnArray;
-    var iFirstSave = context.iCurr - 3;
-    var pos = (i - iFirstSave) % 4;
+  return count - i;
+}
 
-    switch (pos) {
-      case 0:
-        return fnArray[i] === _util.OPS.save;
+const InitialState = [];
+addState(InitialState, [_util.OPS.save, _util.OPS.transform, _util.OPS.paintInlineImageXObject, _util.OPS.restore], null, function iterateInlineImageGroup(context, i) {
+  const fnArray = context.fnArray;
+  const iFirstSave = context.iCurr - 3;
+  const pos = (i - iFirstSave) % 4;
 
-      case 1:
-        return fnArray[i] === _util.OPS.transform;
+  switch (pos) {
+    case 0:
+      return fnArray[i] === _util.OPS.save;
 
-      case 2:
-        return fnArray[i] === _util.OPS.paintInlineImageXObject;
+    case 1:
+      return fnArray[i] === _util.OPS.transform;
 
-      case 3:
-        return fnArray[i] === _util.OPS.restore;
-    }
+    case 2:
+      return fnArray[i] === _util.OPS.paintInlineImageXObject;
 
-    throw new Error(`iterateInlineImageGroup - invalid pos: ${pos}`);
-  }, function foundInlineImageGroup(context, i) {
-    var MIN_IMAGES_IN_INLINE_IMAGES_BLOCK = 10;
-    var MAX_IMAGES_IN_INLINE_IMAGES_BLOCK = 200;
-    var MAX_WIDTH = 1000;
-    var IMAGE_PADDING = 1;
-    var fnArray = context.fnArray,
+    case 3:
+      return fnArray[i] === _util.OPS.restore;
+  }
+
+  throw new Error(`iterateInlineImageGroup - invalid pos: ${pos}`);
+}, function foundInlineImageGroup(context, i) {
+  const MIN_IMAGES_IN_INLINE_IMAGES_BLOCK = 10;
+  const MAX_IMAGES_IN_INLINE_IMAGES_BLOCK = 200;
+  const MAX_WIDTH = 1000;
+  const IMAGE_PADDING = 1;
+  const fnArray = context.fnArray,
         argsArray = context.argsArray;
-    var curr = context.iCurr;
-    var iFirstSave = curr - 3;
-    var iFirstTransform = curr - 2;
-    var iFirstPIIXO = curr - 1;
-    var count = Math.min(Math.floor((i - iFirstSave) / 4), MAX_IMAGES_IN_INLINE_IMAGES_BLOCK);
+  const curr = context.iCurr;
+  const iFirstSave = curr - 3;
+  const iFirstTransform = curr - 2;
+  const iFirstPIIXO = curr - 1;
+  const count = Math.min(Math.floor((i - iFirstSave) / 4), MAX_IMAGES_IN_INLINE_IMAGES_BLOCK);
 
-    if (count < MIN_IMAGES_IN_INLINE_IMAGES_BLOCK) {
-      return i - (i - iFirstSave) % 4;
+  if (count < MIN_IMAGES_IN_INLINE_IMAGES_BLOCK) {
+    return i - (i - iFirstSave) % 4;
+  }
+
+  let maxX = 0;
+  const map = [];
+  let maxLineHeight = 0;
+  let currentX = IMAGE_PADDING,
+      currentY = IMAGE_PADDING;
+
+  for (let q = 0; q < count; q++) {
+    const transform = argsArray[iFirstTransform + (q << 2)];
+    const img = argsArray[iFirstPIIXO + (q << 2)][0];
+
+    if (currentX + img.width > MAX_WIDTH) {
+      maxX = Math.max(maxX, currentX);
+      currentY += maxLineHeight + 2 * IMAGE_PADDING;
+      currentX = 0;
+      maxLineHeight = 0;
     }
 
-    var maxX = 0;
-    var map = [],
-        maxLineHeight = 0;
-    var currentX = IMAGE_PADDING,
-        currentY = IMAGE_PADDING;
-    var q;
+    map.push({
+      transform,
+      x: currentX,
+      y: currentY,
+      w: img.width,
+      h: img.height
+    });
+    currentX += img.width + 2 * IMAGE_PADDING;
+    maxLineHeight = Math.max(maxLineHeight, img.height);
+  }
 
-    for (q = 0; q < count; q++) {
-      var transform = argsArray[iFirstTransform + (q << 2)];
-      var img = argsArray[iFirstPIIXO + (q << 2)][0];
+  const imgWidth = Math.max(maxX, currentX) + IMAGE_PADDING;
+  const imgHeight = currentY + maxLineHeight + IMAGE_PADDING;
+  const imgData = new Uint8ClampedArray(imgWidth * imgHeight * 4);
+  const imgRowSize = imgWidth << 2;
 
-      if (currentX + img.width > MAX_WIDTH) {
-        maxX = Math.max(maxX, currentX);
-        currentY += maxLineHeight + 2 * IMAGE_PADDING;
-        currentX = 0;
-        maxLineHeight = 0;
-      }
+  for (let q = 0; q < count; q++) {
+    const data = argsArray[iFirstPIIXO + (q << 2)][0].data;
+    const rowSize = map[q].w << 2;
+    let dataOffset = 0;
+    let offset = map[q].x + map[q].y * imgWidth << 2;
+    imgData.set(data.subarray(0, rowSize), offset - imgRowSize);
 
-      map.push({
-        transform,
-        x: currentX,
-        y: currentY,
-        w: img.width,
-        h: img.height
-      });
-      currentX += img.width + 2 * IMAGE_PADDING;
-      maxLineHeight = Math.max(maxLineHeight, img.height);
+    for (let k = 0, kk = map[q].h; k < kk; k++) {
+      imgData.set(data.subarray(dataOffset, dataOffset + rowSize), offset);
+      dataOffset += rowSize;
+      offset += imgRowSize;
     }
 
-    var imgWidth = Math.max(maxX, currentX) + IMAGE_PADDING;
-    var imgHeight = currentY + maxLineHeight + IMAGE_PADDING;
-    var imgData = new Uint8ClampedArray(imgWidth * imgHeight * 4);
-    var imgRowSize = imgWidth << 2;
+    imgData.set(data.subarray(dataOffset - rowSize, dataOffset), offset);
 
-    for (q = 0; q < count; q++) {
-      var data = argsArray[iFirstPIIXO + (q << 2)][0].data;
-      var rowSize = map[q].w << 2;
-      var dataOffset = 0;
-      var offset = map[q].x + map[q].y * imgWidth << 2;
-      imgData.set(data.subarray(0, rowSize), offset - imgRowSize);
-
-      for (var k = 0, kk = map[q].h; k < kk; k++) {
-        imgData.set(data.subarray(dataOffset, dataOffset + rowSize), offset);
-        dataOffset += rowSize;
-        offset += imgRowSize;
-      }
-
-      imgData.set(data.subarray(dataOffset - rowSize, dataOffset), offset);
-
-      while (offset >= 0) {
-        data[offset - 4] = data[offset];
-        data[offset - 3] = data[offset + 1];
-        data[offset - 2] = data[offset + 2];
-        data[offset - 1] = data[offset + 3];
-        data[offset + rowSize] = data[offset + rowSize - 4];
-        data[offset + rowSize + 1] = data[offset + rowSize - 3];
-        data[offset + rowSize + 2] = data[offset + rowSize - 2];
-        data[offset + rowSize + 3] = data[offset + rowSize - 1];
-        offset -= imgRowSize;
-      }
+    while (offset >= 0) {
+      data[offset - 4] = data[offset];
+      data[offset - 3] = data[offset + 1];
+      data[offset - 2] = data[offset + 2];
+      data[offset - 1] = data[offset + 3];
+      data[offset + rowSize] = data[offset + rowSize - 4];
+      data[offset + rowSize + 1] = data[offset + rowSize - 3];
+      data[offset + rowSize + 2] = data[offset + rowSize - 2];
+      data[offset + rowSize + 3] = data[offset + rowSize - 1];
+      offset -= imgRowSize;
     }
+  }
 
-    fnArray.splice(iFirstSave, count * 4, _util.OPS.paintInlineImageXObjectGroup);
-    argsArray.splice(iFirstSave, count * 4, [{
-      width: imgWidth,
-      height: imgHeight,
-      kind: _util.ImageKind.RGBA_32BPP,
-      data: imgData
-    }, map]);
-    return iFirstSave + 1;
-  });
-  addState(InitialState, [_util.OPS.save, _util.OPS.transform, _util.OPS.paintImageMaskXObject, _util.OPS.restore], null, function iterateImageMaskGroup(context, i) {
-    var fnArray = context.fnArray;
-    var iFirstSave = context.iCurr - 3;
-    var pos = (i - iFirstSave) % 4;
+  fnArray.splice(iFirstSave, count * 4, _util.OPS.paintInlineImageXObjectGroup);
+  argsArray.splice(iFirstSave, count * 4, [{
+    width: imgWidth,
+    height: imgHeight,
+    kind: _util.ImageKind.RGBA_32BPP,
+    data: imgData
+  }, map]);
+  return iFirstSave + 1;
+});
+addState(InitialState, [_util.OPS.save, _util.OPS.transform, _util.OPS.paintImageMaskXObject, _util.OPS.restore], null, function iterateImageMaskGroup(context, i) {
+  const fnArray = context.fnArray;
+  const iFirstSave = context.iCurr - 3;
+  const pos = (i - iFirstSave) % 4;
 
-    switch (pos) {
-      case 0:
-        return fnArray[i] === _util.OPS.save;
+  switch (pos) {
+    case 0:
+      return fnArray[i] === _util.OPS.save;
 
-      case 1:
-        return fnArray[i] === _util.OPS.transform;
+    case 1:
+      return fnArray[i] === _util.OPS.transform;
 
-      case 2:
-        return fnArray[i] === _util.OPS.paintImageMaskXObject;
+    case 2:
+      return fnArray[i] === _util.OPS.paintImageMaskXObject;
 
-      case 3:
-        return fnArray[i] === _util.OPS.restore;
-    }
+    case 3:
+      return fnArray[i] === _util.OPS.restore;
+  }
 
-    throw new Error(`iterateImageMaskGroup - invalid pos: ${pos}`);
-  }, function foundImageMaskGroup(context, i) {
-    var MIN_IMAGES_IN_MASKS_BLOCK = 10;
-    var MAX_IMAGES_IN_MASKS_BLOCK = 100;
-    var MAX_SAME_IMAGES_IN_MASKS_BLOCK = 1000;
-    var fnArray = context.fnArray,
+  throw new Error(`iterateImageMaskGroup - invalid pos: ${pos}`);
+}, function foundImageMaskGroup(context, i) {
+  const MIN_IMAGES_IN_MASKS_BLOCK = 10;
+  const MAX_IMAGES_IN_MASKS_BLOCK = 100;
+  const MAX_SAME_IMAGES_IN_MASKS_BLOCK = 1000;
+  const fnArray = context.fnArray,
         argsArray = context.argsArray;
-    var curr = context.iCurr;
-    var iFirstSave = curr - 3;
-    var iFirstTransform = curr - 2;
-    var iFirstPIMXO = curr - 1;
-    var count = Math.floor((i - iFirstSave) / 4);
-    count = handlePaintSolidColorImageMask(iFirstSave, count, fnArray, argsArray);
+  const curr = context.iCurr;
+  const iFirstSave = curr - 3;
+  const iFirstTransform = curr - 2;
+  const iFirstPIMXO = curr - 1;
+  let count = Math.floor((i - iFirstSave) / 4);
+  count = handlePaintSolidColorImageMask(iFirstSave, count, fnArray, argsArray);
 
-    if (count < MIN_IMAGES_IN_MASKS_BLOCK) {
-      return i - (i - iFirstSave) % 4;
-    }
+  if (count < MIN_IMAGES_IN_MASKS_BLOCK) {
+    return i - (i - iFirstSave) % 4;
+  }
 
-    var q;
-    var isSameImage = false;
-    var iTransform, transformArgs;
-    var firstPIMXOArg0 = argsArray[iFirstPIMXO][0];
+  let isSameImage = false;
+  let iTransform, transformArgs;
+  const firstPIMXOArg0 = argsArray[iFirstPIMXO][0];
+  const firstTransformArg0 = argsArray[iFirstTransform][0],
+        firstTransformArg1 = argsArray[iFirstTransform][1],
+        firstTransformArg2 = argsArray[iFirstTransform][2],
+        firstTransformArg3 = argsArray[iFirstTransform][3];
 
-    if (argsArray[iFirstTransform][1] === 0 && argsArray[iFirstTransform][2] === 0) {
-      isSameImage = true;
-      var firstTransformArg0 = argsArray[iFirstTransform][0];
-      var firstTransformArg3 = argsArray[iFirstTransform][3];
-      iTransform = iFirstTransform + 4;
-      var iPIMXO = iFirstPIMXO + 4;
+  if (firstTransformArg1 === firstTransformArg2) {
+    isSameImage = true;
+    iTransform = iFirstTransform + 4;
+    let iPIMXO = iFirstPIMXO + 4;
 
-      for (q = 1; q < count; q++, iTransform += 4, iPIMXO += 4) {
-        transformArgs = argsArray[iTransform];
+    for (let q = 1; q < count; q++, iTransform += 4, iPIMXO += 4) {
+      transformArgs = argsArray[iTransform];
 
-        if (argsArray[iPIMXO][0] !== firstPIMXOArg0 || transformArgs[0] !== firstTransformArg0 || transformArgs[1] !== 0 || transformArgs[2] !== 0 || transformArgs[3] !== firstTransformArg3) {
-          if (q < MIN_IMAGES_IN_MASKS_BLOCK) {
-            isSameImage = false;
-          } else {
-            count = q;
-          }
-
-          break;
+      if (argsArray[iPIMXO][0] !== firstPIMXOArg0 || transformArgs[0] !== firstTransformArg0 || transformArgs[1] !== firstTransformArg1 || transformArgs[2] !== firstTransformArg2 || transformArgs[3] !== firstTransformArg3) {
+        if (q < MIN_IMAGES_IN_MASKS_BLOCK) {
+          isSameImage = false;
+        } else {
+          count = q;
         }
+
+        break;
       }
     }
+  }
 
-    if (isSameImage) {
-      count = Math.min(count, MAX_SAME_IMAGES_IN_MASKS_BLOCK);
-      var positions = new Float32Array(count * 2);
-      iTransform = iFirstTransform;
+  if (isSameImage) {
+    count = Math.min(count, MAX_SAME_IMAGES_IN_MASKS_BLOCK);
+    const positions = new Float32Array(count * 2);
+    iTransform = iFirstTransform;
 
-      for (q = 0; q < count; q++, iTransform += 4) {
-        transformArgs = argsArray[iTransform];
-        positions[q << 1] = transformArgs[4];
-        positions[(q << 1) + 1] = transformArgs[5];
-      }
-
-      fnArray.splice(iFirstSave, count * 4, _util.OPS.paintImageMaskXObjectRepeat);
-      argsArray.splice(iFirstSave, count * 4, [firstPIMXOArg0, firstTransformArg0, firstTransformArg3, positions]);
-    } else {
-      count = Math.min(count, MAX_IMAGES_IN_MASKS_BLOCK);
-      var images = [];
-
-      for (q = 0; q < count; q++) {
-        transformArgs = argsArray[iFirstTransform + (q << 2)];
-        var maskParams = argsArray[iFirstPIMXO + (q << 2)][0];
-        images.push({
-          data: maskParams.data,
-          width: maskParams.width,
-          height: maskParams.height,
-          transform: transformArgs
-        });
-      }
-
-      fnArray.splice(iFirstSave, count * 4, _util.OPS.paintImageMaskXObjectGroup);
-      argsArray.splice(iFirstSave, count * 4, [images]);
-    }
-
-    return iFirstSave + 1;
-  });
-  addState(InitialState, [_util.OPS.save, _util.OPS.transform, _util.OPS.paintImageXObject, _util.OPS.restore], function (context) {
-    var argsArray = context.argsArray;
-    var iFirstTransform = context.iCurr - 2;
-    return argsArray[iFirstTransform][1] === 0 && argsArray[iFirstTransform][2] === 0;
-  }, function iterateImageGroup(context, i) {
-    var fnArray = context.fnArray,
-        argsArray = context.argsArray;
-    var iFirstSave = context.iCurr - 3;
-    var pos = (i - iFirstSave) % 4;
-
-    switch (pos) {
-      case 0:
-        return fnArray[i] === _util.OPS.save;
-
-      case 1:
-        if (fnArray[i] !== _util.OPS.transform) {
-          return false;
-        }
-
-        var iFirstTransform = context.iCurr - 2;
-        var firstTransformArg0 = argsArray[iFirstTransform][0];
-        var firstTransformArg3 = argsArray[iFirstTransform][3];
-
-        if (argsArray[i][0] !== firstTransformArg0 || argsArray[i][1] !== 0 || argsArray[i][2] !== 0 || argsArray[i][3] !== firstTransformArg3) {
-          return false;
-        }
-
-        return true;
-
-      case 2:
-        if (fnArray[i] !== _util.OPS.paintImageXObject) {
-          return false;
-        }
-
-        var iFirstPIXO = context.iCurr - 1;
-        var firstPIXOArg0 = argsArray[iFirstPIXO][0];
-
-        if (argsArray[i][0] !== firstPIXOArg0) {
-          return false;
-        }
-
-        return true;
-
-      case 3:
-        return fnArray[i] === _util.OPS.restore;
-    }
-
-    throw new Error(`iterateImageGroup - invalid pos: ${pos}`);
-  }, function (context, i) {
-    var MIN_IMAGES_IN_BLOCK = 3;
-    var MAX_IMAGES_IN_BLOCK = 1000;
-    var fnArray = context.fnArray,
-        argsArray = context.argsArray;
-    var curr = context.iCurr;
-    var iFirstSave = curr - 3;
-    var iFirstTransform = curr - 2;
-    var iFirstPIXO = curr - 1;
-    var firstPIXOArg0 = argsArray[iFirstPIXO][0];
-    var firstTransformArg0 = argsArray[iFirstTransform][0];
-    var firstTransformArg3 = argsArray[iFirstTransform][3];
-    var count = Math.min(Math.floor((i - iFirstSave) / 4), MAX_IMAGES_IN_BLOCK);
-
-    if (count < MIN_IMAGES_IN_BLOCK) {
-      return i - (i - iFirstSave) % 4;
-    }
-
-    var positions = new Float32Array(count * 2);
-    var iTransform = iFirstTransform;
-
-    for (var q = 0; q < count; q++, iTransform += 4) {
-      var transformArgs = argsArray[iTransform];
+    for (let q = 0; q < count; q++, iTransform += 4) {
+      transformArgs = argsArray[iTransform];
       positions[q << 1] = transformArgs[4];
       positions[(q << 1) + 1] = transformArgs[5];
     }
 
-    var args = [firstPIXOArg0, firstTransformArg0, firstTransformArg3, positions];
-    fnArray.splice(iFirstSave, count * 4, _util.OPS.paintImageXObjectRepeat);
-    argsArray.splice(iFirstSave, count * 4, args);
-    return iFirstSave + 1;
-  });
-  addState(InitialState, [_util.OPS.beginText, _util.OPS.setFont, _util.OPS.setTextMatrix, _util.OPS.showText, _util.OPS.endText], null, function iterateShowTextGroup(context, i) {
-    var fnArray = context.fnArray,
+    fnArray.splice(iFirstSave, count * 4, _util.OPS.paintImageMaskXObjectRepeat);
+    argsArray.splice(iFirstSave, count * 4, [firstPIMXOArg0, firstTransformArg0, firstTransformArg1, firstTransformArg2, firstTransformArg3, positions]);
+  } else {
+    count = Math.min(count, MAX_IMAGES_IN_MASKS_BLOCK);
+    const images = [];
+
+    for (let q = 0; q < count; q++) {
+      transformArgs = argsArray[iFirstTransform + (q << 2)];
+      const maskParams = argsArray[iFirstPIMXO + (q << 2)][0];
+      images.push({
+        data: maskParams.data,
+        width: maskParams.width,
+        height: maskParams.height,
+        transform: transformArgs
+      });
+    }
+
+    fnArray.splice(iFirstSave, count * 4, _util.OPS.paintImageMaskXObjectGroup);
+    argsArray.splice(iFirstSave, count * 4, [images]);
+  }
+
+  return iFirstSave + 1;
+});
+addState(InitialState, [_util.OPS.save, _util.OPS.transform, _util.OPS.paintImageXObject, _util.OPS.restore], function (context) {
+  const argsArray = context.argsArray;
+  const iFirstTransform = context.iCurr - 2;
+  return argsArray[iFirstTransform][1] === 0 && argsArray[iFirstTransform][2] === 0;
+}, function iterateImageGroup(context, i) {
+  const fnArray = context.fnArray,
         argsArray = context.argsArray;
-    var iFirstSave = context.iCurr - 4;
-    var pos = (i - iFirstSave) % 5;
+  const iFirstSave = context.iCurr - 3;
+  const pos = (i - iFirstSave) % 4;
 
-    switch (pos) {
-      case 0:
-        return fnArray[i] === _util.OPS.beginText;
+  switch (pos) {
+    case 0:
+      return fnArray[i] === _util.OPS.save;
 
-      case 1:
-        return fnArray[i] === _util.OPS.setFont;
+    case 1:
+      if (fnArray[i] !== _util.OPS.transform) {
+        return false;
+      }
 
-      case 2:
-        return fnArray[i] === _util.OPS.setTextMatrix;
+      const iFirstTransform = context.iCurr - 2;
+      const firstTransformArg0 = argsArray[iFirstTransform][0];
+      const firstTransformArg3 = argsArray[iFirstTransform][3];
 
-      case 3:
-        if (fnArray[i] !== _util.OPS.showText) {
-          return false;
-        }
+      if (argsArray[i][0] !== firstTransformArg0 || argsArray[i][1] !== 0 || argsArray[i][2] !== 0 || argsArray[i][3] !== firstTransformArg3) {
+        return false;
+      }
 
-        var iFirstSetFont = context.iCurr - 3;
-        var firstSetFontArg0 = argsArray[iFirstSetFont][0];
-        var firstSetFontArg1 = argsArray[iFirstSetFont][1];
+      return true;
 
-        if (argsArray[i][0] !== firstSetFontArg0 || argsArray[i][1] !== firstSetFontArg1) {
-          return false;
-        }
+    case 2:
+      if (fnArray[i] !== _util.OPS.paintImageXObject) {
+        return false;
+      }
 
-        return true;
+      const iFirstPIXO = context.iCurr - 1;
+      const firstPIXOArg0 = argsArray[iFirstPIXO][0];
 
-      case 4:
-        return fnArray[i] === _util.OPS.endText;
-    }
+      if (argsArray[i][0] !== firstPIXOArg0) {
+        return false;
+      }
 
-    throw new Error(`iterateShowTextGroup - invalid pos: ${pos}`);
-  }, function (context, i) {
-    var MIN_CHARS_IN_BLOCK = 3;
-    var MAX_CHARS_IN_BLOCK = 1000;
-    var fnArray = context.fnArray,
+      return true;
+
+    case 3:
+      return fnArray[i] === _util.OPS.restore;
+  }
+
+  throw new Error(`iterateImageGroup - invalid pos: ${pos}`);
+}, function (context, i) {
+  const MIN_IMAGES_IN_BLOCK = 3;
+  const MAX_IMAGES_IN_BLOCK = 1000;
+  const fnArray = context.fnArray,
         argsArray = context.argsArray;
-    var curr = context.iCurr;
-    var iFirstBeginText = curr - 4;
-    var iFirstSetFont = curr - 3;
-    var iFirstSetTextMatrix = curr - 2;
-    var iFirstShowText = curr - 1;
-    var iFirstEndText = curr;
-    var firstSetFontArg0 = argsArray[iFirstSetFont][0];
-    var firstSetFontArg1 = argsArray[iFirstSetFont][1];
-    var count = Math.min(Math.floor((i - iFirstBeginText) / 5), MAX_CHARS_IN_BLOCK);
+  const curr = context.iCurr;
+  const iFirstSave = curr - 3;
+  const iFirstTransform = curr - 2;
+  const iFirstPIXO = curr - 1;
+  const firstPIXOArg0 = argsArray[iFirstPIXO][0];
+  const firstTransformArg0 = argsArray[iFirstTransform][0];
+  const firstTransformArg3 = argsArray[iFirstTransform][3];
+  const count = Math.min(Math.floor((i - iFirstSave) / 4), MAX_IMAGES_IN_BLOCK);
 
-    if (count < MIN_CHARS_IN_BLOCK) {
-      return i - (i - iFirstBeginText) % 5;
-    }
+  if (count < MIN_IMAGES_IN_BLOCK) {
+    return i - (i - iFirstSave) % 4;
+  }
 
-    var iFirst = iFirstBeginText;
+  const positions = new Float32Array(count * 2);
+  let iTransform = iFirstTransform;
 
-    if (iFirstBeginText >= 4 && fnArray[iFirstBeginText - 4] === fnArray[iFirstSetFont] && fnArray[iFirstBeginText - 3] === fnArray[iFirstSetTextMatrix] && fnArray[iFirstBeginText - 2] === fnArray[iFirstShowText] && fnArray[iFirstBeginText - 1] === fnArray[iFirstEndText] && argsArray[iFirstBeginText - 4][0] === firstSetFontArg0 && argsArray[iFirstBeginText - 4][1] === firstSetFontArg1) {
-      count++;
-      iFirst -= 5;
-    }
+  for (let q = 0; q < count; q++, iTransform += 4) {
+    const transformArgs = argsArray[iTransform];
+    positions[q << 1] = transformArgs[4];
+    positions[(q << 1) + 1] = transformArgs[5];
+  }
 
-    var iEndText = iFirst + 4;
+  const args = [firstPIXOArg0, firstTransformArg0, firstTransformArg3, positions];
+  fnArray.splice(iFirstSave, count * 4, _util.OPS.paintImageXObjectRepeat);
+  argsArray.splice(iFirstSave, count * 4, args);
+  return iFirstSave + 1;
+});
+addState(InitialState, [_util.OPS.beginText, _util.OPS.setFont, _util.OPS.setTextMatrix, _util.OPS.showText, _util.OPS.endText], null, function iterateShowTextGroup(context, i) {
+  const fnArray = context.fnArray,
+        argsArray = context.argsArray;
+  const iFirstSave = context.iCurr - 4;
+  const pos = (i - iFirstSave) % 5;
 
-    for (var q = 1; q < count; q++) {
-      fnArray.splice(iEndText, 3);
-      argsArray.splice(iEndText, 3);
-      iEndText += 2;
-    }
+  switch (pos) {
+    case 0:
+      return fnArray[i] === _util.OPS.beginText;
 
-    return iEndText + 1;
-  });
+    case 1:
+      return fnArray[i] === _util.OPS.setFont;
 
-  function QueueOptimizer(queue) {
+    case 2:
+      return fnArray[i] === _util.OPS.setTextMatrix;
+
+    case 3:
+      if (fnArray[i] !== _util.OPS.showText) {
+        return false;
+      }
+
+      const iFirstSetFont = context.iCurr - 3;
+      const firstSetFontArg0 = argsArray[iFirstSetFont][0];
+      const firstSetFontArg1 = argsArray[iFirstSetFont][1];
+
+      if (argsArray[i][0] !== firstSetFontArg0 || argsArray[i][1] !== firstSetFontArg1) {
+        return false;
+      }
+
+      return true;
+
+    case 4:
+      return fnArray[i] === _util.OPS.endText;
+  }
+
+  throw new Error(`iterateShowTextGroup - invalid pos: ${pos}`);
+}, function (context, i) {
+  const MIN_CHARS_IN_BLOCK = 3;
+  const MAX_CHARS_IN_BLOCK = 1000;
+  const fnArray = context.fnArray,
+        argsArray = context.argsArray;
+  const curr = context.iCurr;
+  const iFirstBeginText = curr - 4;
+  const iFirstSetFont = curr - 3;
+  const iFirstSetTextMatrix = curr - 2;
+  const iFirstShowText = curr - 1;
+  const iFirstEndText = curr;
+  const firstSetFontArg0 = argsArray[iFirstSetFont][0];
+  const firstSetFontArg1 = argsArray[iFirstSetFont][1];
+  let count = Math.min(Math.floor((i - iFirstBeginText) / 5), MAX_CHARS_IN_BLOCK);
+
+  if (count < MIN_CHARS_IN_BLOCK) {
+    return i - (i - iFirstBeginText) % 5;
+  }
+
+  let iFirst = iFirstBeginText;
+
+  if (iFirstBeginText >= 4 && fnArray[iFirstBeginText - 4] === fnArray[iFirstSetFont] && fnArray[iFirstBeginText - 3] === fnArray[iFirstSetTextMatrix] && fnArray[iFirstBeginText - 2] === fnArray[iFirstShowText] && fnArray[iFirstBeginText - 1] === fnArray[iFirstEndText] && argsArray[iFirstBeginText - 4][0] === firstSetFontArg0 && argsArray[iFirstBeginText - 4][1] === firstSetFontArg1) {
+    count++;
+    iFirst -= 5;
+  }
+
+  let iEndText = iFirst + 4;
+
+  for (let q = 1; q < count; q++) {
+    fnArray.splice(iEndText, 3);
+    argsArray.splice(iEndText, 3);
+    iEndText += 2;
+  }
+
+  return iEndText + 1;
+});
+
+class NullOptimizer {
+  constructor(queue) {
     this.queue = queue;
+  }
+
+  _optimize() {}
+
+  push(fn, args) {
+    this.queue.fnArray.push(fn);
+    this.queue.argsArray.push(args);
+
+    this._optimize();
+  }
+
+  flush() {}
+
+  reset() {}
+
+}
+
+class QueueOptimizer extends NullOptimizer {
+  constructor(queue) {
+    super(queue);
     this.state = null;
     this.context = {
       iCurr: 0,
@@ -434,116 +455,92 @@ var QueueOptimizer = function QueueOptimizerClosure() {
     this.lastProcessed = 0;
   }
 
-  QueueOptimizer.prototype = {
-    _optimize() {
-      const fnArray = this.queue.fnArray;
-      let i = this.lastProcessed,
-          ii = fnArray.length;
-      let state = this.state;
-      let match = this.match;
+  _optimize() {
+    const fnArray = this.queue.fnArray;
+    let i = this.lastProcessed,
+        ii = fnArray.length;
+    let state = this.state;
+    let match = this.match;
 
-      if (!state && !match && i + 1 === ii && !InitialState[fnArray[i]]) {
-        this.lastProcessed = ii;
-        return;
-      }
+    if (!state && !match && i + 1 === ii && !InitialState[fnArray[i]]) {
+      this.lastProcessed = ii;
+      return;
+    }
 
-      const context = this.context;
+    const context = this.context;
 
-      while (i < ii) {
-        if (match) {
-          const iterate = (0, match.iterateFn)(context, i);
+    while (i < ii) {
+      if (match) {
+        const iterate = (0, match.iterateFn)(context, i);
 
-          if (iterate) {
-            i++;
-            continue;
-          }
-
-          i = (0, match.processFn)(context, i + 1);
-          ii = fnArray.length;
-          match = null;
-          state = null;
-
-          if (i >= ii) {
-            break;
-          }
-        }
-
-        state = (state || InitialState)[fnArray[i]];
-
-        if (!state || Array.isArray(state)) {
+        if (iterate) {
           i++;
           continue;
         }
 
-        context.iCurr = i;
-        i++;
-
-        if (state.checkFn && !(0, state.checkFn)(context)) {
-          state = null;
-          continue;
-        }
-
-        match = state;
+        i = (0, match.processFn)(context, i + 1);
+        ii = fnArray.length;
+        match = null;
         state = null;
+
+        if (i >= ii) {
+          break;
+        }
       }
 
-      this.state = state;
-      this.match = match;
-      this.lastProcessed = i;
-    },
+      state = (state || InitialState)[fnArray[i]];
 
-    push(fn, args) {
-      this.queue.fnArray.push(fn);
-      this.queue.argsArray.push(args);
-
-      this._optimize();
-    },
-
-    flush() {
-      while (this.match) {
-        const length = this.queue.fnArray.length;
-        this.lastProcessed = (0, this.match.processFn)(this.context, length);
-        this.match = null;
-        this.state = null;
-
-        this._optimize();
+      if (!state || Array.isArray(state)) {
+        i++;
+        continue;
       }
-    },
 
-    reset() {
-      this.state = null;
-      this.match = null;
-      this.lastProcessed = 0;
+      context.iCurr = i;
+      i++;
+
+      if (state.checkFn && !(0, state.checkFn)(context)) {
+        state = null;
+        continue;
+      }
+
+      match = state;
+      state = null;
     }
 
-  };
-  return QueueOptimizer;
-}();
-
-var NullOptimizer = function NullOptimizerClosure() {
-  function NullOptimizer(queue) {
-    this.queue = queue;
+    this.state = state;
+    this.match = match;
+    this.lastProcessed = i;
   }
 
-  NullOptimizer.prototype = {
-    push(fn, args) {
-      this.queue.fnArray.push(fn);
-      this.queue.argsArray.push(args);
-    },
+  flush() {
+    while (this.match) {
+      const length = this.queue.fnArray.length;
+      this.lastProcessed = (0, this.match.processFn)(this.context, length);
+      this.match = null;
+      this.state = null;
 
-    flush() {},
+      this._optimize();
+    }
+  }
 
-    reset() {}
+  reset() {
+    this.state = null;
+    this.match = null;
+    this.lastProcessed = 0;
+  }
 
-  };
-  return NullOptimizer;
-}();
+}
 
-var OperatorList = function OperatorListClosure() {
-  var CHUNK_SIZE = 1000;
-  var CHUNK_SIZE_ABOUT = CHUNK_SIZE - 5;
+class OperatorList {
+  static get CHUNK_SIZE() {
+    return (0, _util.shadow)(this, "CHUNK_SIZE", 1000);
+  }
 
-  function OperatorList(intent, streamSink, pageIndex) {
+  static get CHUNK_SIZE_ABOUT() {
+    return (0, _util.shadow)(this, "CHUNK_SIZE_ABOUT", OperatorList.CHUNK_SIZE - 5);
+  }
+
+  constructor(intent, streamSink) {
     this._streamSink = streamSink;
     this.fnArray = [];
     this.argsArray = [];
@@ -554,119 +551,121 @@ var OperatorList = function OperatorListClosure() {
       this.optimizer = new NullOptimizer(this);
     }
 
-    this.dependencies = Object.create(null);
+    this.dependencies = new Set();
     this._totalLength = 0;
-    this.pageIndex = pageIndex;
-    this.intent = intent;
     this.weight = 0;
     this._resolved = streamSink ? null : Promise.resolve();
   }
 
-  OperatorList.prototype = {
-    get length() {
-      return this.argsArray.length;
-    },
+  get length() {
+    return this.argsArray.length;
+  }
 
-    get ready() {
-      return this._resolved || this._streamSink.ready;
-    },
+  get ready() {
+    return this._resolved || this._streamSink.ready;
+  }
 
-    get totalLength() {
-      return this._totalLength + this.length;
-    },
+  get totalLength() {
+    return this._totalLength + this.length;
+  }
 
-    addOp(fn, args) {
-      this.optimizer.push(fn, args);
-      this.weight++;
+  addOp(fn, args) {
+    this.optimizer.push(fn, args);
+    this.weight++;
 
-      if (this._streamSink) {
-        if (this.weight >= CHUNK_SIZE) {
-          this.flush();
-        } else if (this.weight >= CHUNK_SIZE_ABOUT && (fn === _util.OPS.restore || fn === _util.OPS.endText)) {
-          this.flush();
-        }
+    if (this._streamSink) {
+      if (this.weight >= OperatorList.CHUNK_SIZE) {
+        this.flush();
+      } else if (this.weight >= OperatorList.CHUNK_SIZE_ABOUT && (fn === _util.OPS.restore || fn === _util.OPS.endText)) {
+        this.flush();
       }
-    },
+    }
+  }
 
-    addDependency(dependency) {
-      if (dependency in this.dependencies) {
-        return;
-      }
-
-      this.dependencies[dependency] = true;
-      this.addOp(_util.OPS.dependency, [dependency]);
-    },
-
-    addDependencies(dependencies) {
-      for (var key in dependencies) {
-        this.addDependency(key);
-      }
-    },
-
-    addOpList(opList) {
-      Object.assign(this.dependencies, opList.dependencies);
-
-      for (var i = 0, ii = opList.length; i < ii; i++) {
-        this.addOp(opList.fnArray[i], opList.argsArray[i]);
-      }
-    },
-
-    getIR() {
-      return {
-        fnArray: this.fnArray,
-        argsArray: this.argsArray,
-        length: this.length
-      };
-    },
-
-    get _transfers() {
-      const transfers = [];
-      const {
-        fnArray,
-        argsArray,
-        length
-      } = this;
-
-      for (let i = 0; i < length; i++) {
-        switch (fnArray[i]) {
-          case _util.OPS.paintInlineImageXObject:
-          case _util.OPS.paintInlineImageXObjectGroup:
-          case _util.OPS.paintImageMaskXObject:
-            const arg = argsArray[i][0];
-            ;
-
-            if (!arg.cached) {
-              transfers.push(arg.data.buffer);
-            }
-
-            break;
-        }
-      }
-
-      return transfers;
-    },
-
-    flush(lastChunk = false) {
-      this.optimizer.flush();
-      const length = this.length;
-      this._totalLength += length;
-
-      this._streamSink.enqueue({
-        fnArray: this.fnArray,
-        argsArray: this.argsArray,
-        lastChunk,
-        length
-      }, 1, this._transfers);
-
-      this.dependencies = Object.create(null);
-      this.fnArray.length = 0;
-      this.argsArray.length = 0;
-      this.weight = 0;
-      this.optimizer.reset();
+  addDependency(dependency) {
+    if (this.dependencies.has(dependency)) {
+      return;
     }
 
-  };
-  return OperatorList;
-}();
+    this.dependencies.add(dependency);
+    this.addOp(_util.OPS.dependency, [dependency]);
+  }
+
+  addDependencies(dependencies) {
+    for (const dependency of dependencies) {
+      this.addDependency(dependency);
+    }
+  }
+
+  addOpList(opList) {
+    if (!(opList instanceof OperatorList)) {
+      (0, _util.warn)('addOpList - ignoring invalid "opList" parameter.');
+      return;
+    }
+
+    for (const dependency of opList.dependencies) {
+      this.dependencies.add(dependency);
+    }
+
+    for (let i = 0, ii = opList.length; i < ii; i++) {
+      this.addOp(opList.fnArray[i], opList.argsArray[i]);
+    }
+  }
+
+  getIR() {
+    return {
+      fnArray: this.fnArray,
+      argsArray: this.argsArray,
+      length: this.length
+    };
+  }
+
+  get _transfers() {
+    const transfers = [];
+    const {
+      fnArray,
+      argsArray,
+      length
+    } = this;
+
+    for (let i = 0; i < length; i++) {
+      switch (fnArray[i]) {
+        case _util.OPS.paintInlineImageXObject:
+        case _util.OPS.paintInlineImageXObjectGroup:
+        case _util.OPS.paintImageMaskXObject:
+          const arg = argsArray[i][0];
+          ;
+
+          if (!arg.cached) {
+            transfers.push(arg.data.buffer);
+          }
+
+          break;
+      }
+    }
+
+    return transfers;
+  }
+
+  flush(lastChunk = false) {
+    this.optimizer.flush();
+    const length = this.length;
+    this._totalLength += length;
+
+    this._streamSink.enqueue({
+      fnArray: this.fnArray,
+      argsArray: this.argsArray,
+      lastChunk,
+      length
+    }, 1, this._transfers);
+
+    this.dependencies.clear();
+    this.fnArray.length = 0;
+    this.argsArray.length = 0;
+    this.weight = 0;
+    this.optimizer.reset();
+  }
+
+}
 
 exports.OperatorList = OperatorList;

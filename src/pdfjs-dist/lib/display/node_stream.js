@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ exports.PDFNodeStream = void 0;
 var _util = require("../shared/util.js");
 
 var _network_utils = require("./network_utils.js");
+
+;
 
 const fs = require("fs");
 
@@ -70,11 +72,11 @@ class PDFNodeStream {
   }
 
   get _progressiveDataLength() {
-    return this._fullRequestReader ? this._fullRequestReader._loaded : 0;
+    return this._fullRequestReader?._loaded ?? 0;
   }
 
   getFullReader() {
-    (0, _util.assert)(!this._fullRequestReader);
+    (0, _util.assert)(!this._fullRequestReader, "PDFNodeStream.getFullReader can only be called once.");
     this._fullRequestReader = this.isFsUrl ? new PDFNodeStreamFsFullReader(this) : new PDFNodeStreamFullReader(this);
     return this._fullRequestReader;
   }
@@ -96,11 +98,9 @@ class PDFNodeStream {
       this._fullRequestReader.cancel(reason);
     }
 
-    const readers = this._rangeRequestReaders.slice(0);
-
-    readers.forEach(function (reader) {
+    for (const reader of this._rangeRequestReaders.slice(0)) {
       reader.cancel(reason);
-    });
+    }
   }
 
 }
@@ -321,13 +321,13 @@ class BaseRangeReader {
 
 }
 
-function createRequestOptions(url, headers) {
+function createRequestOptions(parsedUrl, headers) {
   return {
-    protocol: url.protocol,
-    auth: url.auth,
-    host: url.hostname,
-    port: url.port,
-    path: url.path,
+    protocol: parsedUrl.protocol,
+    auth: parsedUrl.auth,
+    host: parsedUrl.hostname,
+    port: parsedUrl.port,
+    path: parsedUrl.path,
     method: "GET",
     headers
   };
@@ -403,7 +403,7 @@ class PDFNodeStreamRangeReader extends BaseRangeReader {
       this._httpHeaders[property] = value;
     }
 
-    this._httpHeaders["Range"] = `bytes=${start}-${end - 1}`;
+    this._httpHeaders.Range = `bytes=${start}-${end - 1}`;
 
     const handleResponse = response => {
       if (response.statusCode === 404) {

@@ -76,7 +76,12 @@ export default (idConfig: ToolbarIdConfig = {}) => ({
     // Views
     thumbnailView: getEl("thumbnailView"),
     outlineView: getEl("outlineView"),
-    attachmentsView: getEl("attachmentsView")
+    attachmentsView: getEl("attachmentsView"),
+    // 2.9.359 add
+    layersButton: getEl(idConfig.viewLayers || "viewLayers"),
+    layersView: getEl("layersView"),
+    outlineOptionsContainer: getEl("outlineOptionsContainer"),
+    currentOutlineItemButton: getEl("currentOutlineItem")
   },
   sidebarResizer: {
     outerContainer: getEl("outerContainer"),

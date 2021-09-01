@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,27 +21,20 @@
  */
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.apiCompatibilityParams = void 0;
+
+var _is_node = require("../shared/is_node.js");
+
 const compatibilityParams = Object.create(null);
 {
-  const {
-    isNodeJS
-  } = require("../shared/is_node.js");
-
-  const userAgent = typeof navigator !== "undefined" && navigator.userAgent || "";
-  const isIE = /Trident/.test(userAgent);
-  const isIOSChrome = /CriOS/.test(userAgent);
-
-  (function checkOnBlobSupport() {
-    if (isIE || isIOSChrome) {
-      compatibilityParams.disableCreateObjectURL = true;
-    }
-  })();
-
-  (function checkFontFaceAndImage() {
-    if (isNodeJS) {
+  (function checkFontFace() {
+    if (_is_node.isNodeJS) {
       compatibilityParams.disableFontFace = true;
-      compatibilityParams.nativeImageDecoderSupport = "none";
     }
   })();
 }
-exports.apiCompatibilityParams = Object.freeze(compatibilityParams);
+const apiCompatibilityParams = Object.freeze(compatibilityParams);
+exports.apiCompatibilityParams = apiCompatibilityParams;

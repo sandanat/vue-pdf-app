@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.isPDFFunction = isPDFFunction;
-exports.PostScriptCompiler = exports.PostScriptEvaluator = exports.PDFFunctionFactory = void 0;
-
-var _util = require("../shared/util.js");
+exports.PostScriptEvaluator = exports.PostScriptCompiler = exports.PDFFunctionFactory = void 0;
 
 var _primitives = require("./primitives.js");
 
+var _util = require("../shared/util.js");
+
 var _ps_parser = require("./ps_parser.js");
+
+var _image_utils = require("./image_utils.js");
 
 class PDFFunctionFactory {
   constructor({
@@ -43,19 +45,85 @@ class PDFFunctionFactory {
   }
 
   create(fn) {
-    return PDFFunction.parse({
+    const cachedFunction = this.getCached(fn);
+
+    if (cachedFunction) {
+      return cachedFunction;
+    }
+
+    const parsedFunction = PDFFunction.parse({
       xref: this.xref,
       isEvalSupported: this.isEvalSupported,
-      fn
+      fn: fn instanceof _primitives.Ref ? this.xref.fetch(fn) : fn
     });
+
+    this._cache(fn, parsedFunction);
+
+    return parsedFunction;
   }
 
   createFromArray(fnObj) {
-    return PDFFunction.parseArray({
+    const cachedFunction = this.getCached(fnObj);
+
+    if (cachedFunction) {
+      return cachedFunction;
+    }
+
+    const parsedFunction = PDFFunction.parseArray({
       xref: this.xref,
       isEvalSupported: this.isEvalSupported,
-      fnObj
+      fnObj: fnObj instanceof _primitives.Ref ? this.xref.fetch(fnObj) : fnObj
     });
+
+    this._cache(fnObj, parsedFunction);
+
+    return parsedFunction;
+  }
+
+  getCached(cacheKey) {
+    let fnRef;
+
+    if (cacheKey instanceof _primitives.Ref) {
+      fnRef = cacheKey;
+    } else if (cacheKey instanceof _primitives.Dict) {
+      fnRef = cacheKey.objId;
+    } else if ((0, _primitives.isStream)(cacheKey)) {
+      fnRef = cacheKey.dict && cacheKey.dict.objId;
+    }
+
+    if (fnRef) {
+      const localFunction = this._localFunctionCache.getByRef(fnRef);
+
+      if (localFunction) {
+        return localFunction;
+      }
+    }
+
+    return null;
+  }
+
+  _cache(cacheKey, parsedFunction) {
+    if (!parsedFunction) {
+      throw new Error('PDFFunctionFactory._cache - expected "parsedFunction" argument.');
+    }
+
+    let fnRef;
+
+    if (cacheKey instanceof _primitives.Ref) {
+      fnRef = cacheKey;
+    } else if (cacheKey instanceof _primitives.Dict) {
+      fnRef = cacheKey.objId;
+    } else if ((0, _primitives.isStream)(cacheKey)) {
+      fnRef = cacheKey.dict && cacheKey.dict.objId;
+    }
+
+    if (fnRef) {
+      this._localFunctionCache.set(null, fnRef, parsedFunction);
+    }
+  }
+
+  get _localFunctionCache() {
+    return (0, _util.shadow)(this, "_localFunctionCache", new _image_utils.LocalFunctionCache());
   }
 
 }
@@ -73,8 +141,8 @@ function toNumberArray(arr) {
     if (typeof arr[i] !== "number") {
       const result = new Array(length);
 
-      for (let i = 0; i < length; i++) {
-        result[i] = +arr[i];
+      for (let j = 0; j < length; j++) {
+        result[j] = +arr[j];
       }
 
       return result;
@@ -84,27 +152,27 @@ function toNumberArray(arr) {
   return arr;
 }
 
-var PDFFunction = function PDFFunctionClosure() {
+const PDFFunction = function PDFFunctionClosure() {
   const CONSTRUCT_SAMPLED = 0;
   const CONSTRUCT_INTERPOLATED = 2;
   const CONSTRUCT_STICHED = 3;
   const CONSTRUCT_POSTSCRIPT = 4;
   return {
     getSampleArray(size, outputSize, bps, stream) {
-      var i, ii;
-      var length = 1;
+      let i, ii;
+      let length = 1;
 
       for (i = 0, ii = size.length; i < ii; i++) {
         length *= size[i];
       }
 
       length *= outputSize;
-      var array = new Array(length);
-      var codeSize = 0;
-      var codeBuf = 0;
-      var sampleMul = 1.0 / (2.0 ** bps - 1);
-      var strBytes = stream.getBytes((length * bps + 7) / 8);
-      var strIdx = 0;
+      const array = new Array(length);
+      let codeSize = 0;
+      let codeBuf = 0;
+      const sampleMul = 1.0 / (2.0 ** bps - 1);
+      const strBytes = stream.getBytes((length * bps + 7) / 8);
+      let strIdx = 0;
 
       for (i = 0; i < length; i++) {
         while (codeSize < bps) {
@@ -126,15 +194,15 @@ var PDFFunction = function PDFFunctionClosure() {
       isEvalSupported,
       fn
     }) {
-      var dict = fn.dict;
+      let dict = fn.dict;
 
       if (!dict) {
         dict = fn;
       }
 
-      var types = [this.constructSampled, null, this.constructInterpolated, this.constructStiched, this.constructPostScript];
-      var typeNum = dict.get("FunctionType");
-      var typeFn = types[typeNum];
+      const types = [this.constructSampled, null, this.constructInterpolated, this.constructStiched, this.constructPostScript];
+      const typeNum = dict.get("FunctionType");
+      const typeFn = types[typeNum];
 
       if (!typeFn) {
         throw new _util.FormatError("Unknown type of function");
@@ -153,7 +221,7 @@ var PDFFunction = function PDFFunctionClosure() {
       isEvalSupported,
       IR
     }) {
-      var type = IR[0];
+      const type = IR[0];
 
       switch (type) {
         case CONSTRUCT_SAMPLED:
@@ -216,9 +284,9 @@ var PDFFunction = function PDFFunctionClosure() {
         });
       }
 
-      var fnArray = [];
+      const fnArray = [];
 
-      for (var j = 0, jj = fnObj.length; j < jj; j++) {
+      for (let j = 0, jj = fnObj.length; j < jj; j++) {
         fnArray.push(this.parse({
           xref,
           isEvalSupported,
@@ -227,7 +295,7 @@ var PDFFunction = function PDFFunctionClosure() {
       }
 
       return function (src, srcOffset, dest, destOffset) {
-        for (var i = 0, ii = fnArray.length; i < ii; i++) {
+        for (let i = 0, ii = fnArray.length; i < ii; i++) {
           fnArray[i](src, srcOffset, dest, destOffset + i);
         }
       };
@@ -240,11 +308,11 @@ var PDFFunction = function PDFFunctionClosure() {
       dict
     }) {
       function toMultiArray(arr) {
-        var inputLength = arr.length;
-        var out = [];
-        var index = 0;
+        const inputLength = arr.length;
+        const out = [];
+        let index = 0;
 
-        for (var i = 0; i < inputLength; i += 2) {
+        for (let i = 0; i < inputLength; i += 2) {
           out[index] = [arr[i], arr[i + 1]];
           ++index;
         }
@@ -252,38 +320,38 @@ var PDFFunction = function PDFFunctionClosure() {
         return out;
       }
 
-      var domain = toNumberArray(dict.getArray("Domain"));
-      var range = toNumberArray(dict.getArray("Range"));
+      let domain = toNumberArray(dict.getArray("Domain"));
+      let range = toNumberArray(dict.getArray("Range"));
 
       if (!domain || !range) {
         throw new _util.FormatError("No domain or range");
       }
 
-      var inputSize = domain.length / 2;
-      var outputSize = range.length / 2;
+      const inputSize = domain.length / 2;
+      const outputSize = range.length / 2;
       domain = toMultiArray(domain);
       range = toMultiArray(range);
-      var size = toNumberArray(dict.getArray("Size"));
-      var bps = dict.get("BitsPerSample");
-      var order = dict.get("Order") || 1;
+      const size = toNumberArray(dict.getArray("Size"));
+      const bps = dict.get("BitsPerSample");
+      const order = dict.get("Order") || 1;
 
       if (order !== 1) {
         (0, _util.info)("No support for cubic spline interpolation: " + order);
       }
 
-      var encode = toNumberArray(dict.getArray("Encode"));
+      let encode = toNumberArray(dict.getArray("Encode"));
 
       if (!encode) {
         encode = [];
 
-        for (var i = 0; i < inputSize; ++i) {
+        for (let i = 0; i < inputSize; ++i) {
           encode.push([0, size[i] - 1]);
         }
       } else {
         encode = toMultiArray(encode);
       }
 
-      var decode = toNumberArray(dict.getArray("Decode"));
+      let decode = toNumberArray(dict.getArray("Decode"));
 
       if (!decode) {
         decode = range;
@@ -291,7 +359,7 @@ var PDFFunction = function PDFFunctionClosure() {
         decode = toMultiArray(decode);
       }
 
-      var samples = this.getSampleArray(size, outputSize, bps, fn);
+      const samples = this.getSampleArray(size, outputSize, bps, fn);
       return [CONSTRUCT_SAMPLED, inputSize, domain, encode, decode, samples, size, outputSize, 2 ** bps - 1, range];
     },
 
@@ -305,38 +373,38 @@ var PDFFunction = function PDFFunctionClosure() {
       }
 
       return function constructSampledFromIRResult(src, srcOffset, dest, destOffset) {
-        var m = IR[1];
-        var domain = IR[2];
-        var encode = IR[3];
-        var decode = IR[4];
-        var samples = IR[5];
-        var size = IR[6];
-        var n = IR[7];
-        var range = IR[9];
-        var cubeVertices = 1 << m;
-        var cubeN = new Float64Array(cubeVertices);
-        var cubeVertex = new Uint32Array(cubeVertices);
-        var i, j;
+        const m = IR[1];
+        const domain = IR[2];
+        const encode = IR[3];
+        const decode = IR[4];
+        const samples = IR[5];
+        const size = IR[6];
+        const n = IR[7];
+        const range = IR[9];
+        const cubeVertices = 1 << m;
+        const cubeN = new Float64Array(cubeVertices);
+        const cubeVertex = new Uint32Array(cubeVertices);
+        let i, j;
 
         for (j = 0; j < cubeVertices; j++) {
           cubeN[j] = 1;
         }
 
-        var k = n,
+        let k = n,
             pos = 1;
 
         for (i = 0; i < m; ++i) {
-          var domain_2i = domain[i][0];
-          var domain_2i_1 = domain[i][1];
-          var xi = Math.min(Math.max(src[srcOffset + i], domain_2i), domain_2i_1);
-          var e = interpolate(xi, domain_2i, domain_2i_1, encode[i][0], encode[i][1]);
-          var size_i = size[i];
+          const domain_2i = domain[i][0];
+          const domain_2i_1 = domain[i][1];
+          const xi = Math.min(Math.max(src[srcOffset + i], domain_2i), domain_2i_1);
+          let e = interpolate(xi, domain_2i, domain_2i_1, encode[i][0], encode[i][1]);
+          const size_i = size[i];
           e = Math.min(Math.max(e, 0), size_i - 1);
-          var e0 = e < size_i - 1 ? Math.floor(e) : e - 1;
-          var n0 = e0 + 1 - e;
-          var n1 = e - e0;
-          var offset0 = e0 * k;
-          var offset1 = offset0 + k;
+          const e0 = e < size_i - 1 ? Math.floor(e) : e - 1;
+          const n0 = e0 + 1 - e;
+          const n1 = e - e0;
+          const offset0 = e0 * k;
+          const offset1 = offset0 + k;
 
           for (j = 0; j < cubeVertices; j++) {
             if (j & pos) {
@@ -353,7 +421,7 @@ var PDFFunction = function PDFFunctionClosure() {
         }
 
         for (j = 0; j < n; ++j) {
-          var rj = 0;
+          let rj = 0;
 
           for (i = 0; i < cubeVertices; i++) {
             rj += samples[cubeVertex[i] + j] * cubeN[i];
@@ -371,13 +439,13 @@ var PDFFunction = function PDFFunctionClosure() {
       fn,
       dict
     }) {
-      var c0 = toNumberArray(dict.getArray("C0")) || [0];
-      var c1 = toNumberArray(dict.getArray("C1")) || [1];
-      var n = dict.get("N");
-      var length = c0.length;
-      var diff = [];
+      const c0 = toNumberArray(dict.getArray("C0")) || [0];
+      const c1 = toNumberArray(dict.getArray("C1")) || [1];
+      const n = dict.get("N");
+      const length = c0.length;
+      const diff = [];
 
-      for (var i = 0; i < length; ++i) {
+      for (let i = 0; i < length; ++i) {
         diff.push(c1[i] - c0[i]);
       }
 
@@ -389,14 +457,14 @@ var PDFFunction = function PDFFunctionClosure() {
       isEvalSupported,
       IR
     }) {
-      var c0 = IR[1];
-      var diff = IR[2];
-      var n = IR[3];
-      var length = diff.length;
+      const c0 = IR[1];
+      const diff = IR[2];
+      const n = IR[3];
+      const length = diff.length;
       return function constructInterpolatedFromIRResult(src, srcOffset, dest, destOffset) {
-        var x = n === 1 ? src[srcOffset] : src[srcOffset] ** n;
+        const x = n === 1 ? src[srcOffset] : src[srcOffset] ** n;
 
-        for (var j = 0; j < length; ++j) {
+        for (let j = 0; j < length; ++j) {
           dest[destOffset + j] = c0[j] + x * diff[j];
         }
       };
@@ -408,22 +476,22 @@ var PDFFunction = function PDFFunctionClosure() {
       fn,
       dict
     }) {
-      var domain = toNumberArray(dict.getArray("Domain"));
+      const domain = toNumberArray(dict.getArray("Domain"));
 
       if (!domain) {
         throw new _util.FormatError("No domain");
       }
 
-      var inputSize = domain.length / 2;
+      const inputSize = domain.length / 2;
 
       if (inputSize !== 1) {
         throw new _util.FormatError("Bad domain for stiched function");
       }
 
-      var fnRefs = dict.get("Functions");
-      var fns = [];
+      const fnRefs = dict.get("Functions");
+      const fns = [];
 
-      for (var i = 0, ii = fnRefs.length; i < ii; ++i) {
+      for (let i = 0, ii = fnRefs.length; i < ii; ++i) {
         fns.push(this.parse({
           xref,
           isEvalSupported,
@@ -431,8 +499,8 @@ var PDFFunction = function PDFFunctionClosure() {
         }));
       }
 
-      var bounds = toNumberArray(dict.getArray("Bounds"));
-      var encode = toNumberArray(dict.getArray("Encode"));
+      const bounds = toNumberArray(dict.getArray("Bounds"));
+      const encode = toNumberArray(dict.getArray("Encode"));
       return [CONSTRUCT_STICHED, domain, bounds, encode, fns];
     },
 
@@ -441,13 +509,13 @@ var PDFFunction = function PDFFunctionClosure() {
       isEvalSupported,
       IR
     }) {
-      var domain = IR[1];
-      var bounds = IR[2];
-      var encode = IR[3];
-      var fns = IR[4];
-      var tmpBuf = new Float32Array(1);
+      const domain = IR[1];
+      const bounds = IR[2];
+      const encode = IR[3];
+      const fns = IR[4];
+      const tmpBuf = new Float32Array(1);
       return function constructStichedFromIRResult(src, srcOffset, dest, destOffset) {
-        var clip = function constructStichedFromIRClip(v, min, max) {
+        const clip = function constructStichedFromIRClip(v, min, max) {
           if (v > max) {
             v = max;
           } else if (v < min) {
@@ -457,28 +525,30 @@ var PDFFunction = function PDFFunctionClosure() {
           return v;
         };
 
-        var v = clip(src[srcOffset], domain[0], domain[1]);
+        const v = clip(src[srcOffset], domain[0], domain[1]);
+        const length = bounds.length;
+        let i;
 
-        for (var i = 0, ii = bounds.length; i < ii; ++i) {
+        for (i = 0; i < length; ++i) {
           if (v < bounds[i]) {
             break;
           }
         }
 
-        var dmin = domain[0];
+        let dmin = domain[0];
 
         if (i > 0) {
           dmin = bounds[i - 1];
         }
 
-        var dmax = domain[1];
+        let dmax = domain[1];
 
         if (i < bounds.length) {
           dmax = bounds[i];
         }
 
-        var rmin = encode[2 * i];
-        var rmax = encode[2 * i + 1];
+        const rmin = encode[2 * i];
+        const rmax = encode[2 * i + 1];
         tmpBuf[0] = dmin === dmax ? rmin : rmin + (v - dmin) * (rmax - rmin) / (dmax - dmin);
         fns[i](tmpBuf, 0, dest, destOffset);
       };
@@ -490,8 +560,8 @@ var PDFFunction = function PDFFunctionClosure() {
       fn,
       dict
     }) {
-      var domain = toNumberArray(dict.getArray("Domain"));
-      var range = toNumberArray(dict.getArray("Range"));
+      const domain = toNumberArray(dict.getArray("Domain"));
+      const range = toNumberArray(dict.getArray("Range"));
 
       if (!domain) {
         throw new _util.FormatError("No domain.");
@@ -501,9 +571,9 @@ var PDFFunction = function PDFFunctionClosure() {
         throw new _util.FormatError("No range.");
       }
 
-      var lexer = new _ps_parser.PostScriptLexer(fn);
-      var parser = new _ps_parser.PostScriptParser(lexer);
-      var code = parser.parse();
+      const lexer = new _ps_parser.PostScriptLexer(fn);
+      const parser = new _ps_parser.PostScriptParser(lexer);
+      const code = parser.parse();
       return [CONSTRUCT_POSTSCRIPT, domain, range, code];
     },
 
@@ -512,9 +582,9 @@ var PDFFunction = function PDFFunctionClosure() {
       isEvalSupported,
       IR
     }) {
-      var domain = IR[1];
-      var range = IR[2];
-      var code = IR[3];
+      const domain = IR[1];
+      const range = IR[2];
+      const code = IR[3];
 
       if (isEvalSupported && _util.IsEvalSupportedCached.value) {
         const compiled = new PostScriptCompiler().compile(code, domain, range);
@@ -525,17 +595,17 @@ var PDFFunction = function PDFFunctionClosure() {
       }
 
       (0, _util.info)("Unable to compile PS function");
-      var numOutputs = range.length >> 1;
-      var numInputs = domain.length >> 1;
-      var evaluator = new PostScriptEvaluator(code);
-      var cache = Object.create(null);
-      var MAX_CACHE_SIZE = 2048 * 4;
-      var cache_available = MAX_CACHE_SIZE;
-      var tmpBuf = new Float32Array(numInputs);
+      const numOutputs = range.length >> 1;
+      const numInputs = domain.length >> 1;
+      const evaluator = new PostScriptEvaluator(code);
+      const cache = Object.create(null);
+      const MAX_CACHE_SIZE = 2048 * 4;
+      let cache_available = MAX_CACHE_SIZE;
+      const tmpBuf = new Float32Array(numInputs);
       return function constructPostScriptFromIRResult(src, srcOffset, dest, destOffset) {
-        var i, value;
-        var key = "";
-        var input = tmpBuf;
+        let i, value;
+        let key = "";
+        const input = tmpBuf;
 
         for (i = 0; i < numInputs; i++) {
           value = src[srcOffset + i];
@@ -543,20 +613,20 @@ var PDFFunction = function PDFFunctionClosure() {
           key += value + "_";
         }
 
-        var cachedValue = cache[key];
+        const cachedValue = cache[key];
 
         if (cachedValue !== undefined) {
           dest.set(cachedValue, destOffset);
           return;
         }
 
-        var output = new Float32Array(numOutputs);
-        var stack = evaluator.execute(input);
-        var stackIndex = stack.length - numOutputs;
+        const output = new Float32Array(numOutputs);
+        const stack = evaluator.execute(input);
+        const stackIndex = stack.length - numOutputs;
 
         for (i = 0; i < numOutputs; i++) {
           value = stack[stackIndex + i];
-          var bound = range[i * 2];
+          let bound = range[i * 2];
 
           if (value < bound) {
             value = bound;
@@ -584,7 +654,7 @@ var PDFFunction = function PDFFunctionClosure() {
 }();
 
 function isPDFFunction(v) {
-  var fnDict;
+  let fnDict;
 
   if (typeof v !== "object") {
     return false;
@@ -599,469 +669,479 @@ function isPDFFunction(v) {
   return fnDict.has("FunctionType");
 }
 
-var PostScriptStack = function PostScriptStackClosure() {
-  var MAX_STACK_SIZE = 100;
+const PostScriptStack = function PostScriptStackClosure() {
+  const MAX_STACK_SIZE = 100;
 
-  function PostScriptStack(initialStack) {
-    this.stack = !initialStack ? [] : Array.prototype.slice.call(initialStack, 0);
-  }
+  class PostScriptStack {
+    constructor(initialStack) {
+      this.stack = !initialStack ? [] : Array.prototype.slice.call(initialStack, 0);
+    }
 
-  PostScriptStack.prototype = {
-    push: function PostScriptStack_push(value) {
+    push(value) {
       if (this.stack.length >= MAX_STACK_SIZE) {
         throw new Error("PostScript function stack overflow.");
       }
 
       this.stack.push(value);
-    },
-    pop: function PostScriptStack_pop() {
+    }
+
+    pop() {
       if (this.stack.length <= 0) {
         throw new Error("PostScript function stack underflow.");
       }
 
       return this.stack.pop();
-    },
-    copy: function PostScriptStack_copy(n) {
+    }
+
+    copy(n) {
       if (this.stack.length + n >= MAX_STACK_SIZE) {
         throw new Error("PostScript function stack overflow.");
       }
 
-      var stack = this.stack;
+      const stack = this.stack;
 
-      for (var i = stack.length - n, j = n - 1; j >= 0; j--, i++) {
+      for (let i = stack.length - n, j = n - 1; j >= 0; j--, i++) {
         stack.push(stack[i]);
       }
-    },
-    index: function PostScriptStack_index(n) {
+    }
+
+    index(n) {
       this.push(this.stack[this.stack.length - n - 1]);
-    },
-    roll: function PostScriptStack_roll(n, p) {
-      var stack = this.stack;
-      var l = stack.length - n;
-      var r = stack.length - 1,
-          c = l + (p - Math.floor(p / n) * n),
-          i,
-          j,
-          t;
+    }
 
-      for (i = l, j = r; i < j; i++, j--) {
-        t = stack[i];
+    roll(n, p) {
+      const stack = this.stack;
+      const l = stack.length - n;
+      const r = stack.length - 1;
+      const c = l + (p - Math.floor(p / n) * n);
+
+      for (let i = l, j = r; i < j; i++, j--) {
+        const t = stack[i];
         stack[i] = stack[j];
         stack[j] = t;
       }
 
-      for (i = l, j = c - 1; i < j; i++, j--) {
-        t = stack[i];
+      for (let i = l, j = c - 1; i < j; i++, j--) {
+        const t = stack[i];
         stack[i] = stack[j];
         stack[j] = t;
       }
 
-      for (i = c, j = r; i < j; i++, j--) {
-        t = stack[i];
+      for (let i = c, j = r; i < j; i++, j--) {
+        const t = stack[i];
         stack[i] = stack[j];
         stack[j] = t;
       }
     }
-  };
+
+  }
+
   return PostScriptStack;
 }();
 
-var PostScriptEvaluator = function PostScriptEvaluatorClosure() {
-  function PostScriptEvaluator(operators) {
+class PostScriptEvaluator {
+  constructor(operators) {
     this.operators = operators;
   }
 
-  PostScriptEvaluator.prototype = {
-    execute: function PostScriptEvaluator_execute(initialStack) {
-      var stack = new PostScriptStack(initialStack);
-      var counter = 0;
-      var operators = this.operators;
-      var length = operators.length;
-      var operator, a, b;
+  execute(initialStack) {
+    const stack = new PostScriptStack(initialStack);
+    let counter = 0;
+    const operators = this.operators;
+    const length = operators.length;
+    let operator, a, b;
 
-      while (counter < length) {
-        operator = operators[counter++];
+    while (counter < length) {
+      operator = operators[counter++];
 
-        if (typeof operator === "number") {
-          stack.push(operator);
-          continue;
-        }
-
-        switch (operator) {
-          case "jz":
-            b = stack.pop();
-            a = stack.pop();
-
-            if (!a) {
-              counter = b;
-            }
-
-            break;
-
-          case "j":
-            a = stack.pop();
-            counter = a;
-            break;
-
-          case "abs":
-            a = stack.pop();
-            stack.push(Math.abs(a));
-            break;
-
-          case "add":
-            b = stack.pop();
-            a = stack.pop();
-            stack.push(a + b);
-            break;
-
-          case "and":
-            b = stack.pop();
-            a = stack.pop();
-
-            if ((0, _util.isBool)(a) && (0, _util.isBool)(b)) {
-              stack.push(a && b);
-            } else {
-              stack.push(a & b);
-            }
-
-            break;
-
-          case "atan":
-            a = stack.pop();
-            stack.push(Math.atan(a));
-            break;
-
-          case "bitshift":
-            b = stack.pop();
-            a = stack.pop();
-
-            if (a > 0) {
-              stack.push(a << b);
-            } else {
-              stack.push(a >> b);
-            }
-
-            break;
-
-          case "ceiling":
-            a = stack.pop();
-            stack.push(Math.ceil(a));
-            break;
-
-          case "copy":
-            a = stack.pop();
-            stack.copy(a);
-            break;
-
-          case "cos":
-            a = stack.pop();
-            stack.push(Math.cos(a));
-            break;
-
-          case "cvi":
-            a = stack.pop() | 0;
-            stack.push(a);
-            break;
-
-          case "cvr":
-            break;
-
-          case "div":
-            b = stack.pop();
-            a = stack.pop();
-            stack.push(a / b);
-            break;
-
-          case "dup":
-            stack.copy(1);
-            break;
-
-          case "eq":
-            b = stack.pop();
-            a = stack.pop();
-            stack.push(a === b);
-            break;
-
-          case "exch":
-            stack.roll(2, 1);
-            break;
-
-          case "exp":
-            b = stack.pop();
-            a = stack.pop();
-            stack.push(a ** b);
-            break;
-
-          case "false":
-            stack.push(false);
-            break;
-
-          case "floor":
-            a = stack.pop();
-            stack.push(Math.floor(a));
-            break;
-
-          case "ge":
-            b = stack.pop();
-            a = stack.pop();
-            stack.push(a >= b);
-            break;
-
-          case "gt":
-            b = stack.pop();
-            a = stack.pop();
-            stack.push(a > b);
-            break;
-
-          case "idiv":
-            b = stack.pop();
-            a = stack.pop();
-            stack.push(a / b | 0);
-            break;
-
-          case "index":
-            a = stack.pop();
-            stack.index(a);
-            break;
-
-          case "le":
-            b = stack.pop();
-            a = stack.pop();
-            stack.push(a <= b);
-            break;
-
-          case "ln":
-            a = stack.pop();
-            stack.push(Math.log(a));
-            break;
-
-          case "log":
-            a = stack.pop();
-            stack.push(Math.log(a) / Math.LN10);
-            break;
-
-          case "lt":
-            b = stack.pop();
-            a = stack.pop();
-            stack.push(a < b);
-            break;
-
-          case "mod":
-            b = stack.pop();
-            a = stack.pop();
-            stack.push(a % b);
-            break;
-
-          case "mul":
-            b = stack.pop();
-            a = stack.pop();
-            stack.push(a * b);
-            break;
-
-          case "ne":
-            b = stack.pop();
-            a = stack.pop();
-            stack.push(a !== b);
-            break;
-
-          case "neg":
-            a = stack.pop();
-            stack.push(-a);
-            break;
-
-          case "not":
-            a = stack.pop();
-
-            if ((0, _util.isBool)(a)) {
-              stack.push(!a);
-            } else {
-              stack.push(~a);
-            }
-
-            break;
-
-          case "or":
-            b = stack.pop();
-            a = stack.pop();
-
-            if ((0, _util.isBool)(a) && (0, _util.isBool)(b)) {
-              stack.push(a || b);
-            } else {
-              stack.push(a | b);
-            }
-
-            break;
-
-          case "pop":
-            stack.pop();
-            break;
-
-          case "roll":
-            b = stack.pop();
-            a = stack.pop();
-            stack.roll(a, b);
-            break;
-
-          case "round":
-            a = stack.pop();
-            stack.push(Math.round(a));
-            break;
-
-          case "sin":
-            a = stack.pop();
-            stack.push(Math.sin(a));
-            break;
-
-          case "sqrt":
-            a = stack.pop();
-            stack.push(Math.sqrt(a));
-            break;
-
-          case "sub":
-            b = stack.pop();
-            a = stack.pop();
-            stack.push(a - b);
-            break;
-
-          case "true":
-            stack.push(true);
-            break;
-
-          case "truncate":
-            a = stack.pop();
-            a = a < 0 ? Math.ceil(a) : Math.floor(a);
-            stack.push(a);
-            break;
-
-          case "xor":
-            b = stack.pop();
-            a = stack.pop();
-
-            if ((0, _util.isBool)(a) && (0, _util.isBool)(b)) {
-              stack.push(a !== b);
-            } else {
-              stack.push(a ^ b);
-            }
-
-            break;
-
-          default:
-            throw new _util.FormatError(`Unknown operator ${operator}`);
-        }
+      if (typeof operator === "number") {
+        stack.push(operator);
+        continue;
       }
 
-      return stack.stack;
+      switch (operator) {
+        case "jz":
+          b = stack.pop();
+          a = stack.pop();
+
+          if (!a) {
+            counter = b;
+          }
+
+          break;
+
+        case "j":
+          a = stack.pop();
+          counter = a;
+          break;
+
+        case "abs":
+          a = stack.pop();
+          stack.push(Math.abs(a));
+          break;
+
+        case "add":
+          b = stack.pop();
+          a = stack.pop();
+          stack.push(a + b);
+          break;
+
+        case "and":
+          b = stack.pop();
+          a = stack.pop();
+
+          if ((0, _util.isBool)(a) && (0, _util.isBool)(b)) {
+            stack.push(a && b);
+          } else {
+            stack.push(a & b);
+          }
+
+          break;
+
+        case "atan":
+          a = stack.pop();
+          stack.push(Math.atan(a));
+          break;
+
+        case "bitshift":
+          b = stack.pop();
+          a = stack.pop();
+
+          if (a > 0) {
+            stack.push(a << b);
+          } else {
+            stack.push(a >> b);
+          }
+
+          break;
+
+        case "ceiling":
+          a = stack.pop();
+          stack.push(Math.ceil(a));
+          break;
+
+        case "copy":
+          a = stack.pop();
+          stack.copy(a);
+          break;
+
+        case "cos":
+          a = stack.pop();
+          stack.push(Math.cos(a));
+          break;
+
+        case "cvi":
+          a = stack.pop() | 0;
+          stack.push(a);
+          break;
+
+        case "cvr":
+          break;
+
+        case "div":
+          b = stack.pop();
+          a = stack.pop();
+          stack.push(a / b);
+          break;
+
+        case "dup":
+          stack.copy(1);
+          break;
+
+        case "eq":
+          b = stack.pop();
+          a = stack.pop();
+          stack.push(a === b);
+          break;
+
+        case "exch":
+          stack.roll(2, 1);
+          break;
+
+        case "exp":
+          b = stack.pop();
+          a = stack.pop();
+          stack.push(a ** b);
+          break;
+
+        case "false":
+          stack.push(false);
+          break;
+
+        case "floor":
+          a = stack.pop();
+          stack.push(Math.floor(a));
+          break;
+
+        case "ge":
+          b = stack.pop();
+          a = stack.pop();
+          stack.push(a >= b);
+          break;
+
+        case "gt":
+          b = stack.pop();
+          a = stack.pop();
+          stack.push(a > b);
+          break;
+
+        case "idiv":
+          b = stack.pop();
+          a = stack.pop();
+          stack.push(a / b | 0);
+          break;
+
+        case "index":
+          a = stack.pop();
+          stack.index(a);
+          break;
+
+        case "le":
+          b = stack.pop();
+          a = stack.pop();
+          stack.push(a <= b);
+          break;
+
+        case "ln":
+          a = stack.pop();
+          stack.push(Math.log(a));
+          break;
+
+        case "log":
+          a = stack.pop();
+          stack.push(Math.log(a) / Math.LN10);
+          break;
+
+        case "lt":
+          b = stack.pop();
+          a = stack.pop();
+          stack.push(a < b);
+          break;
+
+        case "mod":
+          b = stack.pop();
+          a = stack.pop();
+          stack.push(a % b);
+          break;
+
+        case "mul":
+          b = stack.pop();
+          a = stack.pop();
+          stack.push(a * b);
+          break;
+
+        case "ne":
+          b = stack.pop();
+          a = stack.pop();
+          stack.push(a !== b);
+          break;
+
+        case "neg":
+          a = stack.pop();
+          stack.push(-a);
+          break;
+
+        case "not":
+          a = stack.pop();
+
+          if ((0, _util.isBool)(a)) {
+            stack.push(!a);
+          } else {
+            stack.push(~a);
+          }
+
+          break;
+
+        case "or":
+          b = stack.pop();
+          a = stack.pop();
+
+          if ((0, _util.isBool)(a) && (0, _util.isBool)(b)) {
+            stack.push(a || b);
+          } else {
+            stack.push(a | b);
+          }
+
+          break;
+
+        case "pop":
+          stack.pop();
+          break;
+
+        case "roll":
+          b = stack.pop();
+          a = stack.pop();
+          stack.roll(a, b);
+          break;
+
+        case "round":
+          a = stack.pop();
+          stack.push(Math.round(a));
+          break;
+
+        case "sin":
+          a = stack.pop();
+          stack.push(Math.sin(a));
+          break;
+
+        case "sqrt":
+          a = stack.pop();
+          stack.push(Math.sqrt(a));
+          break;
+
+        case "sub":
+          b = stack.pop();
+          a = stack.pop();
+          stack.push(a - b);
+          break;
+
+        case "true":
+          stack.push(true);
+          break;
+
+        case "truncate":
+          a = stack.pop();
+          a = a < 0 ? Math.ceil(a) : Math.floor(a);
+          stack.push(a);
+          break;
+
+        case "xor":
+          b = stack.pop();
+          a = stack.pop();
+
+          if ((0, _util.isBool)(a) && (0, _util.isBool)(b)) {
+            stack.push(a !== b);
+          } else {
+            stack.push(a ^ b);
+          }
+
+          break;
+
+        default:
+          throw new _util.FormatError(`Unknown operator ${operator}`);
+      }
     }
-  };
-  return PostScriptEvaluator;
-}();
+
+    return stack.stack;
+  }
+
+}
 
 exports.PostScriptEvaluator = PostScriptEvaluator;
 
-var PostScriptCompiler = function PostScriptCompilerClosure() {
-  function AstNode(type) {
-    this.type = type;
+const PostScriptCompiler = function PostScriptCompilerClosure() {
+  class AstNode {
+    constructor(type) {
+      this.type = type;
+    }
+
+    visit(visitor) {
+      (0, _util.unreachable)("abstract method");
+    }
+
   }
 
-  AstNode.prototype.visit = function (visitor) {
-    (0, _util.unreachable)("abstract method");
-  };
+  class AstArgument extends AstNode {
+    constructor(index, min, max) {
+      super("args");
+      this.index = index;
+      this.min = min;
+      this.max = max;
+    }
 
-  function AstArgument(index, min, max) {
-    AstNode.call(this, "args");
-    this.index = index;
-    this.min = min;
-    this.max = max;
+    visit(visitor) {
+      visitor.visitArgument(this);
+    }
+
   }
 
-  AstArgument.prototype = Object.create(AstNode.prototype);
+  class AstLiteral extends AstNode {
+    constructor(number) {
+      super("literal");
+      this.number = number;
+      this.min = number;
+      this.max = number;
+    }
 
-  AstArgument.prototype.visit = function (visitor) {
-    visitor.visitArgument(this);
-  };
+    visit(visitor) {
+      visitor.visitLiteral(this);
+    }
 
-  function AstLiteral(number) {
-    AstNode.call(this, "literal");
-    this.number = number;
-    this.min = number;
-    this.max = number;
   }
 
-  AstLiteral.prototype = Object.create(AstNode.prototype);
+  class AstBinaryOperation extends AstNode {
+    constructor(op, arg1, arg2, min, max) {
+      super("binary");
+      this.op = op;
+      this.arg1 = arg1;
+      this.arg2 = arg2;
+      this.min = min;
+      this.max = max;
+    }
 
-  AstLiteral.prototype.visit = function (visitor) {
-    visitor.visitLiteral(this);
-  };
+    visit(visitor) {
+      visitor.visitBinaryOperation(this);
+    }
 
-  function AstBinaryOperation(op, arg1, arg2, min, max) {
-    AstNode.call(this, "binary");
-    this.op = op;
-    this.arg1 = arg1;
-    this.arg2 = arg2;
-    this.min = min;
-    this.max = max;
   }
 
-  AstBinaryOperation.prototype = Object.create(AstNode.prototype);
+  class AstMin extends AstNode {
+    constructor(arg, max) {
+      super("max");
+      this.arg = arg;
+      this.min = arg.min;
+      this.max = max;
+    }
 
-  AstBinaryOperation.prototype.visit = function (visitor) {
-    visitor.visitBinaryOperation(this);
-  };
+    visit(visitor) {
+      visitor.visitMin(this);
+    }
 
-  function AstMin(arg, max) {
-    AstNode.call(this, "max");
-    this.arg = arg;
-    this.min = arg.min;
-    this.max = max;
   }
 
-  AstMin.prototype = Object.create(AstNode.prototype);
+  class AstVariable extends AstNode {
+    constructor(index, min, max) {
+      super("var");
+      this.index = index;
+      this.min = min;
+      this.max = max;
+    }
 
-  AstMin.prototype.visit = function (visitor) {
-    visitor.visitMin(this);
-  };
+    visit(visitor) {
+      visitor.visitVariable(this);
+    }
 
-  function AstVariable(index, min, max) {
-    AstNode.call(this, "var");
-    this.index = index;
-    this.min = min;
-    this.max = max;
   }
 
-  AstVariable.prototype = Object.create(AstNode.prototype);
+  class AstVariableDefinition extends AstNode {
+    constructor(variable, arg) {
+      super("definition");
+      this.variable = variable;
+      this.arg = arg;
+    }
 
-  AstVariable.prototype.visit = function (visitor) {
-    visitor.visitVariable(this);
-  };
+    visit(visitor) {
+      visitor.visitVariableDefinition(this);
+    }
 
-  function AstVariableDefinition(variable, arg) {
-    AstNode.call(this, "definition");
-    this.variable = variable;
-    this.arg = arg;
   }
 
-  AstVariableDefinition.prototype = Object.create(AstNode.prototype);
+  class ExpressionBuilderVisitor {
+    constructor() {
+      this.parts = [];
+    }
 
-  AstVariableDefinition.prototype.visit = function (visitor) {
-    visitor.visitVariableDefinition(this);
-  };
-
-  function ExpressionBuilderVisitor() {
-    this.parts = [];
-  }
-
-  ExpressionBuilderVisitor.prototype = {
     visitArgument(arg) {
       this.parts.push("Math.max(", arg.min, ", Math.min(", arg.max, ", src[srcOffset + ", arg.index, "]))");
-    },
+    }
 
     visitVariable(variable) {
       this.parts.push("v", variable.index);
-    },
+    }
 
     visitLiteral(literal) {
       this.parts.push(literal.number);
-    },
+    }
 
     visitBinaryOperation(operation) {
       this.parts.push("(");
@@ -1069,7 +1149,7 @@ var PostScriptCompiler = function PostScriptCompilerClosure() {
       this.parts.push(" ", operation.op, " ");
       operation.arg2.visit(this);
       this.parts.push(")");
-    },
+    }
 
     visitVariableDefinition(definition) {
       this.parts.push("var ");
@@ -1077,19 +1157,19 @@ var PostScriptCompiler = function PostScriptCompilerClosure() {
       this.parts.push(" = ");
       definition.arg.visit(this);
       this.parts.push(";");
-    },
+    }
 
     visitMin(max) {
       this.parts.push("Math.min(");
       max.arg.visit(this);
       this.parts.push(", ", max.max, ")");
-    },
+    }
 
     toString() {
       return this.parts.join("");
     }
 
-  };
+  }
 
   function buildAddOperation(num1, num2) {
     if (num2.type === "literal" && num2.number === 0) {
@@ -1126,8 +1206,8 @@ var PostScriptCompiler = function PostScriptCompilerClosure() {
       }
     }
 
-    var min = Math.min(num1.min * num2.min, num1.min * num2.max, num1.max * num2.min, num1.max * num2.max);
-    var max = Math.max(num1.min * num2.min, num1.min * num2.max, num1.max * num2.min, num1.max * num2.max);
+    const min = Math.min(num1.min * num2.min, num1.min * num2.max, num1.max * num2.min, num1.max * num2.max);
+    const max = Math.max(num1.min * num2.min, num1.min * num2.max, num1.max * num2.min, num1.max * num2.max);
     return new AstBinaryOperation("*", num1, num2, min, max);
   }
 
@@ -1157,24 +1237,21 @@ var PostScriptCompiler = function PostScriptCompilerClosure() {
     return new AstMin(num1, max);
   }
 
-  function PostScriptCompiler() {}
+  class PostScriptCompiler {
+    compile(code, domain, range) {
+      const stack = [];
+      const instructions = [];
+      const inputSize = domain.length >> 1,
+            outputSize = range.length >> 1;
+      let lastRegister = 0;
+      let n, j;
+      let num1, num2, ast1, ast2, tmpVar, item;
 
-  PostScriptCompiler.prototype = {
-    compile: function PostScriptCompiler_compile(code, domain, range) {
-      var stack = [];
-      var i, ii;
-      var instructions = [];
-      var inputSize = domain.length >> 1,
-          outputSize = range.length >> 1;
-      var lastRegister = 0;
-      var n, j;
-      var num1, num2, ast1, ast2, tmpVar, item;
-
-      for (i = 0; i < inputSize; i++) {
+      for (let i = 0; i < inputSize; i++) {
         stack.push(new AstArgument(i, domain[i * 2], domain[i * 2 + 1]));
       }
 
-      for (i = 0, ii = code.length; i < ii; i++) {
+      for (let i = 0, ii = code.length; i < ii; i++) {
         item = code[i];
 
         if (typeof item === "number") {
@@ -1330,18 +1407,21 @@ var PostScriptCompiler = function PostScriptCompilerClosure() {
         return null;
       }
 
-      var result = [];
-      instructions.forEach(function (instruction) {
-        var statementBuilder = new ExpressionBuilderVisitor();
+      const result = [];
+
+      for (const instruction of instructions) {
+        const statementBuilder = new ExpressionBuilderVisitor();
         instruction.visit(statementBuilder);
         result.push(statementBuilder.toString());
-      });
-      stack.forEach(function (expr, i) {
-        var statementBuilder = new ExpressionBuilderVisitor();
+      }
+
+      for (let i = 0, ii = stack.length; i < ii; i++) {
+        const expr = stack[i],
+              statementBuilder = new ExpressionBuilderVisitor();
         expr.visit(statementBuilder);
-        var min = range[i * 2],
-            max = range[i * 2 + 1];
-        var out = [statementBuilder.toString()];
+        const min = range[i * 2],
+              max = range[i * 2 + 1];
+        const out = [statementBuilder.toString()];
 
         if (min > expr.min) {
           out.unshift("Math.max(", min, ", ");
@@ -1356,10 +1436,13 @@ var PostScriptCompiler = function PostScriptCompilerClosure() {
         out.unshift("dest[destOffset + ", i, "] = ");
         out.push(";");
         result.push(out.join(""));
-      });
+      }
+
       return result.join("\n");
     }
-  };
+
+  }
+
   return PostScriptCompiler;
 }();
 

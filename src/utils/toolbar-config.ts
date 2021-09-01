@@ -4,7 +4,8 @@ export const toolbarConfig: ToolbarConfig = {
   sidebar: {
     viewThumbnail: true,
     viewOutline: true,
-    viewAttachments: true
+    viewAttachments: true,
+    viewLayers: false
   },
   secondaryToolbar: {
     secondaryPresentationMode: true,

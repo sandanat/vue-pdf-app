@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ exports.DefaultAnnotationLayerFactory = exports.AnnotationLayerBuilder = void 0;
 
 var _pdf = require("../pdf");
 
-var _ui_utils = require("./ui_utils.js");
+var _l10n_utils = require("./l10n_utils.js");
 
 var _pdf_link_service = require("./pdf_link_service.js");
 
@@ -38,9 +38,13 @@ class AnnotationLayerBuilder {
     pdfPage,
     linkService,
     downloadManager,
+    annotationStorage = null,
     imageResourcesPath = "",
-    renderInteractiveForms = false,
-    l10n = _ui_utils.NullL10n
+    renderInteractiveForms = true,
+    l10n = _l10n_utils.NullL10n,
+    enableScripting = false,
+    hasJSActionsPromise = null,
+    mouseState = null
   }) {
     this.pageDiv = pageDiv;
     this.pdfPage = pdfPage;
@@ -49,15 +53,23 @@ class AnnotationLayerBuilder {
     this.imageResourcesPath = imageResourcesPath;
     this.renderInteractiveForms = renderInteractiveForms;
     this.l10n = l10n;
+    this.annotationStorage = annotationStorage;
+    this.enableScripting = enableScripting;
+    this._hasJSActionsPromise = hasJSActionsPromise;
+    this._mouseState = mouseState;
     this.div = null;
     this._cancelled = false;
   }
 
   render(viewport, intent = "display") {
-    this.pdfPage.getAnnotations({
+    return Promise.all([this.pdfPage.getAnnotations({
       intent
-    }).then(annotations => {
+    }), this._hasJSActionsPromise]).then(([annotations, hasJSActions = false]) => {
       if (this._cancelled) {
+        return;
+      }
+
+      if (annotations.length === 0) {
         return;
       }
 
@@ -71,16 +83,16 @@ class AnnotationLayerBuilder {
         imageResourcesPath: this.imageResourcesPath,
         renderInteractiveForms: this.renderInteractiveForms,
         linkService: this.linkService,
-        downloadManager: this.downloadManager
+        downloadManager: this.downloadManager,
+        annotationStorage: this.annotationStorage,
+        enableScripting: this.enableScripting,
+        hasJSActions,
+        mouseState: this._mouseState
       };
 
       if (this.div) {
         _pdf.AnnotationLayer.update(parameters);
       } else {
-        if (annotations.length === 0) {
-          return;
-        }
-
         this.div = document.createElement("div");
         this.div.className = "annotationLayer";
         this.pageDiv.appendChild(this.div);
@@ -102,7 +114,7 @@ class AnnotationLayerBuilder {
       return;
     }
 
-    this.div.setAttribute("hidden", "true");
+    this.div.hidden = true;
   }
 
 }
@@ -110,14 +122,18 @@ class AnnotationLayerBuilder {
 exports.AnnotationLayerBuilder = AnnotationLayerBuilder;
 
 class DefaultAnnotationLayerFactory {
-  createAnnotationLayerBuilder(pageDiv, pdfPage, imageResourcesPath = "", renderInteractiveForms = false, l10n = _ui_utils.NullL10n) {
+  createAnnotationLayerBuilder(pageDiv, pdfPage, annotationStorage = null, imageResourcesPath = "", renderInteractiveForms = true, l10n = _l10n_utils.NullL10n, enableScripting = false, hasJSActionsPromise = null, mouseState = null) {
     return new AnnotationLayerBuilder({
       pageDiv,
       pdfPage,
       imageResourcesPath,
       renderInteractiveForms,
       linkService: new _pdf_link_service.SimpleLinkService(),
-      l10n
+      l10n,
+      annotationStorage,
+      enableScripting,
+      hasJSActionsPromise,
+      mouseState
     });
   }
 

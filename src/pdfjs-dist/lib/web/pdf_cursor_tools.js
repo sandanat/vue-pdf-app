@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.PDFCursorTools = exports.CursorTool = void 0;
 
 var _grab_to_pan = require("./grab_to_pan.js");
+
+var _ui_utils = require("./ui_utils.js");
 
 const CursorTool = {
   SELECT: 0,
@@ -116,20 +118,22 @@ class PDFCursorTools {
     });
 
     this.eventBus._on("presentationmodechanged", evt => {
-      if (evt.switchInProgress) {
-        return;
-      }
+      switch (evt.state) {
+        case _ui_utils.PresentationModeState.FULLSCREEN:
+          {
+            const previouslyActive = this.active;
+            this.switchTool(CursorTool.SELECT);
+            this.activeBeforePresentationMode = previouslyActive;
+            break;
+          }
 
-      let previouslyActive;
-
-      if (evt.active) {
-        previouslyActive = this.active;
-        this.switchTool(CursorTool.SELECT);
-        this.activeBeforePresentationMode = previouslyActive;
-      } else {
-        previouslyActive = this.activeBeforePresentationMode;
-        this.activeBeforePresentationMode = null;
-        this.switchTool(previouslyActive);
+        case _ui_utils.PresentationModeState.NORMAL:
+          {
+            const previouslyActive = this.activeBeforePresentationMode;
+            this.activeBeforePresentationMode = null;
+            this.switchTool(previouslyActive);
+            break;
+          }
       }
     });
   }
