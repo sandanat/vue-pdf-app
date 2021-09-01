@@ -3,6 +3,33 @@ import { PDF_FILE_INPUT_ID } from "@/utils/constants";
 
 const getEl = document.getElementById.bind(document);
 
+function delay(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
+/**
+ * Used to poll the DOM for the existance of a specific element;
+ * useful to resolve timing issues e.g. if the pdf viewer is in
+ * a dialog or similar that might not get mounted until later.
+ * 
+ * If it doesn't find it within `maxRetries` attempts it will
+ * stop looking
+ */
+export async function waitForElement(elId: string, checkMs: number, maxRetries = 50) {
+  for (let i = 0; i < 50; ++i) {
+    if (getEl(elId)) {
+      return true;
+    }
+    await delay(checkMs);
+  }
+  return false;
+}
+
+export function waitForAppConfig() {
+  return waitForElement("viewerContainer", 100);
+}
+
+export function viewerElementReady() {
+  return !!getEl("viewerContainer");
+}
+
 export default (idConfig: ToolbarIdConfig = {}) => ({
   appContainer: getEl("pdf"),
   mainContainer: getEl("viewerContainer"),

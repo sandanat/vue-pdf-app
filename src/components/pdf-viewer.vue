@@ -1027,7 +1027,7 @@ import "@/pdfjs-dist/lib/web/pdf_print_service";
 import "@/pdfjs-dist/build/pdf.worker.entry";
 import "@/sass/index.scss";
 import { ToolbarConfig, Theme, ToolbarIdConfig, PageScale } from "@/types";
-import getAppConfig from "@/utils/pdf-config";
+import getAppConfig, { viewerElementReady, waitForAppConfig } from "@/utils/pdf-config";
 import { PDF_FILE_INPUT_ID } from "@/utils/constants";
 import locale from "@/utils/locale";
 import { getToolbarConfigValue, toolbarConfig } from "@/utils/toolbar-config";
@@ -1056,6 +1056,18 @@ export default class PdfViewer extends Vue {
   // can accept string URL
   @Prop({ required: false, type: [String, ArrayBuffer] })
   readonly pdf?: string | ArrayBuffer;
+
+  /**
+   * Use to set the options passed to the `open` function on PDFViewerApplication,
+   * e.g. to add headers, etc to the request:
+   * 
+   *     <vue-pdf-app
+   *        :url="pathToPdf"
+   *        :loadOptions="{httpHeaders: {Authorization: `Bearer ${authToken}`}}"
+   *     />
+   */
+  @Prop({ required: false, type: Object })
+  readonly loadOptions?: any;
 
   @Prop({ required: false, type: String })
   readonly theme?: Theme;
@@ -1130,8 +1142,16 @@ export default class PdfViewer extends Vue {
     this.$emit("after-created", pdfApp.PDFViewerApplication);
   }
 
-  private mounted() {
+  private async mounted() {
     this.addPrintContainer();
+    if (!viewerElementReady()) {
+        // If it hasn't been mounted we'll wait for up to 5 seconds to see if it
+        // gets mounted in the DOM; if it still isn't mounted we'll give up
+        const foundAfterWaiting = await waitForAppConfig();
+        if (!foundAfterWaiting) {
+            console.warn("Could not find app container; PDF viewer will probably not work");
+        }
+    }
     const config = getAppConfig(this.idConfig);
 
     if (pdfApp.PDFViewerApplication) {
@@ -1192,7 +1212,7 @@ export default class PdfViewer extends Vue {
     if (!this.pdf) {
       pdfApp.PDFViewerApplication.close();
     } else {
-      pdfApp.PDFViewerApplication.open(this.pdf)
+      pdfApp.PDFViewerApplication.open(this.pdf, this.loadOptions)
         .then(() => {
           // @ts-ignore
           return pdfApp.PDFViewerApplication.pdfDocument?.getMetadata();

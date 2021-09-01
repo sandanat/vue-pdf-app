@@ -32,7 +32,7 @@
     "build": "vue-cli-service build",
     "build:lib": "vue-cli-service build --target lib src/components/pdf-viewer.vue",
     "build:icons": "webpack --config webpack-icons.config.js",
-    "build:npm": "npm run build:lib & npm run build:icons",
+    "build:npm": "npm run build:lib && npm run build:icons",
     "dist-transit": "node dist-transit.js",
     "lint": "vue-cli-service lint"
   },
