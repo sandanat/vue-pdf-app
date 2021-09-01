@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.isDestHashesEqual = isDestHashesEqual;
 exports.isDestArraysEqual = isDestArraysEqual;
+exports.isDestHashesEqual = isDestHashesEqual;
 exports.PDFHistory = void 0;
 
 var _ui_utils = require("./ui_utils.js");
@@ -44,7 +44,7 @@ class PDFHistory {
     eventBus
   }) {
     this.linkService = linkService;
-    this.eventBus = eventBus || (0, _ui_utils.getGlobalEventBus)();
+    this.eventBus = eventBus;
     this._initialized = false;
     this._fingerprint = "";
     this.reset();
@@ -52,19 +52,17 @@ class PDFHistory {
     this._isViewerInPresentationMode = false;
 
     this.eventBus._on("presentationmodechanged", evt => {
-      this._isViewerInPresentationMode = evt.active || evt.switchInProgress;
+      this._isViewerInPresentationMode = evt.state !== _ui_utils.PresentationModeState.NORMAL;
     });
 
     this.eventBus._on("pagesinit", () => {
       this._isPagesLoaded = false;
 
-      const onPagesLoaded = evt => {
-        this.eventBus._off("pagesloaded", onPagesLoaded);
-
+      this.eventBus._on("pagesloaded", evt => {
         this._isPagesLoaded = !!evt.pagesCount;
-      };
-
-      this.eventBus._on("pagesloaded", onPagesLoaded);
+      }, {
+        once: true
+      });
     });
   }
 
@@ -103,7 +101,7 @@ class PDFHistory {
         hash,
         page,
         rotation
-      } = this._parseCurrentHash();
+      } = this._parseCurrentHash(true);
 
       if (!hash || reInitialized || resetHistory) {
         this._pushOrReplaceState(null, true);
@@ -123,10 +121,6 @@ class PDFHistory {
     const destination = state.destination;
 
     this._updateInternalState(destination, state.uid, true);
-
-    if (this._uid > this._maxUid) {
-      this._maxUid = this._uid;
-    }
 
     if (destination.rotation !== undefined) {
       this._initialRotation = destination.rotation;
@@ -175,7 +169,7 @@ class PDFHistory {
     } else if (!Array.isArray(explicitDest)) {
       console.error("PDFHistory.push: " + `"${explicitDest}" is not a valid explicitDest parameter.`);
       return;
-    } else if (!(Number.isInteger(pageNumber) && pageNumber > 0 && pageNumber <= this.linkService.pagesCount)) {
+    } else if (!this._isValidPage(pageNumber)) {
       if (pageNumber !== null || this._destination) {
         console.error("PDFHistory.push: " + `"${pageNumber}" is not a valid pageNumber parameter.`);
         return;
@@ -208,6 +202,39 @@ class PDFHistory {
       page: pageNumber,
       rotation: this.linkService.rotation
     }, forceReplace);
+
+    if (!this._popStateInProgress) {
+      this._popStateInProgress = true;
+      Promise.resolve().then(() => {
+        this._popStateInProgress = false;
+      });
+    }
+  }
+
+  pushPage(pageNumber) {
+    if (!this._initialized) {
+      return;
+    }
+
+    if (!this._isValidPage(pageNumber)) {
+      console.error(`PDFHistory.pushPage: "${pageNumber}" is not a valid page number.`);
+      return;
+    }
+
+    if (this._destination?.page === pageNumber) {
+      return;
+    }
+
+    if (this._popStateInProgress) {
+      return;
+    }
+
+    this._pushOrReplaceState({
+      dest: null,
+      hash: `page=${pageNumber}`,
+      page: pageNumber,
+      rotation: this.linkService.rotation
+    });
 
     if (!this._popStateInProgress) {
       this._popStateInProgress = true;
@@ -273,7 +300,7 @@ class PDFHistory {
 
     let newUrl;
 
-    if (this._updateUrl && destination && destination.hash) {
+    if (this._updateUrl && destination?.hash) {
       const baseUrl = document.location.href.split("#")[0];
 
       if (!baseUrl.startsWith("file://")) {
@@ -284,7 +311,6 @@ class PDFHistory {
     if (shouldReplace) {
       window.history.replaceState(newState, "", newUrl);
     } else {
-      this._maxUid = this._uid;
       window.history.pushState(newState, "", newUrl);
     }
   }
@@ -324,7 +350,7 @@ class PDFHistory {
     let forceReplace = false;
 
     if (this._destination.page >= position.first && this._destination.page <= position.page) {
-      if (this._destination.dest || !this._destination.first) {
+      if (this._destination.dest !== undefined || !this._destination.first) {
         return;
       }
 
@@ -332,6 +358,10 @@ class PDFHistory {
     }
 
     this._pushOrReplaceState(position, forceReplace);
+  }
+
+  _isValidPage(val) {
+    return Number.isInteger(val) && val > 0 && val <= this.linkService.pagesCount;
   }
 
   _isValidState(state, checkReload = false) {
@@ -347,7 +377,7 @@ class PDFHistory {
 
         const [perfEntry] = performance.getEntriesByType("navigation");
 
-        if (!perfEntry || perfEntry.type !== "reload") {
+        if (perfEntry?.type !== "reload") {
           return false;
         }
       } else {
@@ -372,20 +402,23 @@ class PDFHistory {
       this._updateViewareaTimeout = null;
     }
 
-    if (removeTemporary && destination && destination.temporary) {
+    if (removeTemporary && destination?.temporary) {
       delete destination.temporary;
     }
 
     this._destination = destination;
     this._uid = uid;
+    this._maxUid = Math.max(this._maxUid, uid);
     this._numPositionUpdates = 0;
   }
 
-  _parseCurrentHash() {
+  _parseCurrentHash(checkNameddest = false) {
     const hash = unescape(getCurrentHash()).substring(1);
-    let page = (0, _ui_utils.parseQueryString)(hash).page | 0;
+    const params = (0, _ui_utils.parseQueryString)(hash);
+    const nameddest = params.nameddest || "";
+    let page = params.page | 0;
 
-    if (!(Number.isInteger(page) && page > 0 && page <= this.linkService.pagesCount)) {
+    if (!this._isValidPage(page) || checkNameddest && nameddest.length > 0) {
       page = null;
     }
 
@@ -476,16 +509,12 @@ class PDFHistory {
 
     this._updateInternalState(destination, state.uid, true);
 
-    if (this._uid > this._maxUid) {
-      this._maxUid = this._uid;
-    }
-
     if ((0, _ui_utils.isValidRotation)(destination.rotation)) {
       this.linkService.rotation = destination.rotation;
     }
 
     if (destination.dest) {
-      this.linkService.navigateTo(destination.dest);
+      this.linkService.goToDestination(destination.dest);
     } else if (destination.hash) {
       this.linkService.setHash(destination.hash);
     } else if (destination.page) {

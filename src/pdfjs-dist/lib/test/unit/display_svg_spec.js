@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,15 +21,11 @@
  */
 "use strict";
 
-var _domstubs = require("../../examples/node/domstubs.js");
-
 var _test_utils = require("./test_utils.js");
 
 var _api = require("../../display/api.js");
 
 var _is_node = require("../../shared/is_node.js");
-
-var _util = require("../../shared/util.js");
 
 var _svg = require("../../display/svg.js");
 
@@ -48,9 +44,9 @@ function withZlib(isZlibRequired, callback) {
     return callback();
   }
 
-  var zlib = require("zlib");
+  const zlib = require("zlib");
 
-  var deflateSync = zlib.deflateSync;
+  const deflateSync = zlib.deflateSync;
   zlib.deflateSync = disabledDeflateSync;
 
   function disabledDeflateSync() {
@@ -63,55 +59,57 @@ function withZlib(isZlibRequired, callback) {
     }
   }
 
-  var promise = callback();
+  const promise = callback();
   promise.then(restoreDeflateSync, restoreDeflateSync);
   return promise;
 }
 
 describe("SVGGraphics", function () {
-  var loadingTask;
-  var page;
-  beforeAll(function (done) {
-    loadingTask = (0, _api.getDocument)((0, _test_utils.buildGetDocumentParams)("xobject-image.pdf", {
-      nativeImageDecoderSupport: _util.NativeImageDecoding.DISPLAY
-    }));
-    loadingTask.promise.then(function (doc) {
-      doc.getPage(1).then(function (firstPage) {
-        page = firstPage;
-        done();
-      });
-    });
+  let loadingTask;
+  let page;
+  beforeAll(async function () {
+    loadingTask = (0, _api.getDocument)((0, _test_utils.buildGetDocumentParams)("xobject-image.pdf"));
+    const doc = await loadingTask.promise;
+    page = await doc.getPage(1);
   });
-  afterAll(function (done) {
-    loadingTask.destroy().then(done);
+  afterAll(async function () {
+    await loadingTask.destroy();
   });
   describe("paintImageXObject", function () {
     function getSVGImage() {
-      var svgGfx;
+      let svgGfx;
       return page.getOperatorList().then(function (opList) {
-        var forceDataSchema = true;
+        const forceDataSchema = true;
         svgGfx = new _svg.SVGGraphics(page.commonObjs, page.objs, forceDataSchema);
         return svgGfx.loadDependencies(opList);
       }).then(function () {
-        var svgImg;
-        var elementContainer = {
+        let svgImg;
+        const elementContainer = {
           appendChild(element) {
             svgImg = element;
           }
 
         };
-        var xobjectObjId = "img_p0_1";
+        const xobjectObjId = "img_p0_1";
 
         if (_is_node.isNodeJS) {
-          (0, _domstubs.setStubs)(global);
+          const {
+            setStubs
+          } = require("../../examples/node/domstubs.js");
+
+          setStubs(global);
         }
 
         try {
-          var imgData = svgGfx.objs.get(xobjectObjId);
+          const imgData = svgGfx.objs.get(xobjectObjId);
           svgGfx.paintInlineImageXObject(imgData, elementContainer);
         } finally {
           if (_is_node.isNodeJS) {
-            (0, _domstubs.unsetStubs)(global);
+            const {
+              unsetStubs
+            } = require("../../examples/node/domstubs.js");
+
+            unsetStubs(global);
           }
         }
 
@@ -124,37 +122,34 @@ describe("SVGGraphics", function () {
         require("zlib");
       }
 
-      expect(testFunc.toString()).toMatch(/\srequire\(["']zlib["']\)/);
-
       if (_is_node.isNodeJS) {
+        expect(testFunc.toString()).toMatch(/\srequire\(["']zlib["']\)/);
         expect(testFunc).not.toThrow();
       } else {
         expect(testFunc).toThrow();
       }
     });
-    it("should produce a reasonably small svg:image", function (done) {
+    it("should produce a reasonably small svg:image", async function () {
       if (!_is_node.isNodeJS) {
         pending("zlib.deflateSync is not supported in non-Node environments.");
       }
 
-      withZlib(true, getSVGImage).then(function (svgImg) {
-        expect(svgImg.nodeName).toBe("svg:image");
-        expect(svgImg.getAttributeNS(null, "width")).toBe("200px");
-        expect(svgImg.getAttributeNS(null, "height")).toBe("100px");
-        var imgUrl = svgImg.getAttributeNS(XLINK_NS, "href");
-        expect(imgUrl).toMatch(/^data:image\/png;base64,/);
-        expect(imgUrl.length).toBeLessThan(367);
-      }).then(done, done.fail);
+      const svgImg = await withZlib(true, getSVGImage);
+      expect(svgImg.nodeName).toBe("svg:image");
+      expect(svgImg.getAttributeNS(null, "width")).toBe("200px");
+      expect(svgImg.getAttributeNS(null, "height")).toBe("100px");
+      const imgUrl = svgImg.getAttributeNS(XLINK_NS, "href");
+      expect(imgUrl).toMatch(/^data:image\/png;base64,/);
+      expect(imgUrl.length).toBeLessThan(367);
     });
-    it("should be able to produce a svg:image without zlib", function (done) {
-      withZlib(false, getSVGImage).then(function (svgImg) {
-        expect(svgImg.nodeName).toBe("svg:image");
-        expect(svgImg.getAttributeNS(null, "width")).toBe("200px");
-        expect(svgImg.getAttributeNS(null, "height")).toBe("100px");
-        var imgUrl = svgImg.getAttributeNS(XLINK_NS, "href");
-        expect(imgUrl).toMatch(/^data:image\/png;base64,/);
-        expect(imgUrl.length).toBe(80246);
-      }).then(done, done.fail);
+    it("should be able to produce a svg:image without zlib", async function () {
+      const svgImg = await withZlib(false, getSVGImage);
+      expect(svgImg.nodeName).toBe("svg:image");
+      expect(svgImg.getAttributeNS(null, "width")).toBe("200px");
+      expect(svgImg.getAttributeNS(null, "height")).toBe("100px");
+      const imgUrl = svgImg.getAttributeNS(XLINK_NS, "href");
+      expect(imgUrl).toMatch(/^data:image\/png;base64,/);
+      expect(imgUrl.length).toBe(80246);
     });
   });
 });

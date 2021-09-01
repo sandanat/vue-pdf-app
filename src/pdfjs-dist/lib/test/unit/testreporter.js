@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,14 @@
  */
 "use strict";
 
-var TestReporter = function (browser, appPath) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.TestReporter = void 0;
+
+const TestReporter = function (browser) {
   function send(action, json, cb) {
-    var r = new XMLHttpRequest();
+    const r = new XMLHttpRequest();
     r.open("POST", action, true);
     r.setRequestHeader("Content-Type", "application/json");
 
@@ -39,7 +44,7 @@ var TestReporter = function (browser, appPath) {
       }
     };
 
-    json["browser"] = browser;
+    json.browser = browser;
     r.send(JSON.stringify(json));
   }
 
@@ -50,32 +55,44 @@ var TestReporter = function (browser, appPath) {
   }
 
   function sendResult(status, description, error) {
-    var message = {
+    const message = {
       status,
       description
     };
 
     if (typeof error !== "undefined") {
-      message["error"] = error;
+      message.error = error;
     }
 
     send("/submit_task_results", message);
   }
 
   function sendQuitRequest() {
-    send("/tellMeToQuit?path=" + escape(appPath), {});
+    send(`/tellMeToQuit?browser=${escape(browser)}`, {});
   }
 
   this.now = function () {
-    return new Date().getTime();
+    return Date.now();
   };
 
   this.jasmineStarted = function (suiteInfo) {
     this.runnerStartTime = this.now();
-    sendInfo("Started tests for " + browser + ".");
+    const total = suiteInfo.totalSpecsDefined;
+    const seed = suiteInfo.order.seed;
+    sendInfo(`Started ${total} tests for ${browser} with seed ${seed}.`);
   };
 
-  this.suiteStarted = function (result) {};
+  this.suiteStarted = function (result) {
+    if (result.failedExpectations.length > 0) {
+      let failedMessages = "";
+
+      for (const item of result.failedExpectations) {
+        failedMessages += `${item.message} `;
+      }
+
+      sendResult("TEST-UNEXPECTED-FAIL", result.description, failedMessages);
+    }
+  };
 
   this.specStarted = function (result) {};
 
@@ -83,11 +100,10 @@ var TestReporter = function (browser, appPath) {
     if (result.failedExpectations.length === 0) {
       sendResult("TEST-PASSED", result.description);
     } else {
-      var failedMessages = "";
-      var items = result.failedExpectations;
+      let failedMessages = "";
 
-      for (var i = 0, ii = items.length; i < ii; i++) {
-        failedMessages += items[i].message + " ";
+      for (const item of result.failedExpectations) {
+        failedMessages += `${item.message} `;
       }
 
       sendResult("TEST-UNEXPECTED-FAIL", result.description, failedMessages);
@@ -100,3 +116,5 @@ var TestReporter = function (browser, appPath) {
     setTimeout(sendQuitRequest, 500);
   };
 };
+
+exports.TestReporter = TestReporter;

@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,8 +41,7 @@ class PDFPresentationMode {
   constructor({
     container,
     pdfViewer,
-    eventBus,
-    contextMenuItems = null
+    eventBus
   }) {
     this.container = container;
     this.pdfViewer = pdfViewer;
@@ -53,33 +52,6 @@ class PDFPresentationMode {
     this.mouseScrollTimeStamp = 0;
     this.mouseScrollDelta = 0;
     this.touchSwipeState = null;
-
-    if (contextMenuItems) {
-      contextMenuItems.contextFirstPage.addEventListener("click", () => {
-        this.contextMenuOpen = false;
-        this.eventBus.dispatch("firstpage", {
-          source: this
-        });
-      });
-      contextMenuItems.contextLastPage.addEventListener("click", () => {
-        this.contextMenuOpen = false;
-        this.eventBus.dispatch("lastpage", {
-          source: this
-        });
-      });
-      contextMenuItems.contextPageRotateCw.addEventListener("click", () => {
-        this.contextMenuOpen = false;
-        this.eventBus.dispatch("rotatecw", {
-          source: this
-        });
-      });
-      contextMenuItems.contextPageRotateCcw.addEventListener("click", () => {
-        this.contextMenuOpen = false;
-        this.eventBus.dispatch("rotateccw", {
-          source: this
-        });
-      });
-    }
   }
 
   request() {
@@ -99,8 +71,6 @@ class PDFPresentationMode {
       this.container.mozRequestFullScreen();
     } else if (this.container.webkitRequestFullscreen) {
       this.container.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-    } else if (this.container.msRequestFullscreen) {
-      this.container.msRequestFullscreen();
     } else {
       return false;
     }
@@ -119,7 +89,7 @@ class PDFPresentationMode {
 
     evt.preventDefault();
     const delta = (0, _ui_utils.normalizeWheelEventDelta)(evt);
-    const currentTime = new Date().getTime();
+    const currentTime = Date.now();
     const storedTime = this.mouseScrollTimeStamp;
 
     if (currentTime > storedTime && currentTime - storedTime < MOUSE_SCROLL_COOLDOWN_TIME) {
@@ -137,7 +107,7 @@ class PDFPresentationMode {
 
       this._resetMouseScrollState();
 
-      const success = totalDelta > 0 ? this._goToPreviousPage() : this._goToNextPage();
+      const success = totalDelta > 0 ? this.pdfViewer.previousPage() : this.pdfViewer.nextPage();
 
       if (success) {
         this.mouseScrollTimeStamp = currentTime;
@@ -146,36 +116,21 @@ class PDFPresentationMode {
   }
 
   get isFullscreen() {
-    return !!(document.fullscreenElement || document.mozFullScreen || document.webkitIsFullScreen || document.msFullscreenElement);
-  }
-
-  _goToPreviousPage() {
-    const page = this.pdfViewer.currentPageNumber;
-
-    if (page <= 1) {
-      return false;
-    }
-
-    this.pdfViewer.currentPageNumber = page - 1;
-    return true;
-  }
-
-  _goToNextPage() {
-    const page = this.pdfViewer.currentPageNumber;
-
-    if (page >= this.pdfViewer.pagesCount) {
-      return false;
-    }
-
-    this.pdfViewer.currentPageNumber = page + 1;
-    return true;
+    return !!(document.fullscreenElement || document.mozFullScreen || document.webkitIsFullScreen);
   }
 
   _notifyStateChange() {
+    let state = _ui_utils.PresentationModeState.NORMAL;
+
+    if (this.switchInProgress) {
+      state = _ui_utils.PresentationModeState.CHANGING;
+    } else if (this.active) {
+      state = _ui_utils.PresentationModeState.FULLSCREEN;
+    }
+
     this.eventBus.dispatch("presentationmodechanged", {
       source: this,
-      active: this.active,
-      switchInProgress: !!this.switchInProgress
+      state
     });
   }
 
@@ -218,7 +173,6 @@ class PDFPresentationMode {
     this._showControls();
 
     this.contextMenuOpen = false;
-    this.container.setAttribute("contextmenu", "viewerContextMenu");
     window.getSelection().removeAllRanges();
   }
 
@@ -243,7 +197,6 @@ class PDFPresentationMode {
 
     this._resetMouseScrollState();
 
-    this.container.removeAttribute("contextmenu");
     this.contextMenuOpen = false;
   }
 
@@ -261,9 +214,9 @@ class PDFPresentationMode {
         evt.preventDefault();
 
         if (evt.shiftKey) {
-          this._goToPreviousPage();
+          this.pdfViewer.previousPage();
         } else {
-          this._goToNextPage();
+          this.pdfViewer.nextPage();
         }
       }
     }
@@ -348,9 +301,9 @@ class PDFPresentationMode {
         }
 
         if (delta > 0) {
-          this._goToPreviousPage();
+          this.pdfViewer.previousPage();
         } else if (delta < 0) {
-          this._goToNextPage();
+          this.pdfViewer.nextPage();
         }
 
         break;
@@ -366,7 +319,9 @@ class PDFPresentationMode {
     this.touchSwipeBind = this._touchSwipe.bind(this);
     window.addEventListener("mousemove", this.showControlsBind);
     window.addEventListener("mousedown", this.mouseDownBind);
-    window.addEventListener("wheel", this.mouseWheelBind);
+    window.addEventListener("wheel", this.mouseWheelBind, {
+      passive: false
+    });
     window.addEventListener("keydown", this.resetMouseScrollStateBind);
     window.addEventListener("contextmenu", this.contextMenuBind);
     window.addEventListener("touchstart", this.touchSwipeBind);
@@ -377,7 +332,9 @@ class PDFPresentationMode {
   _removeWindowListeners() {
     window.removeEventListener("mousemove", this.showControlsBind);
     window.removeEventListener("mousedown", this.mouseDownBind);
-    window.removeEventListener("wheel", this.mouseWheelBind);
+    window.removeEventListener("wheel", this.mouseWheelBind, {
+      passive: false
+    });
     window.removeEventListener("keydown", this.resetMouseScrollStateBind);
     window.removeEventListener("contextmenu", this.contextMenuBind);
     window.removeEventListener("touchstart", this.touchSwipeBind);
@@ -404,14 +361,12 @@ class PDFPresentationMode {
     window.addEventListener("fullscreenchange", this.fullscreenChangeBind);
     window.addEventListener("mozfullscreenchange", this.fullscreenChangeBind);
     window.addEventListener("webkitfullscreenchange", this.fullscreenChangeBind);
-    window.addEventListener("MSFullscreenChange", this.fullscreenChangeBind);
   }
 
   _removeFullscreenChangeListeners() {
     window.removeEventListener("fullscreenchange", this.fullscreenChangeBind);
     window.removeEventListener("mozfullscreenchange", this.fullscreenChangeBind);
     window.removeEventListener("webkitfullscreenchange", this.fullscreenChangeBind);
-    window.removeEventListener("MSFullscreenChange", this.fullscreenChangeBind);
     delete this.fullscreenChangeBind;
   }
 

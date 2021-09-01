@@ -1016,7 +1016,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import "@/pdfjs-dist/es5/build/pdf";
+import "@/pdfjs-dist/legacy/build/pdf";
 // FIX typings
 // @ts-ignore
 import * as pdfApp from "@/pdfjs-dist/lib/web/app";

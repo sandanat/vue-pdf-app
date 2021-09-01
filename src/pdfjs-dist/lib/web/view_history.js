@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,23 +33,22 @@ class ViewHistory {
     this.cacheSize = cacheSize;
     this._initializedPromise = this._readFromStorage().then(databaseStr => {
       const database = JSON.parse(databaseStr || "{}");
+      let index = -1;
 
-      if (!("files" in database)) {
+      if (!Array.isArray(database.files)) {
         database.files = [];
       } else {
         while (database.files.length >= this.cacheSize) {
           database.files.shift();
         }
-      }
 
-      let index = -1;
+        for (let i = 0, ii = database.files.length; i < ii; i++) {
+          const branch = database.files[i];
 
-      for (let i = 0, length = database.files.length; i < length; i++) {
-        const branch = database.files[i];
-
-        if (branch.fingerprint === this.fingerprint) {
-          index = i;
-          break;
+          if (branch.fingerprint === this.fingerprint) {
+            index = i;
+            break;
+          }
         }
       }
 

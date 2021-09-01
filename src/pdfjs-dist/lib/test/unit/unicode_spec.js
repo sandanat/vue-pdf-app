@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,11 +37,10 @@ describe("unicode", function () {
     });
   });
   describe("getUnicodeForGlyph", function () {
-    var standardMap, dingbatsMap;
-    beforeAll(function (done) {
+    let standardMap, dingbatsMap;
+    beforeAll(function () {
       standardMap = (0, _glyphlist.getGlyphsUnicode)();
       dingbatsMap = (0, _glyphlist.getDingbatsGlyphsUnicode)();
-      done();
     });
     afterAll(function () {
       standardMap = dingbatsMap = null;
@@ -71,10 +70,9 @@ describe("unicode", function () {
     });
   });
   describe("getNormalizedUnicodes", function () {
-    var NormalizedUnicodes;
-    beforeAll(function (done) {
+    let NormalizedUnicodes;
+    beforeAll(function () {
       NormalizedUnicodes = (0, _unicode.getNormalizedUnicodes)();
-      done();
     });
     afterAll(function () {
       NormalizedUnicodes = null;
@@ -84,11 +82,11 @@ describe("unicode", function () {
       expect(NormalizedUnicodes["\u0675"]).toEqual("\u0627\u0674");
     });
     it("should not normalize standard characters", function () {
-      expect(NormalizedUnicodes["A"]).toEqual(undefined);
+      expect(NormalizedUnicodes.A).toEqual(undefined);
     });
   });
   describe("reverseIfRtl", function () {
-    var NormalizedUnicodes;
+    let NormalizedUnicodes;
 
     function getGlyphUnicode(char) {
       if (NormalizedUnicodes[char] !== undefined) {
@@ -98,23 +96,22 @@ describe("unicode", function () {
       return char;
     }
 
-    beforeAll(function (done) {
+    beforeAll(function () {
       NormalizedUnicodes = (0, _unicode.getNormalizedUnicodes)();
-      done();
     });
     afterAll(function () {
       NormalizedUnicodes = null;
     });
     it("should not reverse LTR characters", function () {
-      var A = getGlyphUnicode("A");
+      const A = getGlyphUnicode("A");
       expect((0, _unicode.reverseIfRtl)(A)).toEqual("A");
-      var fi = getGlyphUnicode("\uFB01");
+      const fi = getGlyphUnicode("\uFB01");
       expect((0, _unicode.reverseIfRtl)(fi)).toEqual("fi");
     });
     it("should reverse RTL characters", function () {
-      var heAlef = getGlyphUnicode("\u05D0");
+      const heAlef = getGlyphUnicode("\u05D0");
       expect((0, _unicode.reverseIfRtl)(heAlef)).toEqual("\u05D0");
-      var arAlef = getGlyphUnicode("\u0675");
+      const arAlef = getGlyphUnicode("\u0675");
       expect((0, _unicode.reverseIfRtl)(arAlef)).toEqual("\u0674\u0627");
     });
   });

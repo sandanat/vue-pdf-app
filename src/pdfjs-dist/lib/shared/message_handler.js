@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -122,22 +122,22 @@ class MessageHandler {
       }
 
       if (data.callbackId) {
-        const sourceName = this.sourceName;
-        const targetName = data.sourceName;
+        const cbSourceName = this.sourceName;
+        const cbTargetName = data.sourceName;
         new Promise(function (resolve) {
           resolve(action(data.data));
         }).then(function (result) {
           comObj.postMessage({
-            sourceName,
-            targetName,
+            sourceName: cbSourceName,
+            targetName: cbTargetName,
             callback: CallbackKind.DATA,
             callbackId: data.callbackId,
             data: result
           });
         }, function (reason) {
           comObj.postMessage({
-            sourceName,
-            targetName,
+            sourceName: cbSourceName,
+            targetName: cbTargetName,
             callback: CallbackKind.ERROR,
             callbackId: data.callbackId,
             reason: wrapReason(reason)

@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -125,30 +125,6 @@ describe("core_utils", function () {
         stopWhenFound: false
       })).toEqual([["qux1", "quux"], ["qux2", "quux"]]);
     });
-    it("stops searching when the loop limit is reached", function () {
-      const dict = new _primitives.Dict();
-      let currentDict = dict;
-      let parentDict = null;
-
-      for (let i = 0; i < 150; i++) {
-        parentDict = new _primitives.Dict();
-        currentDict.set("Parent", parentDict);
-        currentDict = parentDict;
-      }
-
-      parentDict.set("foo", "bar");
-      expect((0, _core_utils.getInheritableProperty)({
-        dict,
-        key: "foo"
-      })).toEqual(undefined);
-      dict.set("foo", "baz");
-      expect((0, _core_utils.getInheritableProperty)({
-        dict,
-        key: "foo",
-        getArray: false,
-        stopWhenFound: false
-      })).toEqual(["baz"]);
-    });
   });
   describe("toRomanNumerals", function () {
     it("handles invalid arguments", function () {
@@ -206,6 +182,124 @@ describe("core_utils", function () {
       expect((0, _core_utils.isWhiteSpace)(0x0b)).toEqual(false);
       expect((0, _core_utils.isWhiteSpace)(null)).toEqual(false);
       expect((0, _core_utils.isWhiteSpace)(undefined)).toEqual(false);
+    });
+  });
+  describe("parseXFAPath", function () {
+    it("should get a correctly parsed path", function () {
+      const path = "foo.bar[12].oof[3].rab.FOO[123].BAR[456]";
+      expect((0, _core_utils.parseXFAPath)(path)).toEqual([{
+        name: "foo",
+        pos: 0
+      }, {
+        name: "bar",
+        pos: 12
+      }, {
+        name: "oof",
+        pos: 3
+      }, {
+        name: "rab",
+        pos: 0
+      }, {
+        name: "FOO",
+        pos: 123
+      }, {
+        name: "BAR",
+        pos: 456
+      }]);
+    });
+  });
+  describe("escapePDFName", function () {
+    it("should escape PDF name", function () {
+      expect((0, _core_utils.escapePDFName)("hello")).toEqual("hello");
+      expect((0, _core_utils.escapePDFName)("\xfehello")).toEqual("#fehello");
+      expect((0, _core_utils.escapePDFName)("he\xfell\xffo")).toEqual("he#fell#ffo");
+      expect((0, _core_utils.escapePDFName)("\xfehe\xfell\xffo\xff")).toEqual("#fehe#fell#ffo#ff");
+      expect((0, _core_utils.escapePDFName)("#h#e#l#l#o")).toEqual("#23h#23e#23l#23l#23o");
+      expect((0, _core_utils.escapePDFName)("#()<>[]{}/%")).toEqual("#23#28#29#3c#3e#5b#5d#7b#7d#2f#25");
+    });
+  });
+  describe("encodeToXmlString", function () {
+    it("should get a correctly encoded string with some entities", function () {
+      const str = "\"\u0397ell😂' & <W😂rld>";
+      expect((0, _core_utils.encodeToXmlString)(str)).toEqual("&quot;&#x397;ell&#x1F602;&apos; &amp; &lt;W&#x1F602;rld&gt;");
+    });
+    it("should get a correctly encoded basic ascii string", function () {
+      const str = "hello world";
+      expect((0, _core_utils.encodeToXmlString)(str)).toEqual(str);
+    });
+  });
+  describe("validateCSSFont", function () {
+    it("Check font family", function () {
+      const cssFontInfo = {
+        fontFamily: `"blah blah " blah blah"`,
+        fontWeight: 0,
+        italicAngle: 0
+      };
+      expect((0, _core_utils.validateCSSFont)(cssFontInfo)).toEqual(false);
+      cssFontInfo.fontFamily = `"blah blah \\" blah blah"`;
+      expect((0, _core_utils.validateCSSFont)(cssFontInfo)).toEqual(true);
+      cssFontInfo.fontFamily = `'blah blah ' blah blah'`;
+      expect((0, _core_utils.validateCSSFont)(cssFontInfo)).toEqual(false);
+      cssFontInfo.fontFamily = `'blah blah \\' blah blah'`;
+      expect((0, _core_utils.validateCSSFont)(cssFontInfo)).toEqual(true);
+      cssFontInfo.fontFamily = `"blah blah `;
+      expect((0, _core_utils.validateCSSFont)(cssFontInfo)).toEqual(false);
+      cssFontInfo.fontFamily = `blah blah"`;
+      expect((0, _core_utils.validateCSSFont)(cssFontInfo)).toEqual(false);
+      cssFontInfo.fontFamily = `'blah blah `;
+      expect((0, _core_utils.validateCSSFont)(cssFontInfo)).toEqual(false);
+      cssFontInfo.fontFamily = `blah blah'`;
+      expect((0, _core_utils.validateCSSFont)(cssFontInfo)).toEqual(false);
+      cssFontInfo.fontFamily = "blah blah blah";
+      expect((0, _core_utils.validateCSSFont)(cssFontInfo)).toEqual(true);
+      cssFontInfo.fontFamily = "blah 0blah blah";
+      expect((0, _core_utils.validateCSSFont)(cssFontInfo)).toEqual(false);
+      cssFontInfo.fontFamily = "blah blah -0blah";
+      expect((0, _core_utils.validateCSSFont)(cssFontInfo)).toEqual(false);
+      cssFontInfo.fontFamily = "blah blah --blah";
+      expect((0, _core_utils.validateCSSFont)(cssFontInfo)).toEqual(false);
+      cssFontInfo.fontFamily = "blah blah -blah";
+      expect((0, _core_utils.validateCSSFont)(cssFontInfo)).toEqual(true);
+      cssFontInfo.fontFamily = "blah fdqAJqjHJK23kl23__--Kj blah";
+      expect((0, _core_utils.validateCSSFont)(cssFontInfo)).toEqual(true);
+      cssFontInfo.fontFamily = "blah fdqAJqjH$JK23kl23__--Kj blah";
+      expect((0, _core_utils.validateCSSFont)(cssFontInfo)).toEqual(false);
+    });
+    it("Check font weight", function () {
+      const cssFontInfo = {
+        fontFamily: "blah",
+        fontWeight: 100,
+        italicAngle: 0
+      };
+      (0, _core_utils.validateCSSFont)(cssFontInfo);
+      expect(cssFontInfo.fontWeight).toEqual("100");
+      cssFontInfo.fontWeight = "700";
+      (0, _core_utils.validateCSSFont)(cssFontInfo);
+      expect(cssFontInfo.fontWeight).toEqual("700");
+      cssFontInfo.fontWeight = "normal";
+      (0, _core_utils.validateCSSFont)(cssFontInfo);
+      expect(cssFontInfo.fontWeight).toEqual("normal");
+      cssFontInfo.fontWeight = 314;
+      (0, _core_utils.validateCSSFont)(cssFontInfo);
+      expect(cssFontInfo.fontWeight).toEqual("400");
+    });
+    it("Check italic angle", function () {
+      const cssFontInfo = {
+        fontFamily: "blah",
+        fontWeight: 100,
+        italicAngle: 10
+      };
+      (0, _core_utils.validateCSSFont)(cssFontInfo);
+      expect(cssFontInfo.italicAngle).toEqual("10");
+      cssFontInfo.italicAngle = -123;
+      (0, _core_utils.validateCSSFont)(cssFontInfo);
+      expect(cssFontInfo.italicAngle).toEqual("14");
+      cssFontInfo.italicAngle = "91";
+      (0, _core_utils.validateCSSFont)(cssFontInfo);
+      expect(cssFontInfo.italicAngle).toEqual("14");
+      cssFontInfo.italicAngle = 2.718;
+      (0, _core_utils.validateCSSFont)(cssFontInfo);
+      expect(cssFontInfo.italicAngle).toEqual("2.718");
     });
   });
 });

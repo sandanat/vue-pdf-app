@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.addLinkAttributes = addLinkAttributes;
+exports.deprecated = deprecated;
 exports.getFilenameFromUrl = getFilenameFromUrl;
+exports.getPdfFilenameFromUrl = getPdfFilenameFromUrl;
+exports.isDataScheme = isDataScheme;
 exports.isFetchSupported = isFetchSupported;
+exports.isPdfFile = isPdfFile;
 exports.isValidFetchUrl = isValidFetchUrl;
 exports.loadScript = loadScript;
-exports.deprecated = deprecated;
-exports.releaseImageResources = releaseImageResources;
-exports.PDFDateString = exports.StatTimer = exports.DOMSVGFactory = exports.DOMCMapReaderFactory = exports.DOMCanvasFactory = exports.DEFAULT_LINK_REL = exports.LinkTarget = exports.RenderingCancelledException = exports.PageViewport = void 0;
+exports.StatTimer = exports.RenderingCancelledException = exports.PDFDateString = exports.PageViewport = exports.LinkTarget = exports.DOMSVGFactory = exports.DOMCMapReaderFactory = exports.DOMCanvasFactory = exports.DEFAULT_LINK_REL = exports.BaseCMapReaderFactory = exports.BaseCanvasFactory = void 0;
 
 var _util = require("../shared/util.js");
 
@@ -39,20 +41,15 @@ const DEFAULT_LINK_REL = "noopener noreferrer nofollow";
 exports.DEFAULT_LINK_REL = DEFAULT_LINK_REL;
 const SVG_NS = "http://www.w3.org/2000/svg";
 
-class DOMCanvasFactory {
-  create(width, height) {
-    if (width <= 0 || height <= 0) {
-      throw new Error("Invalid canvas size");
+class BaseCanvasFactory {
+  constructor() {
+    if (this.constructor === BaseCanvasFactory) {
+      (0, _util.unreachable)("Cannot initialize BaseCanvasFactory.");
     }
+  }
 
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
-    canvas.width = width;
-    canvas.height = height;
-    return {
-      canvas,
-      context
-    };
+  create(width, height) {
+    (0, _util.unreachable)("Abstract method `create` called.");
   }
 
   reset(canvasAndContext, width, height) {
@@ -81,13 +78,45 @@ class DOMCanvasFactory {
 
 }
 
+exports.BaseCanvasFactory = BaseCanvasFactory;
+
+class DOMCanvasFactory extends BaseCanvasFactory {
+  constructor({
+    ownerDocument = globalThis.document
+  } = {}) {
+    super();
+    this._document = ownerDocument;
+  }
+
+  create(width, height) {
+    if (width <= 0 || height <= 0) {
+      throw new Error("Invalid canvas size");
+    }
+
+    const canvas = this._document.createElement("canvas");
+
+    const context = canvas.getContext("2d");
+    canvas.width = width;
+    canvas.height = height;
+    return {
+      canvas,
+      context
+    };
+  }
+
+}
+
 exports.DOMCanvasFactory = DOMCanvasFactory;
 
-class DOMCMapReaderFactory {
+class BaseCMapReaderFactory {
   constructor({
     baseUrl = null,
     isCompressed = false
   }) {
+    if (this.constructor === BaseCMapReaderFactory) {
+      (0, _util.unreachable)("Cannot initialize BaseCMapReaderFactory.");
+    }
+
     this.baseUrl = baseUrl;
     this.isCompressed = isCompressed;
   }
@@ -105,7 +134,21 @@ class DOMCMapReaderFactory {
 
     const url = this.baseUrl + name + (this.isCompressed ? ".bcmap" : "");
     const compressionType = this.isCompressed ? _util.CMapCompressionType.BINARY : _util.CMapCompressionType.NONE;
+    return this._fetchData(url, compressionType).catch(reason => {
+      throw new Error(`Unable to load ${this.isCompressed ? "binary " : ""}CMap at: ${url}`);
+    });
+  }
 
+  _fetchData(url, compressionType) {
+    (0, _util.unreachable)("Abstract method `_fetchData` called.");
+  }
+
+}
+
+exports.BaseCMapReaderFactory = BaseCMapReaderFactory;
+
+class DOMCMapReaderFactory extends BaseCMapReaderFactory {
+  _fetchData(url, compressionType) {
     if (isFetchSupported() && isValidFetchUrl(url, document.baseURI)) {
       return fetch(url).then(async response => {
         if (!response.ok) {
@@ -115,17 +158,15 @@ class DOMCMapReaderFactory {
         let cMapData;
 
         if (this.isCompressed) {
-          cMapData = new Uint8Array((await response.arrayBuffer()));
+          cMapData = new Uint8Array(await response.arrayBuffer());
         } else {
-          cMapData = (0, _util.stringToBytes)((await response.text()));
+          cMapData = (0, _util.stringToBytes)(await response.text());
         }
 
         return {
           cMapData,
           compressionType
         };
-      }).catch(reason => {
-        throw new Error(`Unable to load ${this.isCompressed ? "binary " : ""}` + `CMap at: ${url}`);
       });
     }
 
@@ -164,8 +205,6 @@ class DOMCMapReaderFactory {
       };
 
       request.send(null);
-    }).catch(reason => {
-      throw new Error(`Unable to load ${this.isCompressed ? "binary " : ""}` + `CMap at: ${url}`);
     });
   }
 
@@ -211,8 +250,11 @@ class PageViewport {
     const centerX = (viewBox[2] + viewBox[0]) / 2;
     const centerY = (viewBox[3] + viewBox[1]) / 2;
     let rotateA, rotateB, rotateC, rotateD;
-    rotation = rotation % 360;
-    rotation = rotation < 0 ? rotation + 360 : rotation;
+    rotation %= 360;
+
+    if (rotation < 0) {
+      rotation += 360;
+    }
 
     switch (rotation) {
       case 180:
@@ -236,12 +278,15 @@ class PageViewport {
         rotateD = 0;
         break;
 
-      default:
+      case 0:
         rotateA = 1;
         rotateB = 0;
         rotateC = 0;
         rotateD = -1;
         break;
+
+      default:
+        throw new Error("PageViewport: Invalid rotation, must be a multiple of 90 degrees.");
     }
 
     if (dontFlip) {
@@ -371,11 +416,54 @@ function addLinkAttributes(link, {
   link.rel = typeof rel === "string" ? rel : DEFAULT_LINK_REL;
 }
 
+function isDataScheme(url) {
+  const ii = url.length;
+  let i = 0;
+
+  while (i < ii && url[i].trim() === "") {
+    i++;
+  }
+
+  return url.substring(i, i + 5).toLowerCase() === "data:";
+}
+
+function isPdfFile(filename) {
+  return typeof filename === "string" && /\.pdf$/i.test(filename);
+}
+
 function getFilenameFromUrl(url) {
   const anchor = url.indexOf("#");
   const query = url.indexOf("?");
   const end = Math.min(anchor > 0 ? anchor : url.length, query > 0 ? query : url.length);
   return url.substring(url.lastIndexOf("/", end) + 1, end);
+}
+
+function getPdfFilenameFromUrl(url, defaultFilename = "document.pdf") {
+  if (typeof url !== "string") {
+    return defaultFilename;
+  }
+
+  if (isDataScheme(url)) {
+    (0, _util.warn)('getPdfFilenameFromUrl: ignore "data:"-URL for performance reasons.');
+    return defaultFilename;
+  }
+
+  const reURI = /^(?:(?:[^:]+:)?\/\/[^/]+)?([^?#]*)(\?[^#]*)?(#.*)?$/;
+  const reFilename = /[^/?#=]+\.pdf\b(?!.*\.pdf\b)/i;
+  const splitURI = reURI.exec(url);
+  let suggestedFilename = reFilename.exec(splitURI[1]) || reFilename.exec(splitURI[2]) || reFilename.exec(splitURI[3]);
+
+  if (suggestedFilename) {
+    suggestedFilename = suggestedFilename[0];
+
+    if (suggestedFilename.includes("%")) {
+      try {
+        suggestedFilename = reFilename.exec(decodeURIComponent(suggestedFilename))[0];
+      } catch (ex) {}
+    }
+  }
+
+  return suggestedFilename || defaultFilename;
 }
 
 class StatTimer {
@@ -444,11 +532,18 @@ function isValidFetchUrl(url, baseUrl) {
   }
 }
 
-function loadScript(src) {
+function loadScript(src, removeScriptElement = false) {
   return new Promise((resolve, reject) => {
     const script = document.createElement("script");
     script.src = src;
-    script.onload = resolve;
+
+    script.onload = function (evt) {
+      if (removeScriptElement) {
+        script.remove();
+      }
+
+      resolve(evt);
+    };
 
     script.onerror = function () {
       reject(new Error(`Cannot load script at: ${script.src}`));
@@ -460,17 +555,6 @@ function loadScript(src) {
 
 function deprecated(details) {
   console.log("Deprecated API usage: " + details);
-}
-
-function releaseImageResources(img) {
-  (0, _util.assert)(img instanceof Image, "Invalid `img` parameter.");
-  const url = img.src;
-
-  if (typeof url === "string" && url.startsWith("blob:") && URL.revokeObjectURL) {
-    URL.revokeObjectURL(url);
-  }
-
-  img.removeAttribute("src");
 }
 
 let pdfDateStringRegex;

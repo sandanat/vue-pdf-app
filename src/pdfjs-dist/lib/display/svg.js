@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,10 +32,12 @@ var _display_utils = require("./display_utils.js");
 
 var _is_node = require("../shared/is_node.js");
 
-let SVGGraphics = function () {
-  throw new Error("Not implemented: SVGGraphics");
-};
+let SVGGraphics = class {
+  constructor() {
+    (0, _util.unreachable)("Not implemented: SVGGraphics");
+  }
 
+};
 exports.SVGGraphics = SVGGraphics;
 {
   const SVG_DEFAULTS = {
@@ -365,8 +367,8 @@ exports.SVGGraphics = SVGGraphics;
   let clipCount = 0;
   let maskCount = 0;
   let shadingCount = 0;
-  exports.SVGGraphics = SVGGraphics = class SVGGraphics {
-    constructor(commonObjs, objs, forceDataSchema) {
+  exports.SVGGraphics = SVGGraphics = class {
+    constructor(commonObjs, objs, forceDataSchema = false) {
       this.svgFactory = new _display_utils.DOMSVGFactory();
       this.current = new SVGExtraState();
       this.transformMatrix = _util.IDENTITY_MATRIX;
@@ -614,10 +616,6 @@ exports.SVGGraphics = SVGGraphics;
             this.paintSolidColorImageMask();
             break;
 
-          case _util.OPS.paintJpegXObject:
-            this.paintJpegXObject(args[0], args[1], args[2]);
-            break;
-
           case _util.OPS.paintImageXObject:
             this.paintImageXObject(args[0]);
             break;
@@ -696,10 +694,11 @@ exports.SVGGraphics = SVGGraphics;
     setTextMatrix(a, b, c, d, e, f) {
       const current = this.current;
       current.textMatrix = current.lineMatrix = [a, b, c, d, e, f];
-      current.textMatrixScale = Math.sqrt(a * a + b * b);
+      current.textMatrixScale = Math.hypot(a, b);
       current.x = current.lineX = 0;
       current.y = current.lineY = 0;
       current.xcoords = [];
+      current.ycoords = [];
       current.tspan = this.svgFactory.createElement("svg:tspan");
       current.tspan.setAttributeNS(null, "font-family", current.fontFamily);
       current.tspan.setAttributeNS(null, "font-size", `${pf(current.fontSize)}px`);
@@ -719,6 +718,7 @@ exports.SVGGraphics = SVGGraphics;
       current.txtElement = this.svgFactory.createElement("svg:text");
       current.txtgrp = this.svgFactory.createElement("svg:g");
       current.xcoords = [];
+      current.ycoords = [];
     }
 
     moveText(x, y) {
@@ -726,6 +726,7 @@ exports.SVGGraphics = SVGGraphics;
       current.x = current.lineX += x;
       current.y = current.lineY += y;
       current.xcoords = [];
+      current.ycoords = [];
       current.tspan = this.svgFactory.createElement("svg:tspan");
       current.tspan.setAttributeNS(null, "font-family", current.fontFamily);
       current.tspan.setAttributeNS(null, "font-size", `${pf(current.fontSize)}px`);
@@ -741,11 +742,14 @@ exports.SVGGraphics = SVGGraphics;
         return;
       }
 
+      const fontSizeScale = current.fontSizeScale;
       const charSpacing = current.charSpacing;
       const wordSpacing = current.wordSpacing;
       const fontDirection = current.fontDirection;
       const textHScale = current.textHScale * fontDirection;
       const vertical = font.vertical;
+      const spacingDir = vertical ? 1 : -1;
+      const defaultVMetrics = font.defaultVMetrics;
       const widthAdvanceScale = fontSize * current.fontMatrix[0];
       let x = 0;
 
@@ -754,33 +758,64 @@ exports.SVGGraphics = SVGGraphics;
           x += fontDirection * wordSpacing;
           continue;
         } else if ((0, _util.isNum)(glyph)) {
-          x += -glyph * fontSize * 0.001;
+          x += spacingDir * glyph * fontSize / 1000;
           continue;
         }
 
-        const width = glyph.width;
-        const character = glyph.fontChar;
         const spacing = (glyph.isSpace ? wordSpacing : 0) + charSpacing;
-        const charWidth = width * widthAdvanceScale + spacing * fontDirection;
+        const character = glyph.fontChar;
+        let scaledX, scaledY;
+        let width = glyph.width;
 
-        if (!glyph.isInFont && !font.missingFile) {
-          x += charWidth;
-          continue;
+        if (vertical) {
+          let vx;
+          const vmetric = glyph.vmetric || defaultVMetrics;
+          vx = glyph.vmetric ? vmetric[1] : width * 0.5;
+          vx = -vx * widthAdvanceScale;
+          const vy = vmetric[2] * widthAdvanceScale;
+          width = vmetric ? -vmetric[0] : width;
+          scaledX = vx / fontSizeScale;
+          scaledY = (x + vy) / fontSizeScale;
+        } else {
+          scaledX = x / fontSizeScale;
+          scaledY = 0;
         }
 
-        current.xcoords.push(current.x + x);
-        current.tspan.textContent += character;
+        if (glyph.isInFont || font.missingFile) {
+          current.xcoords.push(current.x + scaledX);
+
+          if (vertical) {
+            current.ycoords.push(-current.y + scaledY);
+          }
+
+          current.tspan.textContent += character;
+        } else {}
+
+        let charWidth;
+
+        if (vertical) {
+          charWidth = width * widthAdvanceScale - spacing * fontDirection;
+        } else {
+          charWidth = width * widthAdvanceScale + spacing * fontDirection;
+        }
+
         x += charWidth;
       }
 
+      current.tspan.setAttributeNS(null, "x", current.xcoords.map(pf).join(" "));
+
       if (vertical) {
-        current.y -= x * textHScale;
+        current.tspan.setAttributeNS(null, "y", current.ycoords.map(pf).join(" "));
+      } else {
+        current.tspan.setAttributeNS(null, "y", pf(-current.y));
+      }
+
+      if (vertical) {
+        current.y -= x;
       } else {
         current.x += x * textHScale;
       }
 
-      current.tspan.setAttributeNS(null, "x", current.xcoords.map(pf).join(" "));
-      current.tspan.setAttributeNS(null, "y", pf(-current.y));
       current.tspan.setAttributeNS(null, "font-family", current.fontFamily);
       current.tspan.setAttributeNS(null, "font-size", `${pf(current.fontSize)}px`);
 
@@ -835,6 +870,10 @@ exports.SVGGraphics = SVGGraphics;
     }
 
     addFontStyle(fontObj) {
+      if (!fontObj.data) {
+        throw new Error("addFontStyle: No font data available, " + 'ensure that the "fontExtraProperties" API parameter is set.');
+      }
+
       if (!this.cssStyle) {
         this.cssStyle = this.svgFactory.createElement("svg:style");
         this.cssStyle.setAttributeNS(null, "type", "text/css");
@@ -851,12 +890,12 @@ exports.SVGGraphics = SVGGraphics;
       let size = details[1];
       current.font = fontObj;
 
-      if (this.embedFonts && fontObj.data && !this.embeddedFonts[fontObj.loadedName]) {
+      if (this.embedFonts && !fontObj.missingFile && !this.embeddedFonts[fontObj.loadedName]) {
         this.addFontStyle(fontObj);
         this.embeddedFonts[fontObj.loadedName] = fontObj;
       }
 
-      current.fontMatrix = fontObj.fontMatrix ? fontObj.fontMatrix : _util.FONT_IDENTITY_MATRIX;
+      current.fontMatrix = fontObj.fontMatrix || _util.FONT_IDENTITY_MATRIX;
       let bold = "normal";
 
       if (fontObj.black) {
@@ -881,12 +920,13 @@ exports.SVGGraphics = SVGGraphics;
       current.tspan = this.svgFactory.createElement("svg:tspan");
       current.tspan.setAttributeNS(null, "y", pf(-current.y));
       current.xcoords = [];
+      current.ycoords = [];
     }
 
     endText() {
       const current = this.current;
 
-      if (current.textRenderingMode & _util.TextRenderingMode.ADD_TO_PATH_FLAG && current.txtElement && current.txtElement.hasChildNodes()) {
+      if (current.textRenderingMode & _util.TextRenderingMode.ADD_TO_PATH_FLAG && current.txtElement?.hasChildNodes()) {
         current.element = current.txtElement;
         this.clip("nonzero");
         this.endPath();
@@ -916,7 +956,7 @@ exports.SVGGraphics = SVGGraphics;
     }
 
     setStrokeRGBColor(r, g, b) {
-      this.current.strokeColor = _util.Util.makeCssRgb(r, g, b);
+      this.current.strokeColor = _util.Util.makeHexColor(r, g, b);
     }
 
     setFillAlpha(fillAlpha) {
@@ -924,9 +964,10 @@ exports.SVGGraphics = SVGGraphics;
     }
 
     setFillRGBColor(r, g, b) {
-      this.current.fillColor = _util.Util.makeCssRgb(r, g, b);
+      this.current.fillColor = _util.Util.makeHexColor(r, g, b);
       this.current.tspan = this.svgFactory.createElement("svg:tspan");
       this.current.xcoords = [];
+      this.current.ycoords = [];
     }
 
     setStrokeColorN(args) {
@@ -961,6 +1002,10 @@ exports.SVGGraphics = SVGGraphics;
       rect.setAttributeNS(null, "width", x1 - x0);
       rect.setAttributeNS(null, "height", y1 - y0);
       rect.setAttributeNS(null, "fill", this._makeShadingPattern(args));
+
+      if (this.current.fillAlpha < 1) {
+        rect.setAttributeNS(null, "fill-opacity", this.current.fillAlpha);
+      }
 
       this._ensureTransformGroup().appendChild(rect);
     }
@@ -1007,7 +1052,7 @@ exports.SVGGraphics = SVGGraphics;
       this.transformMatrix = matrix;
 
       if (paintType === 2) {
-        const cssColor = _util.Util.makeCssRgb(...color);
+        const cssColor = _util.Util.makeHexColor(...color);
 
         this.current.fillColor = cssColor;
         this.current.strokeColor = cssColor;
@@ -1195,9 +1240,11 @@ exports.SVGGraphics = SVGGraphics;
 
       if (current.activeClipUrl) {
         current.clipGroup = null;
-        this.extraStack.forEach(function (prev) {
+
+        for (const prev of this.extraStack) {
           prev.clipGroup = null;
-        });
+        }
+
         clipPath.setAttributeNS(null, "clip-path", current.activeClipUrl);
       }
 
@@ -1376,21 +1423,8 @@ exports.SVGGraphics = SVGGraphics;
       this._ensureTransformGroup().appendChild(rect);
     }
 
-    paintJpegXObject(objId, w, h) {
-      const imgObj = this.objs.get(objId);
-      const imgEl = this.svgFactory.createElement("svg:image");
-      imgEl.setAttributeNS(XLINK_NS, "xlink:href", imgObj.src);
-      imgEl.setAttributeNS(null, "width", pf(w));
-      imgEl.setAttributeNS(null, "height", pf(h));
-      imgEl.setAttributeNS(null, "x", "0");
-      imgEl.setAttributeNS(null, "y", pf(-h));
-      imgEl.setAttributeNS(null, "transform", `scale(${pf(1 / w)} ${pf(-1 / h)})`);
-
-      this._ensureTransformGroup().appendChild(imgEl);
-    }
-
     paintImageXObject(objId) {
-      const imgData = this.objs.get(objId);
+      const imgData = objId.startsWith("g_") ? this.commonObjs.get(objId) : this.objs.get(objId);
 
       if (!imgData) {
         (0, _util.warn)(`Dependent image with object ID ${objId} is not ready yet`);

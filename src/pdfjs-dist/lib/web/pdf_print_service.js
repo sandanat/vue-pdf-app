@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,23 +28,18 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.PDFPrintService = PDFPrintService;
 
-var _ui_utils = require("./ui_utils.js");
-
 var _app = require("./app.js");
 
-var _app_options = require("./app_options.js");
+var _viewer_compatibility = require("./viewer_compatibility.js");
 
 let activeService = null;
 let overlayManager = null;
 
-function renderPage(activeServiceOnEntry, pdfDocument, pageNumber, size) {
+function renderPage(activeServiceOnEntry, pdfDocument, pageNumber, size, printResolution, optionalContentConfigPromise) {
   const scratchCanvas = activeService.scratchCanvas;
-  const PRINT_RESOLUTION = _app_options.AppOptions.get("printResolution") || 150;
-  const PRINT_UNITS = PRINT_RESOLUTION / 72.0;
+  const PRINT_UNITS = printResolution / 72.0;
   scratchCanvas.width = Math.floor(size.width * PRINT_UNITS);
   scratchCanvas.height = Math.floor(size.height * PRINT_UNITS);
-  const width = Math.floor(size.width * _ui_utils.CSS_UNITS) + "px";
-  const height = Math.floor(size.height * _ui_utils.CSS_UNITS) + "px";
   const ctx = scratchCanvas.getContext("2d");
   ctx.save();
   ctx.fillStyle = "rgb(255, 255, 255)";
@@ -58,23 +53,21 @@ function renderPage(activeServiceOnEntry, pdfDocument, pageNumber, size) {
         scale: 1,
         rotation: size.rotation
       }),
-      intent: "print"
+      intent: "print",
+      includeAnnotationStorage: true,
+      optionalContentConfigPromise
     };
     return pdfPage.render(renderContext).promise;
-  }).then(function () {
-    return {
-      width,
-      height
-    };
   });
 }
 
-function PDFPrintService(pdfDocument, pagesOverview, printContainer, l10n) {
+function PDFPrintService(pdfDocument, pagesOverview, printContainer, printResolution, optionalContentConfigPromise = null, l10n) {
   this.pdfDocument = pdfDocument;
   this.pagesOverview = pagesOverview;
   this.printContainer = printContainer;
-  this.l10n = l10n || _ui_utils.NullL10n;
-  this.disableCreateObjectURL = pdfDocument.loadingParams["disableCreateObjectURL"];
+  this._printResolution = printResolution || 150;
+  this._optionalContentConfigPromise = optionalContentConfigPromise || pdfDocument.getOptionalContentConfig();
+  this.l10n = l10n;
   this.currentPage = -1;
   this.scratchCanvas = document.createElement("canvas");
 }
@@ -94,7 +87,7 @@ PDFPrintService.prototype = {
 
     this.pageStyleSheet = document.createElement("style");
     const pageSize = this.pagesOverview[0];
-    this.pageStyleSheet.textContent = "@supports ((size:A4) and (size:1pt 1pt)) {" + "@page { size: " + pageSize.width + "pt " + pageSize.height + "pt;}" + "}";
+    this.pageStyleSheet.textContent = "@page { size: " + pageSize.width + "pt " + pageSize.height + "pt;}";
     body.appendChild(this.pageStyleSheet);
   },
 
@@ -138,7 +131,7 @@ PDFPrintService.prototype = {
 
       const index = this.currentPage;
       renderProgress(index, pageCount, this.l10n);
-      renderPage(this, this.pdfDocument, index + 1, this.pagesOverview[index]).then(this.useRenderedPage.bind(this)).then(function () {
+      renderPage(this, this.pdfDocument, index + 1, this.pagesOverview[index], this._printResolution, this._optionalContentConfigPromise).then(this.useRenderedPage.bind(this)).then(function () {
         renderNextPage(resolve, reject);
       }, reject);
     };
@@ -146,14 +139,12 @@ PDFPrintService.prototype = {
     return new Promise(renderNextPage);
   },
 
-  useRenderedPage(printItem) {
+  useRenderedPage() {
     this.throwIfInactive();
     const img = document.createElement("img");
-    img.style.width = printItem.width;
-    img.style.height = printItem.height;
     const scratchCanvas = this.scratchCanvas;
 
-    if ("toBlob" in scratchCanvas && !this.disableCreateObjectURL) {
+    if ("toBlob" in scratchCanvas && !_viewer_compatibility.viewerCompatibilityParams.disableCreateObjectURL) {
       scratchCanvas.toBlob(function (blob) {
         img.src = URL.createObjectURL(blob);
       });
@@ -255,7 +246,7 @@ function renderProgress(index, total, l10n) {
   progressBar.value = progress;
   l10n.get("print_progress_percent", {
     progress
-  }, progress + "%").then(msg => {
+  }).then(msg => {
     progressPerc.textContent = msg;
   });
 }
@@ -304,12 +295,12 @@ function ensureOverlay() {
 _app.PDFPrintServiceFactory.instance = {
   supportsPrinting: true,
 
-  createPrintService(pdfDocument, pagesOverview, printContainer, l10n) {
+  createPrintService(pdfDocument, pagesOverview, printContainer, printResolution, optionalContentConfigPromise, l10n) {
     if (activeService) {
       throw new Error("The print service is created and active.");
     }
 
-    activeService = new PDFPrintService(pdfDocument, pagesOverview, printContainer, l10n);
+    activeService = new PDFPrintService(pdfDocument, pagesOverview, printContainer, printResolution, optionalContentConfigPromise, l10n);
     return activeService;
   }
 

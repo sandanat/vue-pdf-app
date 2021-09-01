@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,14 +28,17 @@ exports.PDFDataTransportStream = void 0;
 
 var _util = require("../shared/util.js");
 
+var _display_utils = require("./display_utils.js");
+
 class PDFDataTransportStream {
   constructor(params, pdfDataRangeTransport) {
-    (0, _util.assert)(pdfDataRangeTransport);
+    (0, _util.assert)(pdfDataRangeTransport, 'PDFDataTransportStream - missing required "pdfDataRangeTransport" argument.');
     this._queuedChunks = [];
     this._progressiveDone = params.progressiveDone || false;
+    this._contentDispositionFilename = params.contentDispositionFilename || null;
     const initialData = params.initialData;
 
-    if (initialData && initialData.length > 0) {
+    if (initialData?.length > 0) {
       const buffer = new Uint8Array(initialData).buffer;
 
       this._queuedChunks.push(buffer);
@@ -95,19 +98,19 @@ class PDFDataTransportStream {
         return true;
       });
 
-      (0, _util.assert)(found);
+      (0, _util.assert)(found, "_onReceiveData - no `PDFDataTransportStreamRangeReader` instance found.");
     }
   }
 
   get _progressiveDataLength() {
-    return this._fullRequestReader ? this._fullRequestReader._loaded : 0;
+    return this._fullRequestReader?._loaded ?? 0;
   }
 
   _onProgress(evt) {
     if (evt.total === undefined) {
       const firstReader = this._rangeReaders[0];
 
-      if (firstReader && firstReader.onProgress) {
+      if (firstReader?.onProgress) {
         firstReader.onProgress({
           loaded: evt.loaded
         });
@@ -115,7 +118,7 @@ class PDFDataTransportStream {
     } else {
       const fullReader = this._fullRequestReader;
 
-      if (fullReader && fullReader.onProgress) {
+      if (fullReader?.onProgress) {
         fullReader.onProgress({
           loaded: evt.loaded,
           total: evt.total
@@ -141,10 +144,10 @@ class PDFDataTransportStream {
   }
 
   getFullReader() {
-    (0, _util.assert)(!this._fullRequestReader);
+    (0, _util.assert)(!this._fullRequestReader, "PDFDataTransportStream.getFullReader can only be called once.");
     const queuedChunks = this._queuedChunks;
     this._queuedChunks = null;
-    return new PDFDataTransportStreamReader(this, queuedChunks, this._progressiveDone);
+    return new PDFDataTransportStreamReader(this, queuedChunks, this._progressiveDone, this._contentDispositionFilename);
   }
 
   getRangeReader(begin, end) {
@@ -166,11 +169,9 @@ class PDFDataTransportStream {
       this._fullRequestReader.cancel(reason);
     }
 
-    const readers = this._rangeReaders.slice(0);
-
-    readers.forEach(function (rangeReader) {
-      rangeReader.cancel(reason);
-    });
+    for (const reader of this._rangeReaders.slice(0)) {
+      reader.cancel(reason);
+    }
 
     this._pdfDataRangeTransport.abort();
   }
@@ -180,10 +181,10 @@ class PDFDataTransportStream {
 exports.PDFDataTransportStream = PDFDataTransportStream;
 
 class PDFDataTransportStreamReader {
-  constructor(stream, queuedChunks, progressiveDone = false) {
+  constructor(stream, queuedChunks, progressiveDone = false, contentDispositionFilename = null) {
     this._stream = stream;
     this._done = progressiveDone || false;
-    this._filename = null;
+    this._filename = (0, _display_utils.isPdfFile)(contentDispositionFilename) ? contentDispositionFilename : null;
     this._queuedChunks = queuedChunks || [];
     this._loaded = 0;
 
@@ -263,14 +264,14 @@ class PDFDataTransportStreamReader {
   cancel(reason) {
     this._done = true;
 
-    this._requests.forEach(function (requestCapability) {
+    for (const requestCapability of this._requests) {
       requestCapability.resolve({
         value: undefined,
         done: true
       });
-    });
+    }
 
-    this._requests = [];
+    this._requests.length = 0;
   }
 
   progressiveDone() {
@@ -309,14 +310,14 @@ class PDFDataTransportStreamRangeReader {
         done: false
       });
 
-      this._requests.forEach(function (requestCapability) {
+      for (const requestCapability of this._requests) {
         requestCapability.resolve({
           value: undefined,
           done: true
         });
-      });
+      }
 
-      this._requests = [];
+      this._requests.length = 0;
     }
 
     this._done = true;
@@ -355,14 +356,14 @@ class PDFDataTransportStreamRangeReader {
   cancel(reason) {
     this._done = true;
 
-    this._requests.forEach(function (requestCapability) {
+    for (const requestCapability of this._requests) {
       requestCapability.resolve({
         value: undefined,
         done: true
       });
-    });
+    }
 
-    this._requests = [];
+    this._requests.length = 0;
 
     this._stream._removeRangeReader(this);
   }

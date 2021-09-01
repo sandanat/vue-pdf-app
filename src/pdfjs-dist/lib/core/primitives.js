@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,72 +25,76 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.clearPrimitiveCaches = clearPrimitiveCaches;
-exports.isEOF = isEOF;
 exports.isCmd = isCmd;
 exports.isDict = isDict;
+exports.isEOF = isEOF;
 exports.isName = isName;
 exports.isRef = isRef;
 exports.isRefsEqual = isRefsEqual;
 exports.isStream = isStream;
-exports.RefSetCache = exports.RefSet = exports.Ref = exports.Name = exports.Dict = exports.Cmd = exports.EOF = void 0;
+exports.RefSetCache = exports.RefSet = exports.Ref = exports.Name = exports.EOF = exports.Dict = exports.Cmd = void 0;
 
 var _util = require("../shared/util.js");
 
-var EOF = {};
+var _base_stream = require("./base_stream.js");
+
+const EOF = {};
 exports.EOF = EOF;
 
-var Name = function NameClosure() {
+const Name = function NameClosure() {
   let nameCache = Object.create(null);
 
-  function Name(name) {
-    this.name = name;
+  class Name {
+    constructor(name) {
+      this.name = name;
+    }
+
+    static get(name) {
+      const nameValue = nameCache[name];
+      return nameValue ? nameValue : nameCache[name] = new Name(name);
+    }
+
+    static _clearCache() {
+      nameCache = Object.create(null);
+    }
+
   }
-
-  Name.prototype = {};
-
-  Name.get = function Name_get(name) {
-    var nameValue = nameCache[name];
-    return nameValue ? nameValue : nameCache[name] = new Name(name);
-  };
-
-  Name._clearCache = function () {
-    nameCache = Object.create(null);
-  };
 
   return Name;
 }();
 
 exports.Name = Name;
 
-var Cmd = function CmdClosure() {
+const Cmd = function CmdClosure() {
   let cmdCache = Object.create(null);
 
-  function Cmd(cmd) {
-    this.cmd = cmd;
+  class Cmd {
+    constructor(cmd) {
+      this.cmd = cmd;
+    }
+
+    static get(cmd) {
+      const cmdValue = cmdCache[cmd];
+      return cmdValue ? cmdValue : cmdCache[cmd] = new Cmd(cmd);
+    }
+
+    static _clearCache() {
+      cmdCache = Object.create(null);
+    }
+
   }
-
-  Cmd.prototype = {};
-
-  Cmd.get = function Cmd_get(cmd) {
-    var cmdValue = cmdCache[cmd];
-    return cmdValue ? cmdValue : cmdCache[cmd] = new Cmd(cmd);
-  };
-
-  Cmd._clearCache = function () {
-    cmdCache = Object.create(null);
-  };
 
   return Cmd;
 }();
 
 exports.Cmd = Cmd;
 
-var Dict = function DictClosure() {
-  var nonSerializable = function nonSerializableClosure() {
-    return nonSerializable;
-  };
+const nonSerializable = function nonSerializableClosure() {
+  return nonSerializable;
+};
 
-  function Dict(xref) {
+class Dict {
+  constructor(xref = null) {
     this._map = Object.create(null);
     this.xref = xref;
     this.objId = null;
@@ -98,197 +102,290 @@ var Dict = function DictClosure() {
     this.__nonSerializable__ = nonSerializable;
   }
 
-  Dict.prototype = {
-    assignXref: function Dict_assignXref(newXref) {
-      this.xref = newXref;
-    },
+  assignXref(newXref) {
+    this.xref = newXref;
+  }
 
-    get(key1, key2, key3) {
-      let value = this._map[key1];
+  get size() {
+    return Object.keys(this._map).length;
+  }
 
-      if (value === undefined && key2 !== undefined) {
-        value = this._map[key2];
+  get(key1, key2, key3) {
+    let value = this._map[key1];
 
-        if (value === undefined && key3 !== undefined) {
-          value = this._map[key3];
-        }
+    if (value === undefined && key2 !== undefined) {
+      value = this._map[key2];
+
+      if (value === undefined && key3 !== undefined) {
+        value = this._map[key3];
       }
+    }
 
-      if (value instanceof Ref && this.xref) {
-        return this.xref.fetch(value, this.suppressEncryption);
+    if (value instanceof Ref && this.xref) {
+      return this.xref.fetch(value, this.suppressEncryption);
+    }
+
+    return value;
+  }
+
+  async getAsync(key1, key2, key3) {
+    let value = this._map[key1];
+
+    if (value === undefined && key2 !== undefined) {
+      value = this._map[key2];
+
+      if (value === undefined && key3 !== undefined) {
+        value = this._map[key3];
       }
+    }
 
-      return value;
-    },
+    if (value instanceof Ref && this.xref) {
+      return this.xref.fetchAsync(value, this.suppressEncryption);
+    }
 
-    async getAsync(key1, key2, key3) {
-      let value = this._map[key1];
+    return value;
+  }
 
-      if (value === undefined && key2 !== undefined) {
-        value = this._map[key2];
+  getArray(key1, key2, key3) {
+    let value = this._map[key1];
 
-        if (value === undefined && key3 !== undefined) {
-          value = this._map[key3];
-        }
+    if (value === undefined && key2 !== undefined) {
+      value = this._map[key2];
+
+      if (value === undefined && key3 !== undefined) {
+        value = this._map[key3];
       }
+    }
 
-      if (value instanceof Ref && this.xref) {
-        return this.xref.fetchAsync(value, this.suppressEncryption);
-      }
+    if (value instanceof Ref && this.xref) {
+      value = this.xref.fetch(value, this.suppressEncryption);
+    }
 
-      return value;
-    },
-
-    getArray(key1, key2, key3) {
-      let value = this.get(key1, key2, key3);
-
-      if (!Array.isArray(value) || !this.xref) {
-        return value;
-      }
-
+    if (Array.isArray(value)) {
       value = value.slice();
 
       for (let i = 0, ii = value.length; i < ii; i++) {
-        if (!(value[i] instanceof Ref)) {
+        if (value[i] instanceof Ref && this.xref) {
+          value[i] = this.xref.fetch(value[i], this.suppressEncryption);
+        }
+      }
+    }
+
+    return value;
+  }
+
+  getRaw(key) {
+    return this._map[key];
+  }
+
+  getKeys() {
+    return Object.keys(this._map);
+  }
+
+  getRawValues() {
+    return Object.values(this._map);
+  }
+
+  set(key, value) {
+    this._map[key] = value;
+  }
+
+  has(key) {
+    return this._map[key] !== undefined;
+  }
+
+  forEach(callback) {
+    for (const key in this._map) {
+      callback(key, this.get(key));
+    }
+  }
+
+  static get empty() {
+    const emptyDict = new Dict(null);
+
+    emptyDict.set = (key, value) => {
+      (0, _util.unreachable)("Should not call `set` on the empty dictionary.");
+    };
+
+    return (0, _util.shadow)(this, "empty", emptyDict);
+  }
+
+  static merge({
+    xref,
+    dictArray,
+    mergeSubDicts = false
+  }) {
+    const mergedDict = new Dict(xref);
+
+    if (!mergeSubDicts) {
+      for (const dict of dictArray) {
+        if (!(dict instanceof Dict)) {
           continue;
         }
 
-        value[i] = this.xref.fetch(value[i], this.suppressEncryption);
+        for (const [key, value] of Object.entries(dict._map)) {
+          if (mergedDict._map[key] === undefined) {
+            mergedDict._map[key] = value;
+          }
+        }
       }
 
-      return value;
-    },
-
-    getRaw: function Dict_getRaw(key) {
-      return this._map[key];
-    },
-    getKeys: function Dict_getKeys() {
-      return Object.keys(this._map);
-    },
-    set: function Dict_set(key, value) {
-      this._map[key] = value;
-    },
-    has: function Dict_has(key) {
-      return this._map[key] !== undefined;
-    },
-    forEach: function Dict_forEach(callback) {
-      for (var key in this._map) {
-        callback(key, this.get(key));
-      }
+      return mergedDict.size > 0 ? mergedDict : Dict.empty;
     }
-  };
-  Dict.empty = new Dict(null);
 
-  Dict.merge = function (xref, dictArray) {
-    const mergedDict = new Dict(xref);
+    const properties = new Map();
 
-    for (let i = 0, ii = dictArray.length; i < ii; i++) {
-      const dict = dictArray[i];
-
-      if (!isDict(dict)) {
+    for (const dict of dictArray) {
+      if (!(dict instanceof Dict)) {
         continue;
       }
 
-      for (const keyName in dict._map) {
-        if (mergedDict._map[keyName] !== undefined) {
-          continue;
+      for (const [key, value] of Object.entries(dict._map)) {
+        let property = properties.get(key);
+
+        if (property === undefined) {
+          property = [];
+          properties.set(key, property);
         }
 
-        mergedDict._map[keyName] = dict._map[keyName];
+        property.push(value);
       }
     }
 
-    return mergedDict;
-  };
+    for (const [name, values] of properties) {
+      if (values.length === 1 || !(values[0] instanceof Dict)) {
+        mergedDict._map[name] = values[0];
+        continue;
+      }
 
-  return Dict;
-}();
+      const subDict = new Dict(xref);
+
+      for (const dict of values) {
+        if (!(dict instanceof Dict)) {
+          continue;
+        }
+
+        for (const [key, value] of Object.entries(dict._map)) {
+          if (subDict._map[key] === undefined) {
+            subDict._map[key] = value;
+          }
+        }
+      }
+
+      if (subDict.size > 0) {
+        mergedDict._map[name] = subDict;
+      }
+    }
+
+    properties.clear();
+    return mergedDict.size > 0 ? mergedDict : Dict.empty;
+  }
+
+}
 
 exports.Dict = Dict;
 
-var Ref = function RefClosure() {
+const Ref = function RefClosure() {
   let refCache = Object.create(null);
 
-  function Ref(num, gen) {
-    this.num = num;
-    this.gen = gen;
-  }
+  class Ref {
+    constructor(num, gen) {
+      this.num = num;
+      this.gen = gen;
+    }
 
-  Ref.prototype = {
-    toString: function Ref_toString() {
+    toString() {
       if (this.gen === 0) {
         return `${this.num}R`;
       }
 
       return `${this.num}R${this.gen}`;
     }
-  };
 
-  Ref.get = function (num, gen) {
-    const key = gen === 0 ? `${num}R` : `${num}R${gen}`;
-    const refValue = refCache[key];
-    return refValue ? refValue : refCache[key] = new Ref(num, gen);
-  };
+    static get(num, gen) {
+      const key = gen === 0 ? `${num}R` : `${num}R${gen}`;
+      const refValue = refCache[key];
+      return refValue ? refValue : refCache[key] = new Ref(num, gen);
+    }
 
-  Ref._clearCache = function () {
-    refCache = Object.create(null);
-  };
+    static _clearCache() {
+      refCache = Object.create(null);
+    }
+
+  }
 
   return Ref;
 }();
 
 exports.Ref = Ref;
 
-var RefSet = function RefSetClosure() {
-  function RefSet() {
-    this.dict = Object.create(null);
+class RefSet {
+  constructor(parent = null) {
+    this._set = new Set(parent && parent._set);
   }
 
-  RefSet.prototype = {
-    has: function RefSet_has(ref) {
-      return ref.toString() in this.dict;
-    },
-    put: function RefSet_put(ref) {
-      this.dict[ref.toString()] = true;
-    },
-    remove: function RefSet_remove(ref) {
-      delete this.dict[ref.toString()];
+  has(ref) {
+    return this._set.has(ref.toString());
+  }
+
+  put(ref) {
+    this._set.add(ref.toString());
+  }
+
+  remove(ref) {
+    this._set.delete(ref.toString());
+  }
+
+  forEach(callback) {
+    for (const ref of this._set.values()) {
+      callback(ref);
     }
-  };
-  return RefSet;
-}();
+  }
+
+  clear() {
+    this._set.clear();
+  }
+
+}
 
 exports.RefSet = RefSet;
 
-var RefSetCache = function RefSetCacheClosure() {
-  function RefSetCache() {
-    this.dict = Object.create(null);
+class RefSetCache {
+  constructor() {
+    this._map = new Map();
   }
 
-  RefSetCache.prototype = {
-    get: function RefSetCache_get(ref) {
-      return this.dict[ref.toString()];
-    },
-    has: function RefSetCache_has(ref) {
-      return ref.toString() in this.dict;
-    },
-    put: function RefSetCache_put(ref, obj) {
-      this.dict[ref.toString()] = obj;
-    },
-    putAlias: function RefSetCache_putAlias(ref, aliasRef) {
-      this.dict[ref.toString()] = this.get(aliasRef);
-    },
-    forEach: function RefSetCache_forEach(callback) {
-      for (const i in this.dict) {
-        callback(this.dict[i]);
-      }
-    },
-    clear: function RefSetCache_clear() {
-      this.dict = Object.create(null);
+  get size() {
+    return this._map.size;
+  }
+
+  get(ref) {
+    return this._map.get(ref.toString());
+  }
+
+  has(ref) {
+    return this._map.has(ref.toString());
+  }
+
+  put(ref, obj) {
+    this._map.set(ref.toString(), obj);
+  }
+
+  putAlias(ref, aliasRef) {
+    this._map.set(ref.toString(), this.get(aliasRef));
+  }
+
+  forEach(callback) {
+    for (const value of this._map.values()) {
+      callback(value);
     }
-  };
-  return RefSetCache;
-}();
+  }
+
+  clear() {
+    this._map.clear();
+  }
+
+}
 
 exports.RefSetCache = RefSetCache;
 
@@ -317,7 +414,7 @@ function isRefsEqual(v1, v2) {
 }
 
 function isStream(v) {
-  return typeof v === "object" && v !== null && v.getBytes !== undefined;
+  return v instanceof _base_stream.BaseStream;
 }
 
 function clearPrimitiveCaches() {

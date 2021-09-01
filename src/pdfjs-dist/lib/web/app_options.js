@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.OptionKind = exports.AppOptions = void 0;
-
-var _pdf = require("../pdf");
 
 var _viewer_compatibility = require("./viewer_compatibility.js");
 
@@ -58,16 +56,16 @@ const defaultOptions = {
     value: false,
     kind: OptionKind.VIEWER + OptionKind.PREFERENCE
   },
+  enablePermissions: {
+    value: false,
+    kind: OptionKind.VIEWER + OptionKind.PREFERENCE
+  },
   enablePrintAutoRotate: {
-    value: false,
+    value: true,
     kind: OptionKind.VIEWER + OptionKind.PREFERENCE
   },
-  enableWebGL: {
-    value: false,
-    kind: OptionKind.VIEWER + OptionKind.PREFERENCE
-  },
-  eventBusDispatchToDOM: {
-    value: false,
+  enableScripting: {
+    value: true,
     kind: OptionKind.VIEWER + OptionKind.PREFERENCE
   },
   externalLinkRel: {
@@ -99,12 +97,16 @@ const defaultOptions = {
     value: false,
     kind: OptionKind.VIEWER + OptionKind.PREFERENCE
   },
+  printResolution: {
+    value: 150,
+    kind: OptionKind.VIEWER
+  },
   renderer: {
     value: "canvas",
-    kind: OptionKind.VIEWER + OptionKind.PREFERENCE
+    kind: OptionKind.VIEWER
   },
   renderInteractiveForms: {
-    value: false,
+    value: true,
     kind: OptionKind.VIEWER + OptionKind.PREFERENCE
   },
   sidebarViewOnLoad: {
@@ -127,6 +129,10 @@ const defaultOptions = {
     value: false,
     kind: OptionKind.VIEWER + OptionKind.PREFERENCE
   },
+  viewerCssTheme: {
+    value: 0,
+    kind: OptionKind.VIEWER + OptionKind.PREFERENCE
+  },
   viewOnLoad: {
     value: 0,
     kind: OptionKind.VIEWER + OptionKind.PREFERENCE
@@ -143,11 +149,6 @@ const defaultOptions = {
     value: false,
     kind: OptionKind.API + OptionKind.PREFERENCE
   },
-  disableCreateObjectURL: {
-    value: false,
-    compatibility: _pdf.apiCompatibilityParams.disableCreateObjectURL,
-    kind: OptionKind.API
-  },
   disableFontFace: {
     value: false,
     kind: OptionKind.API + OptionKind.PREFERENCE
@@ -162,6 +163,14 @@ const defaultOptions = {
   },
   docBaseUrl: {
     value: "",
+    kind: OptionKind.API
+  },
+  enableXfa: {
+    value: false,
+    kind: OptionKind.API + OptionKind.PREFERENCE
+  },
+  fontExtraProperties: {
+    value: false,
     kind: OptionKind.API
   },
   isEvalSupported: {
@@ -189,7 +198,21 @@ const defaultOptions = {
     kind: OptionKind.WORKER
   }
 };
-;
+{
+  defaultOptions.disablePreferences = {
+    value: false,
+    kind: OptionKind.VIEWER
+  };
+  defaultOptions.locale = {
+    value: typeof navigator !== "undefined" ? navigator.language : "en-US",
+    kind: OptionKind.VIEWER
+  };
+  defaultOptions.sandboxBundleSrc = {
+    value: "../build/pdf.sandbox.js",
+    kind: OptionKind.VIEWER
+  };
+  defaultOptions.renderer.kind += OptionKind.PREFERENCE;
+}
 const userOptions = Object.create(null);
 
 class AppOptions {
@@ -207,7 +230,7 @@ class AppOptions {
     const defaultOption = defaultOptions[name];
 
     if (defaultOption !== undefined) {
-      return defaultOption.compatibility || defaultOption.value;
+      return defaultOption.compatibility ?? defaultOption.value;
     }
 
     return undefined;
@@ -238,7 +261,7 @@ class AppOptions {
       }
 
       const userOption = userOptions[name];
-      options[name] = userOption !== undefined ? userOption : defaultOption.compatibility || defaultOption.value;
+      options[name] = userOption !== undefined ? userOption : defaultOption.compatibility ?? defaultOption.value;
     }
 
     return options;
@@ -246,6 +269,12 @@ class AppOptions {
 
   static set(name, value) {
     userOptions[name] = value;
+  }
+
+  static setAll(options) {
+    for (const name in options) {
+      userOptions[name] = options[name];
+    }
   }
 
   static remove(name) {

@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.DefaultTextLayerFactory = exports.TextLayerBuilder = void 0;
-
-var _ui_utils = require("./ui_utils.js");
+exports.TextLayerBuilder = exports.DefaultTextLayerFactory = void 0;
 
 var _pdf = require("../pdf");
 
@@ -42,7 +40,7 @@ class TextLayerBuilder {
     enhanceTextSelection = false
   }) {
     this.textLayerDiv = textLayerDiv;
-    this.eventBus = eventBus || (0, _ui_utils.getGlobalEventBus)();
+    this.eventBus = eventBus;
     this.textContent = null;
     this.textContentItemsStr = [];
     this.textContentStream = null;
@@ -142,13 +140,11 @@ class TextLayerBuilder {
     }
 
     const {
-      findController,
       textContentItemsStr
     } = this;
     let i = 0,
         iIndex = 0;
     const end = textContentItemsStr.length - 1;
-    const queryLen = findController.state.query.length;
     const result = [];
 
     for (let m = 0, mm = matches.length; m < mm; m++) {
@@ -169,12 +165,7 @@ class TextLayerBuilder {
           offset: matchIdx - iIndex
         }
       };
-
-      if (matchesLength) {
-        matchIdx += matchesLength[m];
-      } else {
-        matchIdx += queryLen;
-      }
+      matchIdx += matchesLength[m];
 
       while (i !== end && matchIdx > iIndex + textContentItemsStr[i].length) {
         iIndex += textContentItemsStr[i].length;
@@ -315,7 +306,7 @@ class TextLayerBuilder {
       clearedUntilDivIdx = match.end.divIdx + 1;
     }
 
-    if (!findController || !findController.highlightMatches) {
+    if (!findController?.highlightMatches) {
       return;
     }
 

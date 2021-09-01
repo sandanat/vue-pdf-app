@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,15 +30,13 @@ var _util = require("../shared/util.js");
 
 var _core_utils = require("./core_utils.js");
 
-class ChunkedStream {
+var _stream = require("./stream.js");
+
+class ChunkedStream extends _stream.Stream {
   constructor(length, chunkSize, manager) {
-    this.bytes = new Uint8Array(length);
-    this.start = 0;
-    this.pos = 0;
-    this.end = length;
+    super(new Uint8Array(length), 0, length, null);
     this.chunkSize = chunkSize;
-    this.loadedChunks = [];
-    this.numChunksLoaded = 0;
+    this._loadedChunks = new Set();
     this.numChunks = Math.ceil(length / chunkSize);
     this.manager = manager;
     this.progressiveDataLength = 0;
@@ -49,7 +47,7 @@ class ChunkedStream {
     const chunks = [];
 
     for (let chunk = 0, n = this.numChunks; chunk < n; ++chunk) {
-      if (!this.loadedChunks[chunk]) {
+      if (!this._loadedChunks.has(chunk)) {
         chunks.push(chunk);
       }
     }
@@ -57,11 +55,11 @@ class ChunkedStream {
     return chunks;
   }
 
-  getBaseStreams() {
-    return [this];
+  get numChunksLoaded() {
+    return this._loadedChunks.size;
   }
 
-  allChunksLoaded() {
+  get isDataLoaded() {
     return this.numChunksLoaded === this.numChunks;
   }
 
@@ -83,10 +81,7 @@ class ChunkedStream {
     const endChunk = Math.floor((end - 1) / chunkSize) + 1;
 
     for (let curChunk = beginChunk; curChunk < endChunk; ++curChunk) {
-      if (!this.loadedChunks[curChunk]) {
-        this.loadedChunks[curChunk] = true;
-        ++this.numChunksLoaded;
-      }
+      this._loadedChunks.add(curChunk);
     }
   }
 
@@ -99,10 +94,7 @@ class ChunkedStream {
     const endChunk = position >= this.end ? this.numChunks : Math.floor(position / this.chunkSize);
 
     for (let curChunk = beginChunk; curChunk < endChunk; ++curChunk) {
-      if (!this.loadedChunks[curChunk]) {
-        this.loadedChunks[curChunk] = true;
-        ++this.numChunksLoaded;
-      }
+      this._loadedChunks.add(curChunk);
     }
   }
 
@@ -117,7 +109,7 @@ class ChunkedStream {
       return;
     }
 
-    if (!this.loadedChunks[chunk]) {
+    if (!this._loadedChunks.has(chunk)) {
       throw new _core_utils.MissingDataException(pos, pos + 1);
     }
 
@@ -138,7 +130,7 @@ class ChunkedStream {
     const endChunk = Math.floor((end - 1) / chunkSize) + 1;
 
     for (let chunk = beginChunk; chunk < endChunk; ++chunk) {
-      if (!this.loadedChunks[chunk]) {
+      if (!this._loadedChunks.has(chunk)) {
         throw new _core_utils.MissingDataException(begin, end);
       }
     }
@@ -150,7 +142,7 @@ class ChunkedStream {
     for (let i = 0; i < numChunks; ++i) {
       const chunk = (beginChunk + i) % numChunks;
 
-      if (!this.loadedChunks[chunk]) {
+      if (!this._loadedChunks.has(chunk)) {
         return chunk;
       }
     }
@@ -159,15 +151,7 @@ class ChunkedStream {
   }
 
   hasChunk(chunk) {
-    return !!this.loadedChunks[chunk];
-  }
-
-  get length() {
-    return this.end - this.start;
-  }
-
-  get isEmpty() {
-    return this.length === 0;
+    return this._loadedChunks.has(chunk);
   }
 
   getByte() {
@@ -182,25 +166,6 @@ class ChunkedStream {
     }
 
     return this.bytes[this.pos++];
-  }
-
-  getUint16() {
-    const b0 = this.getByte();
-    const b1 = this.getByte();
-
-    if (b0 === -1 || b1 === -1) {
-      return -1;
-    }
-
-    return (b0 << 8) + b1;
-  }
-
-  getInt32() {
-    const b0 = this.getByte();
-    const b1 = this.getByte();
-    const b2 = this.getByte();
-    const b3 = this.getByte();
-    return (b0 << 24) + (b1 << 16) + (b2 << 8) + b3;
   }
 
   getBytes(length, forceClamped = false) {
@@ -232,22 +197,6 @@ class ChunkedStream {
     return forceClamped ? new Uint8ClampedArray(subarray) : subarray;
   }
 
-  peekByte() {
-    const peekedByte = this.getByte();
-
-    if (peekedByte !== -1) {
-      this.pos--;
-    }
-
-    return peekedByte;
-  }
-
-  peekBytes(length, forceClamped = false) {
-    const bytes = this.getBytes(length, forceClamped);
-    this.pos -= bytes.length;
-    return bytes;
-  }
-
   getByteRange(begin, end) {
     if (begin < 0) {
       begin = 0;
@@ -264,23 +213,7 @@ class ChunkedStream {
     return this.bytes.subarray(begin, end);
   }
 
-  skip(n) {
-    if (!n) {
-      n = 1;
-    }
-
-    this.pos += n;
-  }
-
-  reset() {
-    this.pos = this.start;
-  }
-
-  moveStart() {
-    this.start = this.pos;
-  }
-
-  makeSubStream(start, length, dict) {
+  makeSubStream(start, length, dict = null) {
     if (length) {
       if (start + length > this.progressiveDataLength) {
         this.ensureRange(start, start + length);
@@ -302,7 +235,7 @@ class ChunkedStream {
       const missingChunks = [];
 
       for (let chunk = beginChunk; chunk < endChunk; ++chunk) {
-        if (!this.loadedChunks[chunk]) {
+        if (!this._loadedChunks.has(chunk)) {
           missingChunks.push(chunk);
         }
       }
@@ -310,19 +243,26 @@ class ChunkedStream {
       return missingChunks;
     };
 
-    ChunkedStreamSubstream.prototype.allChunksLoaded = function () {
-      if (this.numChunksLoaded === this.numChunks) {
-        return true;
-      }
+    Object.defineProperty(ChunkedStreamSubstream.prototype, "isDataLoaded", {
+      get() {
+        if (this.numChunksLoaded === this.numChunks) {
+          return true;
+        }
 
-      return this.getMissingChunks().length === 0;
-    };
+        return this.getMissingChunks().length === 0;
+      },
 
+      configurable: true
+    });
     const subStream = new ChunkedStreamSubstream();
     subStream.pos = subStream.start = start;
     subStream.end = start + length || this.end;
     subStream.dict = dict;
     return subStream;
+  }
+
+  getBaseStreams() {
+    return [this];
   }
 
 }
@@ -338,9 +278,9 @@ class ChunkedStreamManager {
     this.disableAutoFetch = args.disableAutoFetch;
     this.msgHandler = args.msgHandler;
     this.currRequestId = 0;
-    this.chunksNeededByRequest = Object.create(null);
-    this.requestsByChunk = Object.create(null);
-    this.promisesByRequest = Object.create(null);
+    this._chunksNeededByRequest = new Map();
+    this._requestsByChunk = new Map();
+    this._promisesByRequest = new Map();
     this.progressiveDataLength = 0;
     this.aborted = false;
     this._loadedStreamCapability = (0, _util.createPromiseCapability)();
@@ -409,47 +349,57 @@ class ChunkedStreamManager {
 
   _requestChunks(chunks) {
     const requestId = this.currRequestId++;
-    const chunksNeeded = Object.create(null);
-    this.chunksNeededByRequest[requestId] = chunksNeeded;
+    const chunksNeeded = new Set();
+
+    this._chunksNeededByRequest.set(requestId, chunksNeeded);
 
     for (const chunk of chunks) {
       if (!this.stream.hasChunk(chunk)) {
-        chunksNeeded[chunk] = true;
+        chunksNeeded.add(chunk);
       }
     }
 
-    if ((0, _util.isEmptyObj)(chunksNeeded)) {
+    if (chunksNeeded.size === 0) {
       return Promise.resolve();
     }
 
     const capability = (0, _util.createPromiseCapability)();
-    this.promisesByRequest[requestId] = capability;
+
+    this._promisesByRequest.set(requestId, capability);
+
     const chunksToRequest = [];
 
-    for (let chunk in chunksNeeded) {
-      chunk = chunk | 0;
+    for (const chunk of chunksNeeded) {
+      let requestIds = this._requestsByChunk.get(chunk);
 
-      if (!(chunk in this.requestsByChunk)) {
-        this.requestsByChunk[chunk] = [];
+      if (!requestIds) {
+        requestIds = [];
+
+        this._requestsByChunk.set(chunk, requestIds);
+
         chunksToRequest.push(chunk);
       }
 
-      this.requestsByChunk[chunk].push(requestId);
+      requestIds.push(requestId);
     }
 
-    if (!chunksToRequest.length) {
-      return capability.promise;
+    if (chunksToRequest.length > 0) {
+      const groupedChunksToRequest = this.groupChunks(chunksToRequest);
+
+      for (const groupedChunk of groupedChunksToRequest) {
+        const begin = groupedChunk.beginChunk * this.chunkSize;
+        const end = Math.min(groupedChunk.endChunk * this.chunkSize, this.length);
+        this.sendRequest(begin, end);
+      }
     }
 
-    const groupedChunksToRequest = this.groupChunks(chunksToRequest);
+    return capability.promise.catch(reason => {
+      if (this.aborted) {
+        return;
+      }
 
-    for (const groupedChunk of groupedChunksToRequest) {
-      const begin = groupedChunk.beginChunk * this.chunkSize;
-      const end = Math.min(groupedChunk.endChunk * this.chunkSize, this.length);
-      this.sendRequest(begin, end);
-    }
-
-    return capability.promise;
+      throw reason;
+    });
   }
 
   getStream() {
@@ -544,24 +494,29 @@ class ChunkedStreamManager {
       this.stream.onReceiveData(begin, chunk);
     }
 
-    if (this.stream.allChunksLoaded()) {
+    if (this.stream.isDataLoaded) {
       this._loadedStreamCapability.resolve(this.stream);
     }
 
     const loadedRequests = [];
 
-    for (let chunk = beginChunk; chunk < endChunk; ++chunk) {
-      const requestIds = this.requestsByChunk[chunk] || [];
-      delete this.requestsByChunk[chunk];
+    for (let curChunk = beginChunk; curChunk < endChunk; ++curChunk) {
+      const requestIds = this._requestsByChunk.get(curChunk);
+
+      if (!requestIds) {
+        continue;
+      }
+
+      this._requestsByChunk.delete(curChunk);
 
       for (const requestId of requestIds) {
-        const chunksNeeded = this.chunksNeededByRequest[requestId];
+        const chunksNeeded = this._chunksNeededByRequest.get(requestId);
 
-        if (chunk in chunksNeeded) {
-          delete chunksNeeded[chunk];
+        if (chunksNeeded.has(curChunk)) {
+          chunksNeeded.delete(curChunk);
         }
 
-        if (!(0, _util.isEmptyObj)(chunksNeeded)) {
+        if (chunksNeeded.size > 0) {
           continue;
         }
 
@@ -569,7 +524,7 @@ class ChunkedStreamManager {
       }
     }
 
-    if (!this.disableAutoFetch && (0, _util.isEmptyObj)(this.requestsByChunk)) {
+    if (!this.disableAutoFetch && this._requestsByChunk.size === 0) {
       let nextEmptyChunk;
 
       if (this.stream.numChunksLoaded === 1) {
@@ -588,8 +543,10 @@ class ChunkedStreamManager {
     }
 
     for (const requestId of loadedRequests) {
-      const capability = this.promisesByRequest[requestId];
-      delete this.promisesByRequest[requestId];
+      const capability = this._promisesByRequest.get(requestId);
+
+      this._promisesByRequest.delete(requestId);
+
       capability.resolve();
     }
 
@@ -618,8 +575,8 @@ class ChunkedStreamManager {
       this.pdfNetworkStream.cancelAllRequests(reason);
     }
 
-    for (const requestId in this.promisesByRequest) {
-      this.promisesByRequest[requestId].reject(reason);
+    for (const capability of this._promisesByRequest.values()) {
+      capability.reject(reason);
     }
   }
 

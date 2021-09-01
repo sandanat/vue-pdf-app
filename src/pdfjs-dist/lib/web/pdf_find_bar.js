@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,26 +26,24 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.PDFFindBar = void 0;
 
-var _ui_utils = require("./ui_utils.js");
-
 var _pdf_find_controller = require("./pdf_find_controller.js");
 
 const MATCHES_COUNT_LIMIT = 1000;
 
 class PDFFindBar {
-  constructor(options, eventBus, l10n = _ui_utils.NullL10n) {
+  constructor(options, eventBus, l10n) {
     this.opened = false;
-    this.bar = options.bar || null;
-    this.toggleButton = options.toggleButton || null;
-    this.findField = options.findField || null;
-    this.highlightAll = options.highlightAllCheckbox || null;
-    this.caseSensitive = options.caseSensitiveCheckbox || null;
-    this.entireWord = options.entireWordCheckbox || null;
-    this.findMsg = options.findMsg || null;
-    this.findResultsCount = options.findResultsCount || null;
-    this.findPreviousButton = options.findPreviousButton || null;
-    this.findNextButton = options.findNextButton || null;
-    this.eventBus = eventBus || (0, _ui_utils.getGlobalEventBus)();
+    this.bar = options.bar;
+    this.toggleButton = options.toggleButton;
+    this.findField = options.findField;
+    this.highlightAll = options.highlightAllCheckbox;
+    this.caseSensitive = options.caseSensitiveCheckbox;
+    this.entireWord = options.entireWordCheckbox;
+    this.findMsg = options.findMsg;
+    this.findResultsCount = options.findResultsCount;
+    this.findPreviousButton = options.findPreviousButton;
+    this.findNextButton = options.findNextButton;
+    this.eventBus = eventBus;
     this.l10n = l10n;
     this.toggleButton.addEventListener("click", () => {
       this.toggle();
@@ -104,8 +102,7 @@ class PDFFindBar {
   }
 
   updateUIState(state, previous, matchesCount) {
-    let notFound = false;
-    let findMsg = "";
+    let findMsg = Promise.resolve("");
     let status = "";
 
     switch (state) {
@@ -117,23 +114,17 @@ class PDFFindBar {
         break;
 
       case _pdf_find_controller.FindState.NOT_FOUND:
-        findMsg = this.l10n.get("find_not_found", null, "Phrase not found");
-        notFound = true;
+        findMsg = this.l10n.get("find_not_found");
+        status = "notFound";
         break;
 
       case _pdf_find_controller.FindState.WRAPPED:
-        if (previous) {
-          findMsg = this.l10n.get("find_reached_top", null, "Reached top of document, continued from bottom");
-        } else {
-          findMsg = this.l10n.get("find_reached_bottom", null, "Reached end of document, continued from top");
-        }
-
+        findMsg = this.l10n.get(`find_reached_${previous ? "top" : "bottom"}`);
         break;
     }
 
-    this.findField.classList.toggle("notFound", notFound);
     this.findField.setAttribute("data-status", status);
-    Promise.resolve(findMsg).then(msg => {
+    findMsg.then(msg => {
       this.findMsg.textContent = msg;
 
       this._adjustWidth();
@@ -145,27 +136,25 @@ class PDFFindBar {
     current = 0,
     total = 0
   } = {}) {
-    if (!this.findResultsCount) {
-      return;
-    }
-
     const limit = MATCHES_COUNT_LIMIT;
-    let matchesCountMsg = "";
+    let matchCountMsg = Promise.resolve("");
 
     if (total > 0) {
       if (total > limit) {
-        matchesCountMsg = this.l10n.get("find_match_count_limit", {
+        let key = "find_match_count_limit";
+        matchCountMsg = this.l10n.get(key, {
           limit
-        }, "More than {{limit}} match" + (limit !== 1 ? "es" : ""));
+        });
       } else {
-        matchesCountMsg = this.l10n.get("find_match_count", {
+        let key = "find_match_count";
+        matchCountMsg = this.l10n.get(key, {
           current,
           total
-        }, "{{current}} of {{total}} match" + (total !== 1 ? "es" : ""));
+        });
       }
     }
 
-    Promise.resolve(matchesCountMsg).then(msg => {
+    matchCountMsg.then(msg => {
       this.findResultsCount.textContent = msg;
       this.findResultsCount.classList.toggle("hidden", !total);
 
@@ -177,6 +166,7 @@ class PDFFindBar {
     if (!this.opened) {
       this.opened = true;
       this.toggleButton.classList.add("toggled");
+      this.toggleButton.setAttribute("aria-expanded", "true");
       this.bar.classList.remove("hidden");
     }
 
@@ -193,6 +183,7 @@ class PDFFindBar {
 
     this.opened = false;
     this.toggleButton.classList.remove("toggled");
+    this.toggleButton.setAttribute("aria-expanded", "false");
     this.bar.classList.add("hidden");
     this.eventBus.dispatch("findbarclose", {
       source: this

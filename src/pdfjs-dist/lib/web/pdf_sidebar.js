@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,22 +24,13 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.PDFSidebar = exports.SidebarView = void 0;
+exports.PDFSidebar = void 0;
 
 var _ui_utils = require("./ui_utils.js");
 
 var _pdf_rendering_queue = require("./pdf_rendering_queue.js");
 
 const UI_NOTIFICATION_CLASS = "pdfSidebarNotification";
-const SidebarView = {
-  UNKNOWN: -1,
-  NONE: 0,
-  THUMBS: 1,
-  OUTLINE: 2,
-  ATTACHMENTS: 3,
-  LAYERS: 4
-};
-exports.SidebarView = SidebarView;
 
 class PDFSidebar {
   constructor({
@@ -47,11 +38,10 @@ class PDFSidebar {
     pdfViewer,
     pdfThumbnailViewer,
     eventBus,
-    l10n = _ui_utils.NullL10n,
-    disableNotification = false
+    l10n
   }) {
     this.isOpen = false;
-    this.active = SidebarView.THUMBS;
+    this.active = _ui_utils.SidebarView.THUMBS;
     this.isInitialViewSet = false;
     this.onToggled = null;
     this.pdfViewer = pdfViewer;
@@ -62,12 +52,15 @@ class PDFSidebar {
     this.thumbnailButton = elements.thumbnailButton;
     this.outlineButton = elements.outlineButton;
     this.attachmentsButton = elements.attachmentsButton;
+    this.layersButton = elements.layersButton;
     this.thumbnailView = elements.thumbnailView;
     this.outlineView = elements.outlineView;
     this.attachmentsView = elements.attachmentsView;
+    this.layersView = elements.layersView;
+    this._outlineOptionsContainer = elements.outlineOptionsContainer;
+    this._currentOutlineItemButton = elements.currentOutlineItemButton;
     this.eventBus = eventBus;
     this.l10n = l10n;
-    this._disableNotification = disableNotification;
 
     this._addEventListeners();
   }
@@ -75,37 +68,43 @@ class PDFSidebar {
   reset() {
     this.isInitialViewSet = false;
 
-    this._hideUINotification(null);
+    this._hideUINotification(true);
 
-    this.switchView(SidebarView.THUMBS);
+    this.switchView(_ui_utils.SidebarView.THUMBS);
     this.outlineButton.disabled = false;
     this.attachmentsButton.disabled = false;
+    this.layersButton.disabled = false;
+    this._currentOutlineItemButton.disabled = true;
   }
 
   get visibleView() {
-    return this.isOpen ? this.active : SidebarView.NONE;
+    return this.isOpen ? this.active : _ui_utils.SidebarView.NONE;
   }
 
   get isThumbnailViewVisible() {
-    return this.isOpen && this.active === SidebarView.THUMBS;
+    return this.isOpen && this.active === _ui_utils.SidebarView.THUMBS;
   }
 
   get isOutlineViewVisible() {
-    return this.isOpen && this.active === SidebarView.OUTLINE;
+    return this.isOpen && this.active === _ui_utils.SidebarView.OUTLINE;
   }
 
   get isAttachmentsViewVisible() {
-    return this.isOpen && this.active === SidebarView.ATTACHMENTS;
+    return this.isOpen && this.active === _ui_utils.SidebarView.ATTACHMENTS;
   }
 
-  setInitialView(view = SidebarView.NONE) {
+  get isLayersViewVisible() {
+    return this.isOpen && this.active === _ui_utils.SidebarView.LAYERS;
+  }
+
+  setInitialView(view = _ui_utils.SidebarView.NONE) {
     if (this.isInitialViewSet) {
       return;
     }
 
     this.isInitialViewSet = true;
 
-    if (view === SidebarView.NONE || view === SidebarView.UNKNOWN) {
+    if (view === _ui_utils.SidebarView.NONE || view === _ui_utils.SidebarView.UNKNOWN) {
       this._dispatchEvent();
 
       return;
@@ -125,7 +124,7 @@ class PDFSidebar {
     let shouldForceRendering = false;
 
     switch (view) {
-      case SidebarView.NONE:
+      case _ui_utils.SidebarView.NONE:
         if (this.isOpen) {
           this.close();
           return true;
@@ -133,22 +132,29 @@ class PDFSidebar {
 
         return false;
 
-      case SidebarView.THUMBS:
+      case _ui_utils.SidebarView.THUMBS:
         if (this.isOpen && isViewChanged) {
           shouldForceRendering = true;
         }
 
         break;
 
-      case SidebarView.OUTLINE:
+      case _ui_utils.SidebarView.OUTLINE:
         if (this.outlineButton.disabled) {
           return false;
         }
 
         break;
 
-      case SidebarView.ATTACHMENTS:
+      case _ui_utils.SidebarView.ATTACHMENTS:
         if (this.attachmentsButton.disabled) {
+          return false;
+        }
+
+        break;
+
+      case _ui_utils.SidebarView.LAYERS:
+        if (this.layersButton.disabled) {
           return false;
         }
 
@@ -160,12 +166,16 @@ class PDFSidebar {
     }
 
     this.active = view;
-    this.thumbnailButton.classList.toggle("toggled", view === SidebarView.THUMBS);
-    this.outlineButton.classList.toggle("toggled", view === SidebarView.OUTLINE);
-    this.attachmentsButton.classList.toggle("toggled", view === SidebarView.ATTACHMENTS);
-    this.thumbnailView.classList.toggle("hidden", view !== SidebarView.THUMBS);
-    this.outlineView.classList.toggle("hidden", view !== SidebarView.OUTLINE);
-    this.attachmentsView.classList.toggle("hidden", view !== SidebarView.ATTACHMENTS);
+    this.thumbnailButton.classList.toggle("toggled", view === _ui_utils.SidebarView.THUMBS);
+    this.outlineButton.classList.toggle("toggled", view === _ui_utils.SidebarView.OUTLINE);
+    this.attachmentsButton.classList.toggle("toggled", view === _ui_utils.SidebarView.ATTACHMENTS);
+    this.layersButton.classList.toggle("toggled", view === _ui_utils.SidebarView.LAYERS);
+    this.thumbnailView.classList.toggle("hidden", view !== _ui_utils.SidebarView.THUMBS);
+    this.outlineView.classList.toggle("hidden", view !== _ui_utils.SidebarView.OUTLINE);
+    this.attachmentsView.classList.toggle("hidden", view !== _ui_utils.SidebarView.ATTACHMENTS);
+    this.layersView.classList.toggle("hidden", view !== _ui_utils.SidebarView.LAYERS);
+
+    this._outlineOptionsContainer.classList.toggle("hidden", view !== _ui_utils.SidebarView.OUTLINE);
 
     if (forceOpen && !this.isOpen) {
       this.open();
@@ -182,8 +192,6 @@ class PDFSidebar {
       this._dispatchEvent();
     }
 
-    this._hideUINotification(this.active);
-
     return isViewChanged;
   }
 
@@ -194,9 +202,10 @@ class PDFSidebar {
 
     this.isOpen = true;
     this.toggleButton.classList.add("toggled");
+    this.toggleButton.setAttribute("aria-expanded", "true");
     this.outerContainer.classList.add("sidebarMoving", "sidebarOpen");
 
-    if (this.active === SidebarView.THUMBS) {
+    if (this.active === _ui_utils.SidebarView.THUMBS) {
       this._updateThumbnailViewer();
     }
 
@@ -204,7 +213,7 @@ class PDFSidebar {
 
     this._dispatchEvent();
 
-    this._hideUINotification(this.active);
+    this._hideUINotification();
   }
 
   close() {
@@ -214,6 +223,7 @@ class PDFSidebar {
 
     this.isOpen = false;
     this.toggleButton.classList.remove("toggled");
+    this.toggleButton.setAttribute("aria-expanded", "false");
     this.outerContainer.classList.add("sidebarMoving");
     this.outerContainer.classList.remove("sidebarOpen");
 
@@ -256,7 +266,7 @@ class PDFSidebar {
     for (let pageIndex = 0; pageIndex < pagesCount; pageIndex++) {
       const pageView = pdfViewer.getPageView(pageIndex);
 
-      if (pageView && pageView.renderingState === _pdf_rendering_queue.RenderingStates.FINISHED) {
+      if (pageView?.renderingState === _pdf_rendering_queue.RenderingStates.FINISHED) {
         const thumbnailView = pdfThumbnailViewer.getThumbnail(pageIndex);
         thumbnailView.setImage(pageView);
       }
@@ -265,67 +275,26 @@ class PDFSidebar {
     pdfThumbnailViewer.scrollThumbnailIntoView(pdfViewer.currentPageNumber);
   }
 
-  _showUINotification(view) {
-    if (this._disableNotification) {
-      return;
-    }
-
-    this.l10n.get("toggle_sidebar_notification.title", null, "Toggle Sidebar (document contains outline/attachments)").then(msg => {
+  _showUINotification() {
+    this.l10n.get("toggle_sidebar_notification2.title").then(msg => {
       this.toggleButton.title = msg;
     });
 
     if (!this.isOpen) {
       this.toggleButton.classList.add(UI_NOTIFICATION_CLASS);
-    } else if (view === this.active) {
-      return;
-    }
-
-    switch (view) {
-      case SidebarView.OUTLINE:
-        this.outlineButton.classList.add(UI_NOTIFICATION_CLASS);
-        break;
-
-      case SidebarView.ATTACHMENTS:
-        this.attachmentsButton.classList.add(UI_NOTIFICATION_CLASS);
-        break;
     }
   }
 
-  _hideUINotification(view) {
-    if (this._disableNotification) {
-      return;
+  _hideUINotification(reset = false) {
+    if (this.isOpen || reset) {
+      this.toggleButton.classList.remove(UI_NOTIFICATION_CLASS);
     }
 
-    const removeNotification = sidebarView => {
-      switch (sidebarView) {
-        case SidebarView.OUTLINE:
-          this.outlineButton.classList.remove(UI_NOTIFICATION_CLASS);
-          break;
-
-        case SidebarView.ATTACHMENTS:
-          this.attachmentsButton.classList.remove(UI_NOTIFICATION_CLASS);
-          break;
-      }
-    };
-
-    if (!this.isOpen && view !== null) {
-      return;
+    if (reset) {
+      this.l10n.get("toggle_sidebar.title").then(msg => {
+        this.toggleButton.title = msg;
+      });
     }
-
-    this.toggleButton.classList.remove(UI_NOTIFICATION_CLASS);
-
-    if (view !== null) {
-      removeNotification(view);
-      return;
-    }
-
-    for (view in SidebarView) {
-      removeNotification(SidebarView[view]);
-    }
-
-    this.l10n.get("toggle_sidebar.title", null, "Toggle Sidebar").then(msg => {
-      this.toggleButton.title = msg;
-    });
   }
 
   _addEventListeners() {
@@ -338,10 +307,10 @@ class PDFSidebar {
       this.toggle();
     });
     this.thumbnailButton.addEventListener("click", () => {
-      this.switchView(SidebarView.THUMBS);
+      this.switchView(_ui_utils.SidebarView.THUMBS);
     });
     this.outlineButton.addEventListener("click", () => {
-      this.switchView(SidebarView.OUTLINE);
+      this.switchView(_ui_utils.SidebarView.OUTLINE);
     });
     this.outlineButton.addEventListener("dblclick", () => {
       this.eventBus.dispatch("toggleoutlinetree", {
@@ -349,44 +318,54 @@ class PDFSidebar {
       });
     });
     this.attachmentsButton.addEventListener("click", () => {
-      this.switchView(SidebarView.ATTACHMENTS);
+      this.switchView(_ui_utils.SidebarView.ATTACHMENTS);
     });
-
-    this.eventBus._on("outlineloaded", evt => {
-      const outlineCount = evt.outlineCount;
-      this.outlineButton.disabled = !outlineCount;
-
-      if (outlineCount) {
-        this._showUINotification(SidebarView.OUTLINE);
-      } else if (this.active === SidebarView.OUTLINE) {
-        this.switchView(SidebarView.THUMBS);
-      }
+    this.layersButton.addEventListener("click", () => {
+      this.switchView(_ui_utils.SidebarView.LAYERS);
     });
-
-    this.eventBus._on("attachmentsloaded", evt => {
-      if (evt.attachmentsCount) {
-        this.attachmentsButton.disabled = false;
-
-        this._showUINotification(SidebarView.ATTACHMENTS);
-
-        return;
-      }
-
-      Promise.resolve().then(() => {
-        if (this.attachmentsView.hasChildNodes()) {
-          return;
-        }
-
-        this.attachmentsButton.disabled = true;
-
-        if (this.active === SidebarView.ATTACHMENTS) {
-          this.switchView(SidebarView.THUMBS);
-        }
+    this.layersButton.addEventListener("dblclick", () => {
+      this.eventBus.dispatch("resetlayers", {
+        source: this
       });
     });
 
+    this._currentOutlineItemButton.addEventListener("click", () => {
+      this.eventBus.dispatch("currentoutlineitem", {
+        source: this
+      });
+    });
+
+    const onTreeLoaded = (count, button, view) => {
+      button.disabled = !count;
+
+      if (count) {
+        this._showUINotification();
+      } else if (this.active === view) {
+        this.switchView(_ui_utils.SidebarView.THUMBS);
+      }
+    };
+
+    this.eventBus._on("outlineloaded", evt => {
+      onTreeLoaded(evt.outlineCount, this.outlineButton, _ui_utils.SidebarView.OUTLINE);
+      evt.currentOutlineItemPromise.then(enabled => {
+        if (!this.isInitialViewSet) {
+          return;
+        }
+
+        this._currentOutlineItemButton.disabled = !enabled;
+      });
+    });
+
+    this.eventBus._on("attachmentsloaded", evt => {
+      onTreeLoaded(evt.attachmentsCount, this.attachmentsButton, _ui_utils.SidebarView.ATTACHMENTS);
+    });
+
+    this.eventBus._on("layersloaded", evt => {
+      onTreeLoaded(evt.layersCount, this.layersButton, _ui_utils.SidebarView.LAYERS);
+    });
+
     this.eventBus._on("presentationmodechanged", evt => {
-      if (!evt.active && !evt.switchInProgress && this.isThumbnailViewVisible) {
+      if (evt.state === _ui_utils.PresentationModeState.NORMAL && this.isThumbnailViewVisible) {
         this._updateThumbnailViewer();
       }
     });

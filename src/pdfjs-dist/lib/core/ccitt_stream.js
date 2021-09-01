@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *
- * Copyright 2020 Mozilla Foundation
+ * Copyright 2021 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,10 +30,11 @@ var _primitives = require("./primitives.js");
 
 var _ccitt = require("./ccitt.js");
 
-var _stream = require("./stream.js");
+var _decode_stream = require("./decode_stream.js");
 
-var CCITTFaxStream = function CCITTFaxStreamClosure() {
-  function CCITTFaxStream(str, maybeLength, params) {
+class CCITTFaxStream extends _decode_stream.DecodeStream {
+  constructor(str, maybeLength, params) {
+    super(maybeLength);
     this.str = str;
     this.dict = str.dict;
 
@@ -56,13 +57,9 @@ var CCITTFaxStream = function CCITTFaxStreamClosure() {
       EndOfBlock: params.get("EndOfBlock"),
       BlackIs1: params.get("BlackIs1")
     });
-
-    _stream.DecodeStream.call(this, maybeLength);
   }
 
-  CCITTFaxStream.prototype = Object.create(_stream.DecodeStream.prototype);
-
-  CCITTFaxStream.prototype.readBlock = function () {
+  readBlock() {
     while (!this.eof) {
       const c = this.ccittFaxDecoder.readNextChar();
 
@@ -74,9 +71,8 @@ var CCITTFaxStream = function CCITTFaxStreamClosure() {
       this.ensureBuffer(this.bufferLength + 1);
       this.buffer[this.bufferLength++] = c;
     }
-  };
+  }
 
-  return CCITTFaxStream;
-}();
+}
 
 exports.CCITTFaxStream = CCITTFaxStream;
