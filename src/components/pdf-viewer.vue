@@ -10,42 +10,63 @@
         id="sidebarContainer"
       >
         <div v-show="!isSidebarToolbarHidden" id="toolbarSidebar">
-          <slot v-bind="slotProps" name="toolbar-sidebar-prepend"></slot>
-          <div class="splitToolbarButton toggled">
-            <button
-              v-show="showElem('sidebar.viewThumbnail', 'viewThumbnail')"
-              id="viewThumbnail"
-              class="toolbarButton toggled vue-pdf-app-icon view-thumbnail"
-              title="Show Thumbnails"
-              tabindex="2"
-              data-l10n-id="thumbs"
-            >
-              <span data-l10n-id="thumbs_label">Thumbnails</span>
-            </button>
-            <button
-              v-show="showElem('sidebar.viewOutline', 'viewOutline')"
-              id="viewOutline"
-              class="toolbarButton vue-pdf-app-icon view-outline"
-              title="Show Document Outline (double-click to expand/collapse all items)"
-              tabindex="3"
-              data-l10n-id="document_outline"
-            >
-              <span data-l10n-id="document_outline_label"
-                >Document Outline</span
+          <div id="toolbarSidebarLeft">
+            <slot v-bind="slotProps" name="toolbar-sidebar-prepend"></slot>
+            <div class="splitToolbarButton toggled">
+              <button
+                v-show="showElem('sidebar.viewThumbnail', 'viewThumbnail')"
+                id="viewThumbnail"
+                class="toolbarButton toggled vue-pdf-app-icon view-thumbnail"
+                title="Show Thumbnails"
+                tabindex="2"
+                data-l10n-id="thumbs"
               >
-            </button>
-            <button
-              v-show="showElem('sidebar.viewAttachments', 'viewAttachments')"
-              id="viewAttachments"
-              class="toolbarButton vue-pdf-app-icon view-attachments"
-              title="Show Attachments"
-              tabindex="4"
-              data-l10n-id="attachments"
-            >
-              <span data-l10n-id="attachments_label">Attachments</span>
-            </button>
+                <span data-l10n-id="thumbs_label">Thumbnails</span>
+              </button>
+              <button
+                v-show="showElem('sidebar.viewOutline', 'viewOutline')"
+                id="viewOutline"
+                class="toolbarButton vue-pdf-app-icon view-outline"
+                title="Show Document Outline (double-click to expand/collapse all items)"
+                tabindex="3"
+                data-l10n-id="document_outline"
+              >
+                <span data-l10n-id="document_outline_label"
+                  >Document Outline</span
+                >
+              </button>
+              <button
+                v-show="showElem('sidebar.viewAttachments', 'viewAttachments')"
+                id="viewAttachments"
+                class="toolbarButton vue-pdf-app-icon view-attachments"
+                title="Show Attachments"
+                tabindex="4"
+                data-l10n-id="attachments"
+              >
+                <span data-l10n-id="attachments_label">Attachments</span>
+              </button>
+              <button
+                v-show="showElem('sidebar.viewLayers', 'viewLayers')"
+                id="viewLayers"
+                class="toolbarButton vue-pdf-app-icon view-layers"
+                title="Show Layers (double-click to reset all layers to the default state)"
+                tabindex="5"
+                data-l10n-id="layers"
+              >
+                <span data-l10n-id="layers_label">Layers</span>
+              </button>
+            </div>
+            <slot v-bind="slotProps" name="toolbar-sidebar-append"></slot>
           </div>
-          <slot v-bind="slotProps" name="toolbar-sidebar-append"></slot>
+          <div id="toolbarSidebarRight">
+            <div id="outlineOptionsContainer" class="hidden">
+              <div class="verticalToolbarSeparator"></div>
+
+              <button id="currentOutlineItem" class="toolbarButton" disabled="disabled" title="Find Current Outline Item" tabindex="6" data-l10n-id="current_outline_item">
+                <span data-l10n-id="current_outline_item_label">Current Outline Item</span>
+              </button>
+            </div>
+          </div>
         </div>
         <div
           v-show="showElem('sidebar')"
@@ -64,6 +85,11 @@
           <div
             v-show="showElem('sidebar.viewAttachments')"
             id="attachmentsView"
+            class="hidden"
+          ></div>
+          <div
+            v-show="showElem('sidebar.viewLayers')"
+            id="layersView"
             class="hidden"
           ></div>
         </div>
