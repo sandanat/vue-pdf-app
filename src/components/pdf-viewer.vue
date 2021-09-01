@@ -48,7 +48,7 @@
               <button
                 v-show="showElem('sidebar.viewLayers', 'viewLayers')"
                 id="viewLayers"
-                class="toolbarButton vue-pdf-app-icon view-layers"
+                class="toolbarButton vue-pdf-app-icon view-layers hidden"
                 title="Show Layers (double-click to reset all layers to the default state)"
                 tabindex="5"
                 data-l10n-id="layers"
