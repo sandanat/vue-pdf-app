@@ -78,7 +78,7 @@ export default (idConfig: ToolbarIdConfig = {}) => ({
     outlineView: getEl("outlineView"),
     attachmentsView: getEl("attachmentsView"),
     // 2.9.359 add
-    layersButton: getEl("viewLayers"),
+    layersButton: getEl(idConfig.viewLayers || "viewLayers"),
     layersView: getEl("layersView"),
     outlineOptionsContainer: getEl("outlineOptionsContainer"),
     currentOutlineItemButton: getEl("currentOutlineItem")

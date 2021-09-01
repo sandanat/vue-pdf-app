@@ -53,4 +53,5 @@ export interface ToolbarIdConfig {
   viewThumbnail?: string;
   zoomIn?: string;
   zoomOut?: string;
+  viewLayers?: string;
 }
